@@ -1,0 +1,8 @@
+name = "guander-api"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "guander"
+database_id = "b650d7eb-81d2-4683-8a8c-a6a8e12acfd6"

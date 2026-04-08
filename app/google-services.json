@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "963835877507",
+    "project_id": "guander-7cf49",
+    "storage_bucket": "guander-7cf49.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:963835877507:android:b75ca182a2eb74c90623b6",
+        "android_client_info": {
+          "package_name": "com.example.guander"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "963835877507-ebhkt300vqu35k173mfs7ol38a3ue0u6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcH0WSBey1o4rzxK9zqheb-DUu9k2JmkY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "963835877507-ebhkt300vqu35k173mfs7ol38a3ue0u6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
