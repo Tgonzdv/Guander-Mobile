@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="rbtn_system" type="id" />
+    <item name="rbtn_light" type="id" />
+    <item name="rbtn_dark" type="id" />
+    <item name="rbtn_spanish" type="id" />
+    <item name="rbtn_english" type="id" />
+</resources>

@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background_light">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/green_header"
+        android:orientation="horizontal"
+        android:paddingStart="16dp" android:paddingEnd="16dp"
+        android:paddingTop="44dp" android:paddingBottom="16dp"
+        android:gravity="center_vertical">
+        <TextView android:id="@+id/btn_back" android:layout_width="40dp" android:layout_height="40dp" android:gravity="center" android:text="←" android:textColor="@color/white" android:textSize="22sp" android:background="?attr/selectableItemBackgroundBorderless" />
+        <TextView android:id="@+id/tv_settings_title" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="Título" android:textColor="@color/white" android:textSize="18sp" android:textStyle="bold" android:layout_marginEnd="40dp" />
+    </LinearLayout>
+
+    <ScrollView android:layout_width="match_parent" android:layout_height="match_parent">
+        <LinearLayout android:id="@+id/ll_content" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp" />
+    </ScrollView>
+</LinearLayout>

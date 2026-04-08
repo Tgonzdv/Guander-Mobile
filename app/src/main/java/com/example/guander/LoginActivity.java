@@ -130,7 +130,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void goToWelcome() {
-        startActivity(new Intent(this, MainActivity.class));
+        startActivity(new Intent(this, DashboardActivity.class));
         finish();
     }
 }
