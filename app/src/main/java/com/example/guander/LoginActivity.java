@@ -2,13 +2,15 @@ package com.example.guander;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -31,15 +33,32 @@ public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
+    private MaterialButton btnGoogle;
+    private MaterialButton btnGoogleRegister;
+    private ProgressBar pbLoading;
 
     private final ActivityResultLauncher<Intent> googleSignInLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(result.getData());
                 try {
                     GoogleSignInAccount account = task.getResult(ApiException.class);
-                    firebaseAuthWithGoogle(account.getIdToken());
+                    String idToken = account.getIdToken();
+                    if (idToken == null) {
+                        setLoading(false);
+                        Toast.makeText(this, "Error: no se obtuvo token. Verificá el SHA-1 en Firebase.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    firebaseAuthWithGoogle(idToken);
                 } catch (ApiException e) {
-                    Toast.makeText(this, "Google Sign-In fallo", Toast.LENGTH_SHORT).show();
+                    setLoading(false);
+                    String msg;
+                    switch (e.getStatusCode()) {
+                        case 7:  msg = "Sin conexión a internet"; break;
+                        case 10: msg = "Error de configuración (SHA-1)"; break;
+                        case 12501: msg = "Inicio de sesión cancelado"; break;
+                        default: msg = "Error Google: código " + e.getStatusCode();
+                    }
+                    Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
                 }
             });
 
@@ -56,11 +75,12 @@ public class LoginActivity extends AppCompatActivity {
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        Button btnGoogle = findViewById(R.id.btn_google);
-        Button btnGoogleRegister = findViewById(R.id.btn_google_register);
+        btnGoogle = findViewById(R.id.btn_google);
+        btnGoogleRegister = findViewById(R.id.btn_google_register);
+        pbLoading = findViewById(R.id.pb_loading);
 
-        btnGoogle.setOnClickListener(v -> signInWithGoogle());
-        btnGoogleRegister.setOnClickListener(v -> signInWithGoogle());
+        btnGoogle.setOnClickListener(v -> { setLoading(true); signInWithGoogle(); });
+        btnGoogleRegister.setOnClickListener(v -> { setLoading(true); signInWithGoogle(); });
     }
 
     @Override
@@ -77,20 +97,25 @@ public class LoginActivity extends AppCompatActivity {
         googleSignInLauncher.launch(signInIntent);
     }
 
+    private void setLoading(boolean loading) {
+        pbLoading.setVisibility(loading ? View.VISIBLE : View.GONE);
+        btnGoogle.setEnabled(!loading);
+        btnGoogleRegister.setEnabled(!loading);
+        btnGoogle.setAlpha(loading ? 0.6f : 1f);
+        btnGoogleRegister.setAlpha(loading ? 0.6f : 1f);
+    }
+
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        if (user != null) {
-                            saveUserToDatabase(user);
-                        }
-                        goToWelcome();
-                    } else {
-                        String msg = task.getException() != null ? task.getException().getMessage() : "Error desconocido";
-                        Toast.makeText(this, "Error: " + msg, Toast.LENGTH_SHORT).show();
-                    }
+                .addOnSuccessListener(authResult -> {
+                    FirebaseUser user = mAuth.getCurrentUser();
+                    if (user != null) saveUserToDatabase(user);
+                    goToWelcome();
+                })
+                .addOnFailureListener(e -> {
+                    setLoading(false);
+                    Toast.makeText(this, "Error Firebase: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
 

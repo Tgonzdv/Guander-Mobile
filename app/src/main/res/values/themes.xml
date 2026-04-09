@@ -7,6 +7,12 @@
 
     <style name="Theme.Guander" parent="Base.Theme.Guander" />
 
+    <!-- Login screen always uses Light mode regardless of app theme setting -->
+    <style name="Theme.Guander.Login" parent="Theme.Material3.Light.NoActionBar">
+        <item name="android:windowBackground">#1B4D2E</item>
+        <item name="android:statusBarColor">#1B4D2E</item>
+    </style>
+
     <style name="CircleImageStyle" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
