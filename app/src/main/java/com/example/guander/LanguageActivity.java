@@ -6,9 +6,10 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.os.LocaleListCompat;
 
 public class LanguageActivity extends AppCompatActivity {
 
@@ -29,7 +30,7 @@ public class LanguageActivity extends AppCompatActivity {
         LinearLayout content = findViewById(R.id.ll_content);
 
         TextView label = new TextView(this);
-        label.setText("Selecciona el idioma de la aplicación");
+        label.setText("Selecciona el idioma de la applicación");
         label.setTextSize(13f);
         label.setTextColor(0xFF757575);
         label.setPadding(0, 0, 0, dp(8));
@@ -62,15 +63,14 @@ public class LanguageActivity extends AppCompatActivity {
         rbEn.setTextColor(0xFF212121);
         rbEn.setPadding(dp(4), dp(12), dp(4), dp(12));
         rbEn.setChecked("en".equals(savedLang));
+        rg.addView(rbEn);
+
         card.addView(rg);
 
         rg.setOnCheckedChangeListener((group, checkedId) -> {
             String lang = (checkedId == R.id.rbtn_english) ? "en" : "es";
             prefs.edit().putString(KEY_LANG, lang).apply();
-            Toast.makeText(this,
-                    "en".equals(lang) ? "Language saved. Restart the app to apply." :
-                            "Idioma guardado. Reinicia la app para aplicar.",
-                    Toast.LENGTH_LONG).show();
+            AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(lang));
         });
     }
 

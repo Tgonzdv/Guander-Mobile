@@ -81,19 +81,19 @@ public class DashboardActivity extends AppCompatActivity {
 
         // Navigation clicks
         findViewById(R.id.nav_mapa).setOnClickListener(v ->
-                Toast.makeText(this, "Mapa próximamente", Toast.LENGTH_SHORT).show());
+                startActivity(new Intent(this, MapActivity.class)));
         findViewById(R.id.nav_qr).setOnClickListener(v ->
-                Toast.makeText(this, "QR Scan próximamente", Toast.LENGTH_SHORT).show());
+                startActivity(new Intent(this, QrScanActivity.class)));
         findViewById(R.id.nav_puntos).setOnClickListener(v ->
-                Toast.makeText(this, "Tus puntos: " + tvPoints.getText(), Toast.LENGTH_SHORT).show());
+                startActivity(new Intent(this, RewardsActivity.class)));
         findViewById(R.id.nav_perfil).setOnClickListener(v ->
                 startActivity(new Intent(this, ProfileActivity.class)));
         findViewById(R.id.card_lugares).setOnClickListener(v ->
-                Toast.makeText(this, "Lugares Pet Friendly próximamente", Toast.LENGTH_SHORT).show());
+                startActivity(new Intent(this, MapActivity.class)));
         findViewById(R.id.card_recompensas).setOnClickListener(v ->
-                Toast.makeText(this, "Mis Recompensas próximamente", Toast.LENGTH_SHORT).show());
+                startActivity(new Intent(this, RewardsActivity.class)));
         findViewById(R.id.btn_canjear).setOnClickListener(v ->
-                Toast.makeText(this, "Canje de puntos próximamente", Toast.LENGTH_SHORT).show());
+                startActivity(new Intent(this, RewardsActivity.class)));
 
         // Fetch dashboard data
         String email = user.getEmail();

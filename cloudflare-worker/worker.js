@@ -19,6 +19,27 @@ export default {
     if (request.method === 'POST' && url.pathname === '/sign-upload') {
       return handleSignUpload(request, env);
     }
+    if (request.method === 'GET' && url.pathname === '/rewards') {
+      return handleGetRewards(request, env, url);
+    }
+    if (request.method === 'POST' && url.pathname === '/redeem') {
+      return handlePostRedeem(request, env);
+    }
+    if (request.method === 'GET' && url.pathname === '/redeem-history') {
+      return handleGetRedeemHistory(request, env, url);
+    }
+    if (request.method === 'GET' && url.pathname === '/places') {
+      return handleGetPlaces(request, env, url);
+    }
+    if (request.method === 'GET' && url.pathname === '/comments') {
+      return handleGetComments(request, env, url);
+    }
+    if (request.method === 'POST' && url.pathname === '/review') {
+      return handlePostReview(request, env);
+    }
+    if (request.method === 'POST' && url.pathname === '/validate-qr') {
+      return handleValidateQr(request, env);
+    }
     return new Response('Not found', { status: 404 });
   }
 };
@@ -146,8 +167,8 @@ async function handleGetProfile(request, env, url) {
       try {
         const couponsRow = await env.DB.prepare(`
           SELECT
-            (SELECT COUNT(*) FROM coupon_buy_store WHERE fk_customer = ?) +
-            (SELECT COUNT(*) FROM coupon_buy_prof WHERE fk_customer = ?) AS total
+            (SELECT COUNT(*) FROM coupon_buy_store WHERE fk_customer_id = ?) +
+            (SELECT COUNT(*) FROM coupon_buy_prof WHERE fk_customer_id = ?) AS total
         `).bind(customerId, customerId).first();
         coupons = couponsRow ? (couponsRow.total || 0) : 0;
       } catch (e) { coupons = 0; }
@@ -206,4 +227,434 @@ async function handleSignUpload(request, env) {
     cloudName: env.CLOUDINARY_CLOUD_NAME,
     folder
   });
+}
+
+// ── Helper: ensure points_history table exists ──────────────────────────────
+async function ensurePointsHistoryTable(env) {
+  await env.DB.prepare(`
+    CREATE TABLE IF NOT EXISTS points_history (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      fk_customer INTEGER NOT NULL,
+      description TEXT NOT NULL,
+      points_change INTEGER NOT NULL,
+      redemption_code TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+  `).run().catch(() => {});
+}
+
+// ── Helper: get customer row for email ──────────────────────────────────────
+async function getCustomerByEmail(env, email) {
+  const userData = await env.DB.prepare(`
+    SELECT u.id_user FROM user_data ud
+    JOIN users u ON u.fk_user_data = ud.id_user_data
+    WHERE LOWER(ud.email) = LOWER(?)
+    ORDER BY u.id_user DESC LIMIT 1
+  `).bind(email).first();
+  if (!userData) return null;
+
+  const customer = await env.DB.prepare(
+    'SELECT id_customer, points FROM customer WHERE fk_user = ? ORDER BY points DESC LIMIT 1'
+  ).bind(userData.id_user).first();
+  return customer || null;
+}
+
+// ── GET /rewards?email= ──────────────────────────────────────────────────────
+async function handleGetRewards(request, env, url) {
+  const email = url.searchParams.get('email');
+  if (!email) return corsResponse({ error: 'Email required' }, 400);
+
+  await ensurePointsHistoryTable(env);
+
+  try {
+    const customer = await getCustomerByEmail(env, email);
+    if (!customer) return corsResponse({ error: 'User not found' }, 404);
+
+    let rewards = [];
+    try {
+      const { results } = await env.DB.prepare(`
+        SELECT id_coupon AS id, name, description, point_req,
+               code_coupon, fk_store, 'store' AS type
+        FROM coupon_store
+        WHERE state = 1 AND fk_coupon_state = 1
+          AND expiration_date >= date('now')
+          AND id_coupon NOT IN (
+            SELECT fk_coupon_id FROM coupon_buy_store WHERE fk_customer_id = ?
+          )
+        ORDER BY point_req ASC
+      `).bind(customer.id_customer).all();
+      rewards = results || [];
+    } catch (e) { rewards = []; }
+
+    return corsResponse({ points: customer.points, rewards });
+  } catch (err) {
+    return corsResponse({ error: err.message }, 500);
+  }
+}
+
+// ── POST /redeem ─────────────────────────────────────────────────────────────
+async function handlePostRedeem(request, env) {
+  let body;
+  try { body = await request.json(); } catch { return corsResponse({ error: 'Invalid JSON' }, 400); }
+
+  const { email, couponId, couponType } = body;
+  if (!email || !couponId || !couponType) {
+    return corsResponse({ error: 'email, couponId y couponType son requeridos' }, 400);
+  }
+
+  await ensurePointsHistoryTable(env);
+
+  try {
+    const customer = await getCustomerByEmail(env, email);
+    if (!customer) return corsResponse({ error: 'Usuario no encontrado' }, 404);
+
+    let coupon;
+    if (couponType === 'store') {
+      coupon = await env.DB.prepare(
+        'SELECT id_coupon, name, point_req, code_coupon FROM coupon_store WHERE id_coupon = ? AND state = 1 AND fk_coupon_state = 1'
+      ).bind(couponId).first();
+    } else {
+      coupon = await env.DB.prepare(
+        'SELECT id_coupon, name, point_req, code_coupon FROM coupon_prof WHERE id_coupon = ? AND fk_coupon_state = 1'
+      ).bind(couponId).first();
+    }
+
+    if (!coupon) return corsResponse({ error: 'Cupón no disponible' }, 404);
+
+    // One coupon per person check
+    if (couponType === 'store') {
+      const alreadyRedeemed = await env.DB.prepare(
+        'SELECT fk_customer_id FROM coupon_buy_store WHERE fk_customer_id = ? AND fk_coupon_id = ? LIMIT 1'
+      ).bind(customer.id_customer, couponId).first();
+      if (alreadyRedeemed) return corsResponse({ error: 'Ya canjeaste este cupón' }, 400);
+    }
+
+    if (customer.points < coupon.point_req) {
+      return corsResponse({ error: 'Puntos insuficientes' }, 400);
+    }
+
+    const newPoints = customer.points - coupon.point_req;
+    await env.DB.prepare('UPDATE customer SET points = ? WHERE id_customer = ?')
+      .bind(newPoints, customer.id_customer).run();
+
+    if (couponType === 'store') {
+      await env.DB.prepare(
+        'INSERT INTO coupon_buy_store (fk_customer_id, fk_coupon_id) VALUES (?, ?)'
+      ).bind(customer.id_customer, coupon.id_coupon).run();
+    } else {
+      await env.DB.prepare(
+        'INSERT INTO coupon_buy_prof (fk_coupon_prof_id, fk_customer_id) VALUES (?, ?)'
+      ).bind(coupon.id_coupon, customer.id_customer).run();
+    }
+
+    await env.DB.prepare(
+      'INSERT INTO points_history (fk_customer, description, points_change, redemption_code) VALUES (?, ?, ?, ?)'
+    ).bind(customer.id_customer, 'Canjeado: ' + coupon.name, -coupon.point_req, coupon.code_coupon).run();
+
+    return corsResponse({ success: true, code: coupon.code_coupon, remainingPoints: newPoints });
+  } catch (err) {
+    return corsResponse({ error: err.message }, 500);
+  }
+}
+
+// ── GET /redeem-history?email= ───────────────────────────────────────────────
+async function handleGetRedeemHistory(request, env, url) {
+  const email = url.searchParams.get('email');
+  if (!email) return corsResponse({ error: 'Email required' }, 400);
+
+  await ensurePointsHistoryTable(env);
+
+  try {
+    const customer = await getCustomerByEmail(env, email);
+    if (!customer) return corsResponse({ history: [] });
+
+    const { results } = await env.DB.prepare(`
+      SELECT
+        description AS name,
+        points_change,
+        redemption_code,
+        CASE
+          WHEN julianday('now') - julianday(created_at) < 1 THEN 'Hoy'
+          WHEN julianday('now') - julianday(created_at) < 2 THEN 'Hace 1 día'
+          ELSE 'Hace ' || CAST(CAST(julianday('now') - julianday(created_at) AS INTEGER) AS TEXT) || ' días'
+        END AS date
+      FROM points_history
+      WHERE fk_customer = ?
+      ORDER BY id DESC
+      LIMIT 30
+    `).bind(customer.id_customer).all();
+
+    return corsResponse({ history: results || [] });
+  } catch (err) {
+    return corsResponse({ error: err.message }, 500);
+  }
+}
+
+// ── Helper: haversine distance in km ─────────────────────────────────────────
+function haversineKm(lat1, lng1, lat2, lng2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+// ── Helper: map store category name → app category slug ─────────────────────
+function mapStoreCategory(catName) {
+  const n = (catName || '').toLowerCase();
+  if (n.includes('café') || n.includes('cafe') || n.includes('coffee') ||
+      n.includes('restaurant') || n.includes('bar') || n.includes('brunch')) return 'restaurant';
+  if (n.includes('spa') || n.includes('grooming') || n.includes('foto') ||
+      n.includes('photo') || n.includes('hotel') || n.includes('servic')) return 'service';
+  return 'store';
+}
+
+// ── Helper: parse "lat,lng" location string ──────────────────────────────────
+function parseLoc(loc) {
+  if (!loc) return { lat: -34.6037, lng: -58.3816 };
+  const parts = loc.split(',');
+  return {
+    lat: parseFloat(parts[0]) || -34.6037,
+    lng: parseFloat(parts[1]) || -58.3816
+  };
+}
+
+// ── GET /places?lat=&lng= ────────────────────────────────────────────────────
+async function handleGetPlaces(request, env, url) {
+  const userLat = parseFloat(url.searchParams.get('lat') || '-34.6037');
+  const userLng = parseFloat(url.searchParams.get('lng') || '-58.3816');
+
+  try {
+    // Query real stores table with optional category join
+    const { results: storeRows } = await env.DB.prepare(`
+      SELECT s.id_store AS id_place, s.name, s.description, s.address, s.location,
+             COALESCE(cat.name, '') AS cat_name, 'store' AS place_type
+      FROM stores s
+      LEFT JOIN category cat ON cat.id_category = s.fk_category
+    `).all().catch(() => ({ results: [] }));
+
+    // Query real professionals table (name comes from fk_user_id → users → user_data)
+    const { results: profRows } = await env.DB.prepare(`
+      SELECT p.id_professional AS id_place,
+             COALESCE(ud.name, p.description) AS name,
+             p.description, p.address, p.location,
+             '' AS cat_name, 'professional' AS place_type
+      FROM professionals p
+      LEFT JOIN users u ON u.id_user = p.fk_user_id
+      LEFT JOIN user_data ud ON ud.id_user_data = u.fk_user_data
+    `).all().catch(() => ({ results: [] }));
+
+    const allPlaces = [
+      ...(storeRows || []).map(s => {
+        const { lat, lng } = parseLoc(s.location);
+        return {
+          id_place: s.id_place,
+          name: s.name,
+          description: s.description || '',
+          address: s.address || '',
+          category: mapStoreCategory(s.cat_name),
+          lat, lng,
+          points_reward: 50,
+          is_open: 1,
+          place_type: 'store',
+          distance_km: Math.round(haversineKm(userLat, userLng, lat, lng) * 10) / 10
+        };
+      }),
+      ...(profRows || []).map(p => {
+        const { lat, lng } = parseLoc(p.location);
+        return {
+          id_place: p.id_place,
+          name: p.name,
+          description: p.description || '',
+          address: p.address || '',
+          lat, lng,
+          points_reward: 50,
+          is_open: 1,
+          place_type: 'professional',
+          distance_km: Math.round(haversineKm(userLat, userLng, lat, lng) * 10) / 10
+        };
+      })
+    ];
+
+    allPlaces.sort((a, b) => a.distance_km - b.distance_km);
+    return corsResponse({ places: allPlaces });
+  } catch (err) {
+    return corsResponse({ error: err.message }, 500);
+  }
+}
+
+// ── GET /comments?placeId=&placeType=&email= ─────────────────────────────────
+async function handleGetComments(request, env, url) {
+  const placeId = parseInt(url.searchParams.get('placeId') || '0');
+  const placeType = url.searchParams.get('placeType') || 'store';
+  const email = url.searchParams.get('email') || '';
+  if (!placeId) return corsResponse({ error: 'placeId required' }, 400);
+
+  const dateExpr = (col) => `
+    CASE
+      WHEN julianday('now') - julianday(${col}) < 1 THEN 'Hoy'
+      WHEN julianday('now') - julianday(${col}) < 2 THEN 'Hace 1 día'
+      ELSE 'Hace ' || CAST(CAST(julianday('now') - julianday(${col}) AS INTEGER) AS TEXT) || ' días'
+    END`;
+
+  const authorJoin = `
+    LEFT JOIN customer cust ON cust.id_customer = cm.fk_customer_id
+    LEFT JOIN users us ON us.id_user = cust.fk_user
+    LEFT JOIN user_data ud ON ud.id_user_data = us.fk_user_data`;
+
+  try {
+    let placeName = '';
+    let comments = [];
+
+    if (placeType === 'professional') {
+      const place = await env.DB.prepare(
+        `SELECT COALESCE(ud.name, p.description) AS name
+         FROM professionals p
+         LEFT JOIN users u ON u.id_user = p.fk_user_id
+         LEFT JOIN user_data ud ON ud.id_user_data = u.fk_user_data
+         WHERE p.id_professional = ?`
+      ).bind(placeId).first().catch(() => null);
+      placeName = place ? place.name : '';
+
+      const { results } = await env.DB.prepare(`
+        SELECT cm.id_comment AS id,
+               COALESCE(ud.name, 'Usuario') AS authorName,
+               cm.stars AS rating,
+               cm.body AS comment,
+               ${dateExpr('cm.date')} AS date
+        FROM comments_prof cm
+        ${authorJoin}
+        WHERE cm.fk_professional_id = ?
+        ORDER BY cm.id_comment DESC
+      `).bind(placeId).all().catch(() => ({ results: [] }));
+      comments = results || [];
+    } else {
+      const place = await env.DB.prepare(
+        'SELECT name FROM stores WHERE id_store = ?'
+      ).bind(placeId).first().catch(() => null);
+      placeName = place ? place.name : '';
+
+      const { results } = await env.DB.prepare(`
+        SELECT cm.id_comment AS id,
+               COALESCE(ud.name, 'Usuario') AS authorName,
+               cm.stars AS rating,
+               cm.body AS comment,
+               ${dateExpr('cm.date')} AS date
+        FROM comments_store cm
+        ${authorJoin}
+        WHERE cm.fk_store_id = ?
+        ORDER BY cm.id_comment DESC
+      `).bind(placeId).all().catch(() => ({ results: [] }));
+      comments = results || [];
+    }
+
+    let canComment = false;
+    if (email) {
+      const customer = await getCustomerByEmail(env, email);
+      if (customer) {
+        const table = placeType === 'professional' ? 'prof_purchase' : 'store_purchase';
+        const fkCol = placeType === 'professional' ? 'fk_professional' : 'fk_store';
+        const custCol = 'fk_customer';
+        const check = await env.DB.prepare(
+          `SELECT 1 FROM ${table} WHERE ${custCol} = ? AND ${fkCol} = ? LIMIT 1`
+        ).bind(customer.id_customer, placeId).first().catch(() => null);
+        canComment = !!check;
+      }
+    }
+
+    return corsResponse({ placeId, placeName, totalComments: comments.length, canComment, comments });
+  } catch (err) {
+    return corsResponse({ error: err.message }, 500);
+  }
+}
+
+// ── POST /review ──────────────────────────────────────────────────────────────
+async function handlePostReview(request, env) {
+  let body;
+  try { body = await request.json(); } catch { return corsResponse({ error: 'Invalid JSON' }, 400); }
+
+  const { email, placeId, placeType, rating, comment } = body;
+  if (!email || !placeId || !rating || !comment) {
+    return corsResponse({ error: 'Faltan campos requeridos' }, 400);
+  }
+
+  try {
+    const customer = await getCustomerByEmail(env, email);
+    if (!customer) return corsResponse({ error: 'Usuario no encontrado' }, 404);
+
+    const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+
+    if (placeType === 'professional') {
+      await env.DB.prepare(
+        'INSERT INTO comments_prof (body, stars, date, fk_customer_id, fk_professional_id) VALUES (?, ?, ?, ?, ?)'
+      ).bind(comment, parseInt(rating), now, customer.id_customer, parseInt(placeId)).run();
+    } else {
+      await env.DB.prepare(
+        'INSERT INTO comments_store (body, stars, date, fk_customer_id, fk_store_id) VALUES (?, ?, ?, ?, ?)'
+      ).bind(comment, parseInt(rating), now, customer.id_customer, parseInt(placeId)).run();
+    }
+
+    return corsResponse({ success: true });
+  } catch (err) {
+    return corsResponse({ error: err.message }, 500);
+  }
+}
+
+// ── POST /validate-qr ──────────────────────────────────────────────────────
+async function handleValidateQr(request, env) {
+  let body;
+  try { body = await request.json(); } catch { return corsResponse({ error: 'Invalid JSON' }, 400); }
+
+  const { email, qrData } = body;
+  if (!email || !qrData) return corsResponse({ error: 'Faltan campos' }, 400);
+
+  try {
+    let qr;
+    try { qr = JSON.parse(qrData); } catch { return corsResponse({ error: 'QR inválido' }, 400); }
+
+    const { type, id, name: storeName, amount, item, secret } = qr;
+    if (secret !== 'guander2026') return corsResponse({ error: 'QR inválido' }, 400);
+    if (!id || !amount) return corsResponse({ error: 'QR incompleto' }, 400);
+
+    const customer = await getCustomerByEmail(env, email);
+    if (!customer) return corsResponse({ error: 'Usuario no encontrado' }, 404);
+
+    const pointsEarned = Math.max(1, Math.floor(parseInt(amount) / 1000));
+    const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+
+    if (type === 'professional') {
+      await env.DB.prepare(
+        'INSERT INTO prof_purchase (date, amount, points_earn, fk_professional, fk_customer) VALUES (?, ?, ?, ?, ?)'
+      ).bind(now, parseInt(amount), pointsEarned, parseInt(id), customer.id_customer).run();
+    } else {
+      await env.DB.prepare(
+        'INSERT INTO store_purchase (date, amount, points_earn, fk_customer, fk_store) VALUES (?, ?, ?, ?, ?)'
+      ).bind(now, parseInt(amount), pointsEarned, customer.id_customer, parseInt(id)).run();
+    }
+
+    await env.DB.prepare(
+      'UPDATE customer SET points = points + ? WHERE id_customer = ?'
+    ).bind(pointsEarned, customer.id_customer).run();
+
+    await ensurePointsHistoryTable(env);
+    await env.DB.prepare(
+      'INSERT INTO points_history (fk_customer, description, points_change) VALUES (?, ?, ?)'
+    ).bind(customer.id_customer, 'Consumo en ' + (storeName || 'local afiliado'), pointsEarned).run();
+
+    const updated = await env.DB.prepare(
+      'SELECT points FROM customer WHERE id_customer = ?'
+    ).bind(customer.id_customer).first();
+
+    return corsResponse({
+      success: true,
+      storeName: storeName || '',
+      item: item || '',
+      amount: parseInt(amount),
+      pointsEarned,
+      newBalance: updated ? updated.points : 0
+    });
+  } catch (err) {
+    return corsResponse({ error: err.message }, 500);
+  }
 }
