@@ -102,11 +102,13 @@
                     android:layout_height="wrap_content"
                     android:hint="Nombre"
                     android:layout_marginBottom="12dp"
+                    app:hintTextColor="#1B4D2E"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/et_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textColor="#212121"
                         android:inputType="textPersonName" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -115,11 +117,13 @@
                     android:layout_height="wrap_content"
                     android:hint="Apellido"
                     android:layout_marginBottom="12dp"
+                    app:hintTextColor="#1B4D2E"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/et_lastname"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textColor="#212121"
                         android:inputType="textPersonName" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -128,11 +132,13 @@
                     android:layout_height="wrap_content"
                     android:hint="Correo electronico"
                     android:layout_marginBottom="12dp"
+                    app:hintTextColor="#1B4D2E"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/et_email"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textColor="#757575"
                         android:inputType="textEmailAddress"
                         android:enabled="false" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -142,11 +148,13 @@
                     android:layout_height="wrap_content"
                     android:hint="Telefono"
                     android:layout_marginBottom="12dp"
+                    app:hintTextColor="#1B4D2E"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/et_tel"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textColor="#212121"
                         android:inputType="phone" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -155,11 +163,13 @@
                     android:layout_height="wrap_content"
                     android:hint="Ubicacion"
                     android:layout_marginBottom="12dp"
+                    app:hintTextColor="#1B4D2E"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/et_address"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textColor="#212121"
                         android:inputType="textPostalAddress" />
                 </com.google.android.material.textfield.TextInputLayout>
 

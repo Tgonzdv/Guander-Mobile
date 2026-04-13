@@ -56,8 +56,12 @@ public class QrScanActivity extends AppCompatActivity {
         setContentView(R.layout.activity_qr_scan);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) { finish(); return; }
-        userEmail = user.getEmail();
+        if (user != null) {
+            userEmail = user.getEmail();
+        } else {
+            userEmail = getSharedPreferences("guander_prefs", MODE_PRIVATE).getString("email_auth", null);
+        }
+        if (userEmail == null) { finish(); return; }
 
         barcodeView = findViewById(R.id.barcode_view);
         llPlaceholder = findViewById(R.id.ll_camera_placeholder);

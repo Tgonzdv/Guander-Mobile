@@ -1,6 +1,7 @@
 package com.example.guander;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -34,6 +35,8 @@ public class DashboardActivity extends AppCompatActivity {
 
     private static final String WORKER_DASHBOARD_URL =
             "https://guander-api.tomas-gonzalezz.workers.dev/dashboard";
+    private static final String PREFS          = "guander_prefs";
+    private static final String KEY_EMAIL_AUTH = "email_auth";
 
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
@@ -62,17 +65,31 @@ public class DashboardActivity extends AppCompatActivity {
         pbLoading = findViewById(R.id.pb_loading);
 
         FirebaseUser user = mAuth.getCurrentUser();
-        if (user == null) {
+        // Determine active email: Google/Firebase user first, then email/password session
+        String activeEmail = null;
+        String displayName = null;
+        if (user != null) {
+            activeEmail = user.getEmail();
+            displayName = user.getDisplayName();
+        } else {
+            activeEmail = getSharedPreferences(PREFS, MODE_PRIVATE).getString(KEY_EMAIL_AUTH, null);
+        }
+
+        if (activeEmail == null) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
         }
 
-        // Populate greeting immediately from Firebase
-        String displayName = user.getDisplayName();
-        String firstName = (displayName != null && !displayName.isEmpty())
-                ? displayName.split(" ")[0]
-                : (user.getEmail() != null ? user.getEmail().split("@")[0] : "Usuario");
+        // Populate greeting
+        String firstName;
+        if (displayName != null && !displayName.isEmpty()) {
+            firstName = displayName.split(" ")[0];
+        } else {
+            firstName = activeEmail.split("@")[0];
+        }
+
+        final String emailForFetch = activeEmail;
 
         TextView tvGreeting = findViewById(R.id.tv_greeting);
         TextView tvAvatar = findViewById(R.id.tv_avatar);
@@ -96,10 +113,7 @@ public class DashboardActivity extends AppCompatActivity {
                 startActivity(new Intent(this, RewardsActivity.class)));
 
         // Fetch dashboard data
-        String email = user.getEmail();
-        if (email != null) {
-            fetchDashboardData(email);
-        }
+        fetchDashboardData(emailForFetch);
     }
 
     private void fetchDashboardData(String email) {
@@ -178,6 +192,7 @@ public class DashboardActivity extends AppCompatActivity {
 
     private void logout() {
         mAuth.signOut();
+        getSharedPreferences(PREFS, MODE_PRIVATE).edit().remove(KEY_EMAIL_AUTH).apply();
         mGoogleSignInClient.signOut().addOnCompleteListener(task -> {
             Intent intent = new Intent(this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

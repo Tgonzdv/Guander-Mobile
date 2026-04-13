@@ -68,12 +68,16 @@ public class RewardsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_rewards);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) {
+        if (user != null) {
+            userEmail = user.getEmail() != null ? user.getEmail() : "";
+        } else {
+            userEmail = getSharedPreferences("guander_prefs", MODE_PRIVATE).getString("email_auth", null);
+        }
+        if (userEmail == null) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
         }
-        userEmail = user.getEmail() != null ? user.getEmail() : "";
 
         tvPoints = findViewById(R.id.tv_rewards_points);
         llRewards = findViewById(R.id.ll_rewards);

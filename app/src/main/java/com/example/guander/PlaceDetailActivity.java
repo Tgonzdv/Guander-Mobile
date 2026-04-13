@@ -61,12 +61,16 @@ public class PlaceDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_place_detail);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) {
+        if (user != null) {
+            userEmail = user.getEmail() != null ? user.getEmail() : "";
+        } else {
+            userEmail = getSharedPreferences("guander_prefs", MODE_PRIVATE).getString("email_auth", null);
+        }
+        if (userEmail == null) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
         }
-        userEmail = user.getEmail() != null ? user.getEmail() : "";
 
         placeId = getIntent().getIntExtra("PLACE_ID", 0);
         placeName = getIntent().getStringExtra("PLACE_NAME");

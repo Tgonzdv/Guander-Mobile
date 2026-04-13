@@ -40,24 +40,58 @@ export default {
     if (request.method === 'POST' && url.pathname === '/validate-qr') {
       return handleValidateQr(request, env);
     }
+    if (request.method === 'POST' && url.pathname === '/login-email') {
+      return handleLoginEmail(request, env);
+    }
     return new Response('Not found', { status: 404 });
   }
 };
+
+// ── Password helpers ────────────────────────────────────────────────────────
+function generateSalt() {
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function hashPasswordPBKDF2(password, saltHex) {
+  const enc = new TextEncoder();
+  const saltBytes = new Uint8Array(saltHex.match(/.{2}/g).map(h => parseInt(h, 16)));
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw', enc.encode(password), { name: 'PBKDF2' }, false, ['deriveBits']
+  );
+  const bits = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', hash: 'SHA-256', salt: saltBytes, iterations: 100000 },
+    keyMaterial, 256
+  );
+  return Array.from(new Uint8Array(bits)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
 async function handleRegister(request, env) {
   let body;
   try { body = await request.json(); } catch { return corsResponse({ error: 'Invalid JSON' }, 400); }
 
-  const { email, name, lastName } = body;
+  const { email, name, lastName, tel, password } = body;
   if (!email) return corsResponse({ error: 'Email is required' }, 400);
 
   try {
-    const existing = await env.DB.prepare('SELECT id_user_data FROM user_data WHERE email = ?').bind(email).first();
-    if (existing) return corsResponse({ success: true, existing: true });
+    const existing = await env.DB.prepare('SELECT id_user_data, password_hash FROM user_data WHERE LOWER(email) = LOWER(?)').bind(email).first();
+    if (existing) {
+      // Email/password registration on existing account → error
+      if (password) return corsResponse({ error: 'Email ya registrado. Intentá iniciar sesión.' }, 409);
+      // Google sign-in on existing account → success silently
+      return corsResponse({ success: true, existing: true });
+    }
+
+    let passwordHash = null;
+    if (password) {
+      const salt = generateSalt();
+      const hash = await hashPasswordPBKDF2(password, salt);
+      passwordHash = salt + ':' + hash;
+    }
 
     const userDataResult = await env.DB.prepare(
-      "INSERT INTO user_data (name, last_name, tel, email, address, password_hash) VALUES (?, ?, '', ?, '', NULL)"
-    ).bind(name || '', lastName || '', email).run();
+      "INSERT INTO user_data (name, last_name, tel, email, address, password_hash) VALUES (?, ?, ?, ?, '', ?)"
+    ).bind(name || '', lastName || '', tel || '', email, passwordHash).run();
     const userDataId = userDataResult.meta.last_row_id;
 
     let username = email.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '_');
@@ -72,6 +106,34 @@ async function handleRegister(request, env) {
     await env.DB.prepare('INSERT INTO customer (points, fk_user) VALUES (0, ?)').bind(userId).run();
 
     return corsResponse({ success: true, userId, userDataId });
+  } catch (err) {
+    return corsResponse({ error: err.message }, 500);
+  }
+}
+
+async function handleLoginEmail(request, env) {
+  let body;
+  try { body = await request.json(); } catch { return corsResponse({ error: 'Invalid JSON' }, 400); }
+
+  const { email, password } = body;
+  if (!email || !password) return corsResponse({ error: 'Email y contraseña requeridos' }, 400);
+
+  try {
+    const row = await env.DB.prepare(
+      'SELECT id_user_data, name, last_name, password_hash FROM user_data WHERE LOWER(email) = LOWER(?)'
+    ).bind(email).first();
+
+    if (!row) return corsResponse({ error: 'Credenciales incorrectas' }, 401);
+    if (!row.password_hash) return corsResponse({ error: 'Esta cuenta usa Google para iniciar sesión' }, 400);
+
+    const parts = row.password_hash.split(':');
+    if (parts.length !== 2) return corsResponse({ error: 'Error interno de credenciales' }, 500);
+
+    const [salt, storedHash] = parts;
+    const inputHash = await hashPasswordPBKDF2(password, salt);
+    if (inputHash !== storedHash) return corsResponse({ error: 'Credenciales incorrectas' }, 401);
+
+    return corsResponse({ success: true, email, name: row.name, lastName: row.last_name });
   } catch (err) {
     return corsResponse({ error: err.message }, 500);
   }

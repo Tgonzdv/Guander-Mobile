@@ -44,6 +44,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private static final String WORKER = "https://guander-api.tomas-gonzalezz.workers.dev";
     private static final String PREFS = "guander_prefs";
+    private static final String KEY_EMAIL_AUTH = "email_auth";
 
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
@@ -79,8 +80,12 @@ public class ProfileActivity extends AppCompatActivity {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         FirebaseUser user = mAuth.getCurrentUser();
-        if (user == null) { finish(); return; }
-        userEmail = user.getEmail();
+        if (user != null) {
+            userEmail = user.getEmail();
+        } else {
+            userEmail = getSharedPreferences(PREFS, MODE_PRIVATE).getString(KEY_EMAIL_AUTH, null);
+        }
+        if (userEmail == null) { finish(); return; }
 
         // Pre-fill email from Firebase immediately (visible before API responds)
         ((TextView) findViewById(R.id.tv_profile_email)).setText(userEmail);
@@ -105,8 +110,6 @@ public class ProfileActivity extends AppCompatActivity {
         // Settings navigation
         navigate(R.id.item_notifications, NotificationsSettingsActivity.class);
         navigate(R.id.item_privacy, PrivacySecurityActivity.class);
-        navigate(R.id.item_appearance, AppearanceActivity.class);
-        navigate(R.id.item_language, LanguageActivity.class);
         navigate(R.id.item_help, HelpCenterActivity.class);
         navigate(R.id.item_terms, TermsActivity.class);
         navigate(R.id.item_policy, PrivacyPolicyActivity.class);
@@ -354,6 +357,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void logout() {
         mAuth.signOut();
+        getSharedPreferences(PREFS, MODE_PRIVATE).edit().remove(KEY_EMAIL_AUTH).apply();
         mGoogleSignInClient.signOut().addOnCompleteListener(task -> {
             Intent intent = new Intent(this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

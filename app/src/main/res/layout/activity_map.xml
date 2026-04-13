@@ -172,7 +172,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="● Restaurantes"
                                 android:textSize="11sp"
-                                android:textColor="@color/yellow_accent"
+                                android:textColor="#E65100"
                                 android:layout_marginBottom="3dp" />
 
                             <TextView
@@ -210,6 +210,8 @@
                         android:layout_weight="1"
                         android:background="@null"
                         android:hint="Buscar lugares..."
+                        android:textColorHint="#9E9E9E"
+                        android:textColor="#212121"
                         android:paddingStart="14dp"
                         android:imeOptions="actionSearch"
                         android:inputType="text"

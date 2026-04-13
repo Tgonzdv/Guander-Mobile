@@ -79,12 +79,16 @@ public class MapActivity extends AppCompatActivity {
         setContentView(R.layout.activity_map);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) {
+        if (user != null) {
+            userEmail = user.getEmail() != null ? user.getEmail() : "";
+        } else {
+            userEmail = getSharedPreferences("guander_prefs", MODE_PRIVATE).getString("email_auth", null);
+        }
+        if (userEmail == null) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
         }
-        userEmail = user.getEmail() != null ? user.getEmail() : "";
 
         mapView = findViewById(R.id.map_view);
         llPlaces = findViewById(R.id.ll_places);
