@@ -4,42 +4,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/background_light">
+    android:background="?android:attr/colorBackground">
 
     <!-- ===== HEADER ===== -->
-    <LinearLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/green_header"
-        android:orientation="horizontal"
-        android:paddingTop="44dp"
-        android:paddingBottom="16dp"
-        android:paddingStart="8dp"
-        android:paddingEnd="16dp"
-        android:gravity="center_vertical">
+        android:fitsSystemWindows="true">
 
-        <TextView
-            android:id="@+id/btn_back"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:text="←"
-            android:textSize="22sp"
-            android:textColor="@color/white"
-            android:gravity="center"
-            android:background="?attr/selectableItemBackgroundBorderless" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Mis PetPoints"
-            android:textSize="18sp"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            android:gravity="center" />
-
-        <View android:layout_width="40dp" android:layout_height="40dp" />
-    </LinearLayout>
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:navigationIconTint="?attr/colorOnPrimary"
+            app:title="Mis PetPoints"
+            app:titleTextColor="?attr/colorOnPrimary" />
+    </com.google.android.material.appbar.AppBarLayout>
 
     <!-- ===== BALANCE CARD ===== -->
     <com.google.android.material.card.MaterialCardView
@@ -265,124 +246,10 @@
             android:paddingBottom="12dp" />
     </ScrollView>
 
-    <!-- ===== BOTTOM NAVIGATION ===== -->
-    <LinearLayout
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_nav"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:background="@color/white"
-        android:orientation="horizontal"
-        android:elevation="12dp">
-
-        <LinearLayout
-            android:id="@+id/nav_inicio"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:background="?attr/selectableItemBackground">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="⌂"
-                android:textSize="20sp"
-                android:textColor="@color/text_secondary" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Inicio"
-                android:textSize="10sp"
-                android:textColor="@color/text_secondary" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/nav_mapa"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:background="?attr/selectableItemBackground">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="📍"
-                android:textSize="20sp" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Mapa"
-                android:textSize="10sp"
-                android:textColor="@color/text_secondary" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/nav_qr"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:background="?attr/selectableItemBackground">
-            <TextView
-                android:layout_width="52dp"
-                android:layout_height="52dp"
-                android:gravity="center"
-                android:text="📷"
-                android:textSize="22sp"
-                android:background="@drawable/shape_qr_button" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Qr scan"
-                android:textSize="10sp"
-                android:textColor="@color/text_secondary" />
-        </LinearLayout>
-
-        <!-- Puntos (SELECTED) -->
-        <LinearLayout
-            android:id="@+id/nav_puntos"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:background="?attr/selectableItemBackground">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="🪙"
-                android:textSize="20sp"
-                android:textColor="@color/green_primary" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Puntos"
-                android:textSize="10sp"
-                android:textStyle="bold"
-                android:textColor="@color/green_primary" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/nav_perfil"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:background="?attr/selectableItemBackground">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="👤"
-                android:textSize="20sp" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Perfil"
-                android:textSize="10sp"
-                android:textColor="@color/text_secondary" />
-        </LinearLayout>
-    </LinearLayout>
+        android:layout_height="wrap_content"
+        app:menu="@menu/nav_menu" />
 
 </LinearLayout>

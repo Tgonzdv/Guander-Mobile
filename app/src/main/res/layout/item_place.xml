@@ -6,7 +6,7 @@
     android:layout_marginBottom="10dp"
     app:cardCornerRadius="12dp"
     app:cardElevation="2dp"
-    app:cardBackgroundColor="@color/white">
+    app:cardBackgroundColor="?attr/colorSurface">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -42,7 +42,7 @@
                     android:text="Nombre del lugar"
                     android:textSize="14sp"
                     android:textStyle="bold"
-                    android:textColor="#212121" />
+                    android:textColor="?attr/colorOnSurface" />
 
                 <TextView
                     android:id="@+id/tv_place_desc"
@@ -104,8 +104,8 @@
             android:text="Ver detalles y comentarios"
             android:textSize="12sp"
             android:layout_marginTop="10dp"
-            app:strokeColor="@color/green_primary"
+            app:strokeColor="?attr/colorPrimary"
             app:strokeWidth="1dp"
-            android:textColor="@color/green_primary" />
+            android:textColor="?attr/colorPrimary" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

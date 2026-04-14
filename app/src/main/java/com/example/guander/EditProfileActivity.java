@@ -15,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
@@ -68,7 +69,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
         etEmail.setText(userEmail);
 
-        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
+        ((MaterialToolbar) findViewById(R.id.btn_back)).setNavigationOnClickListener(v -> finish());
         findViewById(R.id.btn_edit_photo).setOnClickListener(v -> imagePickerLauncher.launch("image/*"));
         findViewById(R.id.btn_save).setOnClickListener(v -> saveProfile());
 

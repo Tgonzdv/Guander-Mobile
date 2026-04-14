@@ -19,6 +19,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.journeyapps.barcodescanner.BarcodeCallback;
@@ -67,22 +69,29 @@ public class QrScanActivity extends AppCompatActivity {
         llPlaceholder = findViewById(R.id.ll_camera_placeholder);
         scanLine = findViewById(R.id.scan_line);
 
-        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
+        com.google.android.material.appbar.MaterialToolbar toolbar = findViewById(R.id.btn_back);
+        toolbar.setNavigationOnClickListener(v -> finish());
         findViewById(R.id.btn_activate_camera).setOnClickListener(v -> requestCameraAndStart());
 
         // Bottom nav
-        findViewById(R.id.nav_inicio).setOnClickListener(v -> {
-            startActivity(new Intent(this, DashboardActivity.class)); finish();
-        });
-        findViewById(R.id.nav_mapa).setOnClickListener(v -> {
-            startActivity(new Intent(this, MapActivity.class)); finish();
-        });
-        findViewById(R.id.nav_qr).setOnClickListener(v -> { /* already here */ });
-        findViewById(R.id.nav_puntos).setOnClickListener(v -> {
-            startActivity(new Intent(this, RewardsActivity.class)); finish();
-        });
-        findViewById(R.id.nav_perfil).setOnClickListener(v -> {
-            startActivity(new Intent(this, ProfileActivity.class)); finish();
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
+        bottomNav.setSelectedItemId(R.id.nav_qr);
+        bottomNav.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.nav_inicio) {
+                startActivity(new Intent(this, DashboardActivity.class)); finish();
+                return true;
+            } else if (id == R.id.nav_mapa) {
+                startActivity(new Intent(this, MapActivity.class)); finish();
+                return true;
+            } else if (id == R.id.nav_puntos) {
+                startActivity(new Intent(this, RewardsActivity.class)); finish();
+                return true;
+            } else if (id == R.id.nav_perfil) {
+                startActivity(new Intent(this, ProfileActivity.class)); finish();
+                return true;
+            }
+            return false;
         });
     }
 

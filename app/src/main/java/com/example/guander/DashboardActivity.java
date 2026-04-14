@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -96,15 +98,26 @@ public class DashboardActivity extends AppCompatActivity {
         tvGreeting.setText("¡Hola, " + firstName + "!");
         tvAvatar.setText(String.valueOf(firstName.charAt(0)).toUpperCase());
 
-        // Navigation clicks
-        findViewById(R.id.nav_mapa).setOnClickListener(v ->
-                startActivity(new Intent(this, MapActivity.class)));
-        findViewById(R.id.nav_qr).setOnClickListener(v ->
-                startActivity(new Intent(this, QrScanActivity.class)));
-        findViewById(R.id.nav_puntos).setOnClickListener(v ->
-                startActivity(new Intent(this, RewardsActivity.class)));
-        findViewById(R.id.nav_perfil).setOnClickListener(v ->
-                startActivity(new Intent(this, ProfileActivity.class)));
+        // Navigation
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
+        bottomNav.setSelectedItemId(R.id.nav_inicio);
+        bottomNav.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.nav_mapa) {
+                startActivity(new Intent(this, MapActivity.class));
+                return true;
+            } else if (id == R.id.nav_qr) {
+                startActivity(new Intent(this, QrScanActivity.class));
+                return true;
+            } else if (id == R.id.nav_puntos) {
+                startActivity(new Intent(this, RewardsActivity.class));
+                return true;
+            } else if (id == R.id.nav_perfil) {
+                startActivity(new Intent(this, ProfileActivity.class));
+                return true;
+            }
+            return false;
+        });
         findViewById(R.id.card_lugares).setOnClickListener(v ->
                 startActivity(new Intent(this, MapActivity.class)));
         findViewById(R.id.card_recompensas).setOnClickListener(v ->

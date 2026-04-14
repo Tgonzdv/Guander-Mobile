@@ -21,6 +21,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -94,7 +95,7 @@ public class ProfileActivity extends AppCompatActivity {
         pbPhotoUpload = findViewById(R.id.pb_photo_upload);
 
         // Back
-        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
+        ((MaterialToolbar) findViewById(R.id.btn_back)).setNavigationOnClickListener(v -> finish());
 
         // Change photo
         findViewById(R.id.btn_change_photo).setOnClickListener(v ->

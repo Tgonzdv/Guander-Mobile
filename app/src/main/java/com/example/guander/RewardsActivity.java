@@ -22,6 +22,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -91,7 +93,8 @@ public class RewardsActivity extends AppCompatActivity {
         tvTabCanjear = findViewById(R.id.tv_tab_canjear);
         tvTabHistorial = findViewById(R.id.tv_tab_historial);
 
-        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
+        com.google.android.material.appbar.MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(v -> finish());
 
         findViewById(R.id.tab_canjear).setOnClickListener(v -> switchTab(true));
         findViewById(R.id.tab_historial).setOnClickListener(v -> switchTab(false));
@@ -105,21 +108,28 @@ public class RewardsActivity extends AppCompatActivity {
         });
 
         // Bottom navigation
-        findViewById(R.id.nav_inicio).setOnClickListener(v -> {
-            startActivity(new Intent(this, DashboardActivity.class));
-            finish();
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
+        bottomNav.setSelectedItemId(R.id.nav_puntos);
+        bottomNav.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.nav_inicio) {
+                startActivity(new Intent(this, DashboardActivity.class));
+                finish();
+                return true;
+            } else if (id == R.id.nav_mapa) {
+                startActivity(new Intent(this, MapActivity.class));
+                finish();
+                return true;
+            } else if (id == R.id.nav_qr) {
+                startActivity(new Intent(this, QrScanActivity.class));
+                finish();
+                return true;
+            } else if (id == R.id.nav_perfil) {
+                startActivity(new Intent(this, ProfileActivity.class));
+                return true;
+            }
+            return false;
         });
-        findViewById(R.id.nav_mapa).setOnClickListener(v -> {
-            startActivity(new Intent(this, MapActivity.class));
-            finish();
-        });
-        findViewById(R.id.nav_qr).setOnClickListener(v -> {
-            startActivity(new Intent(this, QrScanActivity.class));
-            finish();
-        });
-        findViewById(R.id.nav_puntos).setOnClickListener(v -> { /* ya estamos aquí */ });
-        findViewById(R.id.nav_perfil).setOnClickListener(v ->
-                startActivity(new Intent(this, ProfileActivity.class)));
 
         loadRewards();
     }

@@ -7,7 +7,7 @@
     android:layout_marginBottom="10dp"
     app:cardCornerRadius="14dp"
     app:cardElevation="2dp"
-    app:cardBackgroundColor="@color/white">
+    app:cardBackgroundColor="?attr/colorSurface">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -40,7 +40,7 @@
                 android:text="Nombre recompensa"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:textColor="#212121" />
+                android:textColor="?attr/colorOnSurface" />
 
             <TextView
                 android:id="@+id/tv_reward_desc"
@@ -70,7 +70,7 @@
                     android:layout_height="wrap_content"
                     android:text="800 pts"
                     android:textSize="13sp"
-                    android:textColor="#212121"
+                    android:textColor="?attr/colorOnSurface"
                     android:layout_marginStart="4dp" />
             </LinearLayout>
         </LinearLayout>
@@ -82,10 +82,10 @@
             android:layout_height="wrap_content"
             android:text="Canjear"
             android:textSize="12sp"
-            android:textColor="@color/white"
+            android:textColor="?attr/colorOnPrimary"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
-            app:backgroundTint="@color/green_primary"
+            app:backgroundTint="?attr/colorPrimary"
             app:cornerRadius="20dp" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

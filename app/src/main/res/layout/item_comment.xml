@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="12dp"
-    android:background="@color/white">
+    android:background="?attr/colorSurface">
 
     <!-- Avatar circle with initial -->
     <TextView
@@ -41,7 +41,7 @@
                 android:text="Monica D."
                 android:textSize="13sp"
                 android:textStyle="bold"
-                android:textColor="#212121" />
+                android:textColor="?attr/colorOnSurface" />
 
             <TextView
                 android:id="@+id/tv_comment_date"
@@ -71,7 +71,7 @@
             android:layout_height="wrap_content"
             android:text="Excelente lugar."
             android:textSize="12sp"
-            android:textColor="#424242"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:layout_marginTop="4dp" />
     </LinearLayout>
 </LinearLayout>

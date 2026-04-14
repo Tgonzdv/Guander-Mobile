@@ -8,6 +8,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.appbar.MaterialToolbar;
 import androidx.appcompat.app.AppCompatDelegate;
 
 public class AppearanceActivity extends AppCompatActivity {
@@ -20,8 +22,9 @@ public class AppearanceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_base);
 
-        ((TextView) findViewById(R.id.tv_settings_title)).setText("Apariencia");
-        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
+        MaterialToolbar settingsToolbar = findViewById(R.id.toolbar);
+        settingsToolbar.setTitle("Apariencia");
+        settingsToolbar.setNavigationOnClickListener(v -> finish());
 
         SharedPreferences prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
         int savedMode = prefs.getInt(KEY_THEME, 0); // 0=system, 1=light, 2=dark

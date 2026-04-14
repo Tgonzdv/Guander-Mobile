@@ -2,6 +2,7 @@ package com.example.guander;
 
 import android.Manifest;
 import android.content.Intent;
+import android.net.Uri;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -27,6 +28,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -112,22 +115,32 @@ public class MapActivity extends AppCompatActivity {
     }
 
     private void setupNavigation() {
-        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
+        com.google.android.material.appbar.MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(v -> finish());
         findViewById(R.id.btn_my_location).setOnClickListener(v -> {
             mapView.getController().animateTo(new GeoPoint(userLat, userLng));
             mapView.getController().setZoom(15.0);
         });
-        findViewById(R.id.nav_inicio).setOnClickListener(v ->
-                startActivity(new Intent(this, DashboardActivity.class)));
-        findViewById(R.id.nav_mapa).setOnClickListener(v -> { /* already here */ });
-        findViewById(R.id.nav_qr).setOnClickListener(v -> {
-            startActivity(new Intent(this, QrScanActivity.class));
-            finish();
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
+        bottomNav.setSelectedItemId(R.id.nav_mapa);
+        bottomNav.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.nav_inicio) {
+                startActivity(new Intent(this, DashboardActivity.class));
+                return true;
+            } else if (id == R.id.nav_qr) {
+                startActivity(new Intent(this, QrScanActivity.class));
+                finish();
+                return true;
+            } else if (id == R.id.nav_puntos) {
+                startActivity(new Intent(this, RewardsActivity.class));
+                return true;
+            } else if (id == R.id.nav_perfil) {
+                startActivity(new Intent(this, ProfileActivity.class));
+                return true;
+            }
+            return false;
         });
-        findViewById(R.id.nav_puntos).setOnClickListener(v ->
-                startActivity(new Intent(this, RewardsActivity.class)));
-        findViewById(R.id.nav_perfil).setOnClickListener(v ->
-                startActivity(new Intent(this, ProfileActivity.class)));
     }
 
     private void setupFilters() {
@@ -327,12 +340,26 @@ public class MapActivity extends AppCompatActivity {
             final String fName = name;
             final String fCat = category;
             final String fType = place.optString("place_type", "store");
+            final double fLat = place.optDouble("lat", 0);
+            final double fLng = place.optDouble("lng", 0);
+            final String fDesc = desc;
+            final String fAddress = place.optString("address", "");
+            final String fPhone = place.optString("phone", "");
+            final int fIsOpen = isOpen;
+            final double fDist = distKm;
             btnDetail.setOnClickListener(v -> {
                 Intent intent = new Intent(this, PlaceDetailActivity.class);
                 intent.putExtra("PLACE_ID", fId);
                 intent.putExtra("PLACE_NAME", fName);
                 intent.putExtra("PLACE_CATEGORY", fCat);
                 intent.putExtra("PLACE_TYPE", fType);
+                intent.putExtra("PLACE_LAT", fLat);
+                intent.putExtra("PLACE_LNG", fLng);
+                intent.putExtra("PLACE_DESC", fDesc);
+                intent.putExtra("PLACE_ADDRESS", fAddress);
+                intent.putExtra("PLACE_PHONE", fPhone);
+                intent.putExtra("PLACE_IS_OPEN", fIsOpen);
+                intent.putExtra("PLACE_DISTANCE", fDist);
                 startActivity(intent);
             });
 
@@ -396,18 +423,88 @@ public class MapActivity extends AppCompatActivity {
             final String fName = name;
             final String fCat = category;
             final String fType = place.optString("place_type", "store");
+            final JSONObject fPlace = place;
             marker.setOnMarkerClickListener((m, mv) -> {
-                Intent intent = new Intent(MapActivity.this, PlaceDetailActivity.class);
-                intent.putExtra("PLACE_ID", fId);
-                intent.putExtra("PLACE_NAME", fName);
-                intent.putExtra("PLACE_CATEGORY", fCat);
-                intent.putExtra("PLACE_TYPE", fType);
-                startActivity(intent);
+                showPlaceBottomSheet(fPlace);
                 return true;
             });
             mapView.getOverlays().add(marker);
         }
         mapView.invalidate();
+    }
+
+    private void showPlaceBottomSheet(JSONObject place) {
+        BottomSheetDialog sheet = new BottomSheetDialog(this);
+        View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_place, null);
+
+        String name = place.optString("name", "");
+        String category = place.optString("category", "store");
+        String placeType = place.optString("place_type", "store");
+        int placeId = place.optInt("id_place", 0);
+        double lat = place.optDouble("lat", 0);
+        double lng = place.optDouble("lng", 0);
+        String desc = place.optString("description", "");
+        String address = place.optString("address", "");
+        String phone = place.optString("phone", "");
+        double distKm = place.optDouble("distance_km", 0);
+        int isOpen = place.optInt("is_open", 1);
+
+        float density = getResources().getDisplayMetrics().density;
+        TextView tvIcon = sheetView.findViewById(R.id.tv_bs_icon);
+        applyPlaceIcon(tvIcon, category, density);
+
+        ((TextView) sheetView.findViewById(R.id.tv_bs_name)).setText(name);
+
+        String openText = isOpen == 1 ? "Abierto" : "Cerrado";
+        String meta = String.format(Locale.getDefault(), "%.1f km · %s", distKm, openText);
+        ((TextView) sheetView.findViewById(R.id.tv_bs_meta)).setText(meta);
+
+        TextView tvDesc = sheetView.findViewById(R.id.tv_bs_desc);
+        if (!desc.isEmpty()) {
+            tvDesc.setText(desc);
+            tvDesc.setVisibility(View.VISIBLE);
+        }
+
+        TextView tvAddress = sheetView.findViewById(R.id.tv_bs_address);
+        if (!address.isEmpty()) {
+            tvAddress.setText("\uD83D\uDCCD " + address);
+            tvAddress.setVisibility(View.VISIBLE);
+        }
+
+        sheetView.findViewById(R.id.btn_bs_directions).setOnClickListener(v -> {
+            try {
+                String geoUri = "geo:" + lat + "," + lng
+                        + "?q=" + lat + "," + lng
+                        + "(" + URLEncoder.encode(name, "UTF-8") + ")";
+                startActivity(Intent.createChooser(
+                        new Intent(Intent.ACTION_VIEW, Uri.parse(geoUri)), "Abrir con..."));
+            } catch (Exception e) {
+                Toast.makeText(this, "No se encontró una app de mapas", Toast.LENGTH_SHORT).show();
+            }
+            sheet.dismiss();
+        });
+
+        final String fPlaceType = placeType;
+        final String fPhone = phone;
+        sheetView.findViewById(R.id.btn_bs_detail).setOnClickListener(v -> {
+            Intent intent = new Intent(this, PlaceDetailActivity.class);
+            intent.putExtra("PLACE_ID", placeId);
+            intent.putExtra("PLACE_NAME", name);
+            intent.putExtra("PLACE_CATEGORY", category);
+            intent.putExtra("PLACE_TYPE", fPlaceType);
+            intent.putExtra("PLACE_LAT", lat);
+            intent.putExtra("PLACE_LNG", lng);
+            intent.putExtra("PLACE_DESC", desc);
+            intent.putExtra("PLACE_ADDRESS", address);
+            intent.putExtra("PLACE_PHONE", fPhone);
+            intent.putExtra("PLACE_IS_OPEN", isOpen);
+            intent.putExtra("PLACE_DISTANCE", distKm);
+            startActivity(intent);
+            sheet.dismiss();
+        });
+
+        sheet.setContentView(sheetView);
+        sheet.show();
     }
 
     private BitmapDrawable createMarkerIcon(String label, int bgColor) {

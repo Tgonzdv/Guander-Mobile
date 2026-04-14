@@ -6,6 +6,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.appbar.MaterialToolbar;
+
 public class TermsActivity extends AppCompatActivity {
 
     @Override
@@ -13,8 +15,9 @@ public class TermsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_base);
 
-        ((TextView) findViewById(R.id.tv_settings_title)).setText("Términos y Condiciones");
-        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
+        MaterialToolbar settingsToolbar = findViewById(R.id.toolbar);
+        settingsToolbar.setTitle("Términos y Condiciones");
+        settingsToolbar.setNavigationOnClickListener(v -> finish());
 
         LinearLayout content = findViewById(R.id.ll_content);
         addText(content, "Última actualización: enero 2025\n");

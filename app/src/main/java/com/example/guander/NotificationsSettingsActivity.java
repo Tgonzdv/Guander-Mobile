@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.appbar.MaterialToolbar;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,8 +23,9 @@ public class NotificationsSettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_base);
 
-        ((TextView) findViewById(R.id.tv_settings_title)).setText("Notificaciones");
-        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
+        MaterialToolbar settingsToolbar = findViewById(R.id.toolbar);
+        settingsToolbar.setTitle("Notificaciones");
+        settingsToolbar.setNavigationOnClickListener(v -> finish());
 
         SharedPreferences prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
         LinearLayout content = findViewById(R.id.ll_content);

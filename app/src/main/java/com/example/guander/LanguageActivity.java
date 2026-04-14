@@ -8,6 +8,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.appbar.MaterialToolbar;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.os.LocaleListCompat;
 
@@ -21,8 +23,9 @@ public class LanguageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_base);
 
-        ((TextView) findViewById(R.id.tv_settings_title)).setText("Idioma");
-        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
+        MaterialToolbar settingsToolbar = findViewById(R.id.toolbar);
+        settingsToolbar.setTitle("Idioma");
+        settingsToolbar.setNavigationOnClickListener(v -> finish());
 
         SharedPreferences prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
         String savedLang = prefs.getString(KEY_LANG, "es");

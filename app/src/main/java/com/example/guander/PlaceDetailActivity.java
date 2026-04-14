@@ -1,6 +1,7 @@
 package com.example.guander;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -81,7 +83,82 @@ public class PlaceDetailActivity extends AppCompatActivity {
         String intentType = getIntent().getStringExtra("PLACE_TYPE");
         if (intentType != null && !intentType.isEmpty()) placeCategory = intentType;
 
-        ((TextView) findViewById(R.id.tv_place_header_name)).setText(placeName);
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle(placeName);
+        toolbar.setNavigationOnClickListener(v -> finish());
+
+        // ===== INFO CARD =====
+        float density = getResources().getDisplayMetrics().density;
+        double placeLat = getIntent().getDoubleExtra("PLACE_LAT", 0);
+        double placeLng = getIntent().getDoubleExtra("PLACE_LNG", 0);
+        String placeDesc = getIntent().getStringExtra("PLACE_DESC");
+        String placeAddress = getIntent().getStringExtra("PLACE_ADDRESS");
+        String placePhone = getIntent().getStringExtra("PLACE_PHONE");
+        int placeIsOpen = getIntent().getIntExtra("PLACE_IS_OPEN", -1);
+
+        // Category badge
+        TextView tvDetailCategory = findViewById(R.id.tv_detail_category);
+        String catLabel;
+        int catColor;
+        switch (placeCategory) {
+            case "store":        catLabel = "Local";          catColor = Color.parseColor("#2E7D32"); break;
+            case "restaurant":   catLabel = "Restaurante";    catColor = Color.parseColor("#FFA000"); break;
+            case "professional": catLabel = "Profesional";    catColor = Color.parseColor("#1B5E20"); break;
+            case "service":      catLabel = "Servicio";       catColor = Color.parseColor("#E65100"); break;
+            default:             catLabel = "Lugar";          catColor = Color.parseColor("#2E7D32"); break;
+        }
+        GradientDrawable catBg = new GradientDrawable();
+        catBg.setShape(GradientDrawable.RECTANGLE);
+        catBg.setCornerRadius(24f * density);
+        catBg.setColor(catColor);
+        tvDetailCategory.setBackground(catBg);
+        tvDetailCategory.setText(catLabel);
+
+        // Open / Closed badge
+        if (placeIsOpen >= 0) {
+            TextView tvDetailOpen = findViewById(R.id.tv_detail_open);
+            tvDetailOpen.setText(placeIsOpen == 1 ? "Abierto ahora" : "Cerrado");
+            tvDetailOpen.setTextColor(Color.parseColor(placeIsOpen == 1 ? "#2E7D32" : "#D32F2F"));
+            tvDetailOpen.setVisibility(View.VISIBLE);
+        }
+
+        // Description
+        if (placeDesc != null && !placeDesc.isEmpty()) {
+            TextView tvDetailDesc = findViewById(R.id.tv_detail_desc);
+            tvDetailDesc.setText(placeDesc);
+            tvDetailDesc.setVisibility(View.VISIBLE);
+        }
+
+        // Address
+        if (placeAddress != null && !placeAddress.isEmpty()) {
+            TextView tvDetailAddress = findViewById(R.id.tv_detail_address);
+            tvDetailAddress.setText("\uD83D\uDCCD " + placeAddress);
+            tvDetailAddress.setVisibility(View.VISIBLE);
+        }
+
+        // Phone
+        if (placePhone != null && !placePhone.isEmpty()) {
+            TextView tvDetailPhone = findViewById(R.id.tv_detail_phone);
+            tvDetailPhone.setText("\uD83D\uDCDE " + placePhone);
+            tvDetailPhone.setVisibility(View.VISIBLE);
+        }
+
+        // Directions button
+        if (placeLat != 0 || placeLng != 0) {
+            MaterialButton btnDirections = findViewById(R.id.btn_directions);
+            btnDirections.setVisibility(View.VISIBLE);
+            btnDirections.setOnClickListener(v -> {
+                try {
+                    String geoUri = "geo:" + placeLat + "," + placeLng
+                            + "?q=" + placeLat + "," + placeLng
+                            + "(" + URLEncoder.encode(placeName, "UTF-8") + ")";
+                    startActivity(Intent.createChooser(
+                            new Intent(Intent.ACTION_VIEW, Uri.parse(geoUri)), "Abrir con..."));
+                } catch (Exception e) {
+                    Toast.makeText(this, "No se encontró una app de mapas", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
 
         tvCommentsCount = findViewById(R.id.tv_comments_count);
         llComments = findViewById(R.id.ll_comments);
@@ -90,8 +167,6 @@ public class PlaceDetailActivity extends AppCompatActivity {
         llCommentForm = findViewById(R.id.ll_comment_form);
         rbMyRating = findViewById(R.id.rb_my_rating);
         etComment = findViewById(R.id.et_comment);
-
-        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
         ((MaterialButton) findViewById(R.id.btn_submit_comment)).setOnClickListener(v -> submitComment());
 
         loadComments();
