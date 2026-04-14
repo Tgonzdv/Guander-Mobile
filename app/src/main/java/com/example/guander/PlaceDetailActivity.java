@@ -10,6 +10,7 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
@@ -22,6 +23,8 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import com.bumptech.glide.Glide;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -95,6 +98,14 @@ public class PlaceDetailActivity extends AppCompatActivity {
         String placeAddress = getIntent().getStringExtra("PLACE_ADDRESS");
         String placePhone = getIntent().getStringExtra("PLACE_PHONE");
         int placeIsOpen = getIntent().getIntExtra("PLACE_IS_OPEN", -1);
+
+        // Place photo
+        String placePhoto = getIntent().getStringExtra("PLACE_PHOTO");
+        ImageView ivPlacePhoto = findViewById(R.id.iv_place_photo);
+        if (placePhoto != null && !placePhoto.isEmpty()) {
+            ivPlacePhoto.setVisibility(View.VISIBLE);
+            Glide.with(this).load(placePhoto).centerCrop().into(ivPlacePhoto);
+        }
 
         // Category badge
         TextView tvDetailCategory = findViewById(R.id.tv_detail_category);

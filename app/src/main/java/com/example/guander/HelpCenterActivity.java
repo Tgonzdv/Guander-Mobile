@@ -1,5 +1,6 @@
 package com.example.guander;
 
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -10,10 +11,27 @@ import com.google.android.material.appbar.MaterialToolbar;
 
 public class HelpCenterActivity extends AppCompatActivity {
 
+    private int colorSurface;
+    private int colorOnSurface;
+    private int colorOnSurfaceVariant;
+    private int colorPrimary;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_base);
+
+        int[] attrs = {
+            com.google.android.material.R.attr.colorSurface,
+            com.google.android.material.R.attr.colorOnSurface,
+            com.google.android.material.R.attr.colorOnSurfaceVariant
+        };
+        TypedArray ta = obtainStyledAttributes(attrs);
+        colorSurface = ta.getColor(0, 0xFFFFFFFF);
+        colorOnSurface = ta.getColor(1, 0xFF212121);
+        colorOnSurfaceVariant = ta.getColor(2, 0xFF757575);
+        ta.recycle();
+        colorPrimary = getColor(R.color.green_primary);
 
         MaterialToolbar settingsToolbar = findViewById(R.id.toolbar);
         settingsToolbar.setTitle("Centro de Ayuda");
@@ -53,7 +71,7 @@ public class HelpCenterActivity extends AppCompatActivity {
     private void addFaq(LinearLayout parent, String question, String answer) {
         LinearLayout card = new LinearLayout(this);
         card.setOrientation(LinearLayout.VERTICAL);
-        card.setBackgroundColor(0xFFFFFFFF);
+        card.setBackgroundColor(colorSurface);
         card.setPadding(dp(16), dp(14), dp(16), dp(14));
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -63,14 +81,14 @@ public class HelpCenterActivity extends AppCompatActivity {
         TextView tvQ = new TextView(this);
         tvQ.setText("❓  " + question);
         tvQ.setTextSize(14f);
-        tvQ.setTextColor(0xFF1B5E20);
+        tvQ.setTextColor(colorPrimary);
         tvQ.setTypeface(null, android.graphics.Typeface.BOLD);
         card.addView(tvQ);
 
         TextView tvA = new TextView(this);
         tvA.setText(answer);
         tvA.setTextSize(13f);
-        tvA.setTextColor(0xFF424242);
+        tvA.setTextColor(colorOnSurfaceVariant);
         tvA.setPadding(0, dp(6), 0, 0);
         card.addView(tvA);
 

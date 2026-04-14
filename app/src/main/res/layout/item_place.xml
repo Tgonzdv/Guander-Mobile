@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="10dp"
     app:cardCornerRadius="12dp"
-    app:cardElevation="2dp"
+    app:cardElevation="6dp"
     app:cardBackgroundColor="?attr/colorSurface">
 
     <LinearLayout
@@ -45,13 +45,21 @@
                     android:textColor="?attr/colorOnSurface" />
 
                 <TextView
-                    android:id="@+id/tv_place_desc"
+                    android:id="@+id/tv_place_stars"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Descripción"
+                    android:textSize="11sp"
+                    android:textColor="#FFA000"
+                    android:layout_marginTop="2dp" />
+
+                <TextView
+                    android:id="@+id/tv_place_schedule"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:textSize="11sp"
                     android:textColor="@color/text_secondary"
-                    android:layout_marginTop="2dp" />
+                    android:layout_marginTop="1dp"
+                    android:visibility="gone" />
             </LinearLayout>
 
             <TextView

@@ -1,5 +1,6 @@
 package com.example.guander;
 
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -10,10 +11,24 @@ import com.google.android.material.appbar.MaterialToolbar;
 
 public class PrivacyPolicyActivity extends AppCompatActivity {
 
+    private int colorOnSurface;
+    private int colorOnSurfaceVariant;
+    private int colorPrimary;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_base);
+
+        int[] attrs = {
+            com.google.android.material.R.attr.colorOnSurface,
+            com.google.android.material.R.attr.colorOnSurfaceVariant
+        };
+        TypedArray ta = obtainStyledAttributes(attrs);
+        colorOnSurface = ta.getColor(0, 0xFF212121);
+        colorOnSurfaceVariant = ta.getColor(1, 0xFF757575);
+        ta.recycle();
+        colorPrimary = getColor(R.color.green_primary);
 
         MaterialToolbar settingsToolbar = findViewById(R.id.toolbar);
         settingsToolbar.setTitle("Políticas de Privacidad");
@@ -72,7 +87,7 @@ public class PrivacyPolicyActivity extends AppCompatActivity {
         TextView tvTitle = new TextView(this);
         tvTitle.setText(title);
         tvTitle.setTextSize(14f);
-        tvTitle.setTextColor(0xFF1B5E20);
+        tvTitle.setTextColor(colorPrimary);
         tvTitle.setTypeface(null, android.graphics.Typeface.BOLD);
         tvTitle.setPadding(0, dp(12), 0, dp(4));
         parent.addView(tvTitle);
@@ -80,7 +95,7 @@ public class PrivacyPolicyActivity extends AppCompatActivity {
         TextView tvBody = new TextView(this);
         tvBody.setText(body);
         tvBody.setTextSize(13f);
-        tvBody.setTextColor(0xFF424242);
+        tvBody.setTextColor(colorOnSurface);
         tvBody.setLineSpacing(0, 1.4f);
         parent.addView(tvBody);
     }
@@ -89,7 +104,7 @@ public class PrivacyPolicyActivity extends AppCompatActivity {
         TextView tv = new TextView(this);
         tv.setText(text);
         tv.setTextSize(12f);
-        tv.setTextColor(0xFF757575);
+        tv.setTextColor(colorOnSurfaceVariant);
         parent.addView(tv);
     }
 

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -10,7 +10,8 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:background="@color/appbar_green">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
@@ -50,8 +51,8 @@
                 android:layout_marginEnd="12dp"
                 android:layout_marginTop="8dp"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
-                app:cardBackgroundColor="@color/white">
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="?attr/colorSurface">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -74,7 +75,7 @@
                             android:text="Leyenda"
                             android:textSize="13sp"
                             android:textStyle="bold"
-                            android:textColor="#212121" />
+                            android:textColor="?attr/colorOnSurface" />
 
                         <LinearLayout
                             android:id="@+id/btn_my_location"
@@ -164,8 +165,8 @@
                 android:layout_marginEnd="12dp"
                 android:layout_marginTop="8dp"
                 app:cardCornerRadius="8dp"
-                app:cardElevation="1dp"
-                app:cardBackgroundColor="@color/white">
+                app:cardElevation="3dp"
+                app:cardBackgroundColor="?attr/colorSurface">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -181,7 +182,7 @@
                         android:background="@null"
                         android:hint="Buscar lugares..."
                         android:textColorHint="#9E9E9E"
-                        android:textColor="#212121"
+                        android:textColor="?attr/colorOnSurface"
                         android:paddingStart="14dp"
                         android:imeOptions="actionSearch"
                         android:inputType="text"
@@ -205,7 +206,7 @@
                 android:layout_marginTop="4dp"
                 app:cardCornerRadius="0dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/white">
+                app:cardBackgroundColor="?attr/colorSurface">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -235,7 +236,7 @@
                             android:layout_weight="1"
                             android:text="  Todos"
                             android:textSize="14sp"
-                            android:textColor="#212121" />
+                            android:textColor="?attr/colorOnSurface" />
 
                         <TextView
                             android:id="@+id/tv_filter_chevron"
@@ -275,7 +276,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="  Locales"
                                 android:textSize="14sp"
-                                android:textColor="#212121" />
+                                android:textColor="?attr/colorOnSurface" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -300,7 +301,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="  Restaurantes"
                                 android:textSize="14sp"
-                                android:textColor="#212121" />
+                                android:textColor="?attr/colorOnSurface" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -325,7 +326,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="  Profesionales"
                                 android:textSize="14sp"
-                                android:textColor="#212121" />
+                                android:textColor="?attr/colorOnSurface" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -350,7 +351,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="  Servicios"
                                 android:textSize="14sp"
-                                android:textColor="#212121" />
+                                android:textColor="?attr/colorOnSurface" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -363,7 +364,7 @@
                 android:text="Cerca de ti"
                 android:textSize="15sp"
                 android:textStyle="bold"
-                android:textColor="#212121"
+                android:textColor="?attr/colorOnSurface"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:paddingTop="12dp"

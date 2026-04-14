@@ -104,8 +104,8 @@
             android:layout_weight="1"
             android:text="Ver detalles"
             android:textSize="13sp"
-            app:backgroundTint="?attr/colorPrimary"
-            android:textColor="?attr/colorOnPrimary" />
+            app:backgroundTint="@color/appbar_green"
+            android:textColor="@color/white" />
 
     </LinearLayout>
 </LinearLayout>

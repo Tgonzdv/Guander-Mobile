@@ -316,7 +316,32 @@ public class MapActivity extends AppCompatActivity {
             int placeId = place.optInt("id_place", 0);
 
             ((TextView) item.findViewById(R.id.tv_place_name)).setText(name);
-            ((TextView) item.findViewById(R.id.tv_place_desc)).setText(desc);
+
+            // Stars
+            double stars = place.optDouble("stars", 0);
+            TextView tvStars = item.findViewById(R.id.tv_place_stars);
+            if (stars > 0) {
+                tvStars.setText(String.format(Locale.getDefault(), "★ %.1f", stars));
+                tvStars.setVisibility(View.VISIBLE);
+            } else {
+                tvStars.setVisibility(View.GONE);
+            }
+
+            // Schedule
+            String schedWeek = place.optString("sched_week", "");
+            String schedWeekend = place.optString("sched_weekend", "");
+            String schedSunday = place.optString("sched_sunday", "");
+            TextView tvSchedule = item.findViewById(R.id.tv_place_schedule);
+            if (!schedWeek.isEmpty()) {
+                StringBuilder sched = new StringBuilder();
+                sched.append("Lun–Vie: ").append(schedWeek);
+                if (!schedWeekend.isEmpty()) sched.append("\nSáb: ").append(schedWeekend);
+                if (!schedSunday.isEmpty()) sched.append("\nDom: ").append(schedSunday);
+                tvSchedule.setText(sched.toString());
+                tvSchedule.setVisibility(View.VISIBLE);
+            } else {
+                tvSchedule.setVisibility(View.GONE);
+            }
 
             String openText = isOpen == 1 ? "Abierto ahora" : "Cerrado";
             ((TextView) item.findViewById(R.id.tv_place_info))
@@ -325,7 +350,7 @@ public class MapActivity extends AppCompatActivity {
             String address = place.optString("address", "");
             TextView tvAddress = item.findViewById(R.id.tv_place_address);
             if (!address.isEmpty()) {
-                tvAddress.setText("📍 " + address);
+                tvAddress.setText(address);
                 tvAddress.setVisibility(android.view.View.VISIBLE);
             } else {
                 tvAddress.setVisibility(android.view.View.GONE);
@@ -347,6 +372,7 @@ public class MapActivity extends AppCompatActivity {
             final String fPhone = place.optString("phone", "");
             final int fIsOpen = isOpen;
             final double fDist = distKm;
+            final String fPhoto = place.optString("photo_url", "");
             btnDetail.setOnClickListener(v -> {
                 Intent intent = new Intent(this, PlaceDetailActivity.class);
                 intent.putExtra("PLACE_ID", fId);
@@ -360,6 +386,7 @@ public class MapActivity extends AppCompatActivity {
                 intent.putExtra("PLACE_PHONE", fPhone);
                 intent.putExtra("PLACE_IS_OPEN", fIsOpen);
                 intent.putExtra("PLACE_DISTANCE", fDist);
+                intent.putExtra("PLACE_PHOTO", fPhoto);
                 startActivity(intent);
             });
 
@@ -371,11 +398,11 @@ public class MapActivity extends AppCompatActivity {
         String emoji;
         int bgColor;
         switch (category) {
-            case "store":        emoji = "🛒"; bgColor = Color.parseColor("#2E7D32"); break;
-            case "restaurant":   emoji = "☕"; bgColor = Color.parseColor("#FFC107"); break;
-            case "professional": emoji = "🏥"; bgColor = Color.parseColor("#1B5E20"); break;
-            case "service":      emoji = "✂️"; bgColor = Color.parseColor("#FF9800"); break;
-            default:             emoji = "📍"; bgColor = Color.parseColor("#2E7D32"); break;
+            case "store":        emoji = "T"; bgColor = Color.parseColor("#2E7D32"); break;
+            case "restaurant":   emoji = "R"; bgColor = Color.parseColor("#FFC107"); break;
+            case "professional": emoji = "P"; bgColor = Color.parseColor("#1B5E20"); break;
+            case "service":      emoji = "S"; bgColor = Color.parseColor("#FF9800"); break;
+            default:             emoji = "L"; bgColor = Color.parseColor("#2E7D32"); break;
         }
         iconView.setText(emoji);
         GradientDrawable gd = new GradientDrawable();
@@ -448,6 +475,7 @@ public class MapActivity extends AppCompatActivity {
         String phone = place.optString("phone", "");
         double distKm = place.optDouble("distance_km", 0);
         int isOpen = place.optInt("is_open", 1);
+        String photo = place.optString("photo_url", "");
 
         float density = getResources().getDisplayMetrics().density;
         TextView tvIcon = sheetView.findViewById(R.id.tv_bs_icon);
@@ -467,7 +495,7 @@ public class MapActivity extends AppCompatActivity {
 
         TextView tvAddress = sheetView.findViewById(R.id.tv_bs_address);
         if (!address.isEmpty()) {
-            tvAddress.setText("\uD83D\uDCCD " + address);
+            tvAddress.setText(address);
             tvAddress.setVisibility(View.VISIBLE);
         }
 
@@ -499,6 +527,7 @@ public class MapActivity extends AppCompatActivity {
             intent.putExtra("PLACE_PHONE", fPhone);
             intent.putExtra("PLACE_IS_OPEN", isOpen);
             intent.putExtra("PLACE_DISTANCE", distKm);
+            intent.putExtra("PLACE_PHOTO", photo);
             startActivity(intent);
             sheet.dismiss();
         });

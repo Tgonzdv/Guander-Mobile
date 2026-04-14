@@ -491,9 +491,15 @@ async function handleGetPlaces(request, env, url) {
     // Query real stores table with optional category join
     const { results: storeRows } = await env.DB.prepare(`
       SELECT s.id_store AS id_place, s.name, s.description, s.address, s.location,
-             COALESCE(cat.name, '') AS cat_name, 'store' AS place_type
+             COALESCE(cat.name, '') AS cat_name, 'store' AS place_type,
+             COALESCE(s.image_url, '') AS photo_url,
+             COALESCE(s.stars, 0) AS stars,
+             COALESCE(sch.week, '') AS sched_week,
+             COALESCE(sch.weekend, '') AS sched_weekend,
+             COALESCE(sch.sunday, '') AS sched_sunday
       FROM stores s
       LEFT JOIN category cat ON cat.id_category = s.fk_category
+      LEFT JOIN schedule sch ON sch.id_schedule = s.fk_schedule
     `).all().catch(() => ({ results: [] }));
 
     // Query real professionals table (name comes from fk_user_id → users → user_data)
@@ -515,6 +521,11 @@ async function handleGetPlaces(request, env, url) {
           name: s.name,
           description: s.description || '',
           address: s.address || '',
+          photo_url: s.photo_url || '',
+          stars: s.stars || 0,
+          sched_week: s.sched_week || '',
+          sched_weekend: s.sched_weekend || '',
+          sched_sunday: s.sched_sunday || '',
           category: mapStoreCategory(s.cat_name),
           lat, lng,
           points_reward: 50,

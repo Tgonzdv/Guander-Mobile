@@ -1,6 +1,7 @@
 package com.example.guander;
 
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -31,16 +32,26 @@ public class AppearanceActivity extends AppCompatActivity {
 
         LinearLayout content = findViewById(R.id.ll_content);
 
+        // Resolve theme-aware colors
+        TypedArray ta = obtainStyledAttributes(new int[]{
+                com.google.android.material.R.attr.colorSurface,
+                com.google.android.material.R.attr.colorOnSurface,
+                com.google.android.material.R.attr.colorOnSurfaceVariant});
+        int colorSurface         = ta.getColor(0, 0xFFFFFFFF);
+        int colorOnSurface       = ta.getColor(1, 0xFF212121);
+        int colorOnSurfaceVariant = ta.getColor(2, 0xFF757575);
+        ta.recycle();
+
         TextView label = new TextView(this);
         label.setText("Tema de la aplicación");
         label.setTextSize(13f);
-        label.setTextColor(0xFF757575);
+        label.setTextColor(colorOnSurfaceVariant);
         label.setPadding(0, 0, 0, dp(8));
         content.addView(label);
 
         LinearLayout card = new LinearLayout(this);
         card.setOrientation(LinearLayout.VERTICAL);
-        card.setBackgroundColor(0xFFFFFFFF);
+        card.setBackgroundColor(colorSurface);
         card.setPadding(dp(16), dp(8), dp(16), dp(8));
         card.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -59,7 +70,7 @@ public class AppearanceActivity extends AppCompatActivity {
             rb.setId(ids[i]);
             rb.setText(labels[i]);
             rb.setTextSize(15f);
-            rb.setTextColor(0xFF212121);
+            rb.setTextColor(colorOnSurface);
             rb.setPadding(dp(4), dp(12), dp(4), dp(12));
             rg.addView(rb);
             buttons[i] = rb;

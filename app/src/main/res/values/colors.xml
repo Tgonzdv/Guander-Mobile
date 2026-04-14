@@ -5,6 +5,8 @@
     <color name="white">#FFFFFFFF</color>
     <color name="green_header">@color/md_theme_primary</color>
     <color name="green_primary">@color/md_theme_primary</color>
+    <color name="appbar_green">#1A6B2E</color>
+    <color name="logout_red">#C62828</color>
     <color name="green_light">#4CAF50</color>
     <color name="yellow_accent">#FFC107</color>
     <color name="background_light">@color/md_theme_background</color>
@@ -43,8 +45,8 @@
 
     <!-- ── M3 Dark color roles ── -->
     <color name="md_theme_dark_primary">#8DD98E</color>
-    <color name="md_theme_dark_on_primary">#003913</color>
-    <color name="md_theme_dark_primary_container">#005120</color>
+    <color name="md_theme_dark_on_primary">#FFFFFF</color>
+    <color name="md_theme_dark_primary_container">#1A4D20</color>
     <color name="md_theme_dark_on_primary_container">#A8F5B4</color>
     <color name="md_theme_dark_secondary">#B7CCAF</color>
     <color name="md_theme_dark_on_secondary">#223423</color>
@@ -58,9 +60,9 @@
     <color name="md_theme_dark_on_error">#690005</color>
     <color name="md_theme_dark_error_container">#93000A</color>
     <color name="md_theme_dark_on_error_container">#FFDAD6</color>
-    <color name="md_theme_dark_background">#0E150E</color>
+    <color name="md_theme_dark_background">#0F1A10</color>
     <color name="md_theme_dark_on_background">#DDE5DA</color>
-    <color name="md_theme_dark_surface">#0E150E</color>
+    <color name="md_theme_dark_surface">#1F3322</color>
     <color name="md_theme_dark_on_surface">#DDE5DA</color>
     <color name="md_theme_dark_surface_variant">#414941</color>
     <color name="md_theme_dark_on_surface_variant">#C1C9BF</color>
