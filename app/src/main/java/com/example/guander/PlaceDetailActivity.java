@@ -52,6 +52,8 @@ public class PlaceDetailActivity extends AppCompatActivity {
     private LinearLayout llCommentForm;
     private RatingBar rbMyRating;
     private EditText etComment;
+    private TextView tvLockTitle;
+    private TextView tvLockMessage;
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
@@ -178,6 +180,8 @@ public class PlaceDetailActivity extends AppCompatActivity {
         llCommentForm = findViewById(R.id.ll_comment_form);
         rbMyRating = findViewById(R.id.rb_my_rating);
         etComment = findViewById(R.id.et_comment);
+        tvLockTitle = findViewById(R.id.tv_lock_title);
+        tvLockMessage = findViewById(R.id.tv_lock_message);
         ((MaterialButton) findViewById(R.id.btn_submit_comment)).setOnClickListener(v -> submitComment());
 
         loadComments();
@@ -205,6 +209,7 @@ public class PlaceDetailActivity extends AppCompatActivity {
                     JSONObject json = new JSONObject(sb.toString());
                     int total = json.optInt("totalComments", 0);
                     boolean canComment = json.optBoolean("canComment", false);
+                    boolean alreadyCommented = json.optBoolean("alreadyCommented", false);
                     JSONArray comments = json.optJSONArray("comments");
 
                     mainHandler.post(() -> {
@@ -217,6 +222,13 @@ public class PlaceDetailActivity extends AppCompatActivity {
                         } else {
                             llLock.setVisibility(View.VISIBLE);
                             llCommentForm.setVisibility(View.GONE);
+                            if (alreadyCommented) {
+                                tvLockTitle.setText("Ya dejaste tu reseña");
+                                tvLockMessage.setText("Solo se permite una reseña por lugar. ¡Gracias por tu opinión!");
+                            } else {
+                                tvLockTitle.setText("No puedes comentar aún");
+                                tvLockMessage.setText("Debes visitar y consumir en este lugar para dejar un comentario");
+                            }
                         }
                     });
                 } else {

@@ -193,6 +193,7 @@
                     android:textColor="@color/yellow_accent" />
 
                 <TextView
+                    android:id="@+id/tv_lock_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="No puedes comentar aún"
@@ -202,6 +203,7 @@
                     android:layout_marginTop="10dp" />
 
                 <TextView
+                    android:id="@+id/tv_lock_message"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Debes visitar y consumir en este lugar para dejar un comentario"

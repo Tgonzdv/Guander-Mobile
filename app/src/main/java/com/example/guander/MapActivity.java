@@ -20,6 +20,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -27,6 +28,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -63,7 +67,7 @@ public class MapActivity extends AppCompatActivity {
     private LinearLayout llSubFilters;
     private TextView tvFilterChevron;
 
-    private boolean filtersExpanded = true;
+    private boolean filtersExpanded = false;
     private String currentFilter = "all";
     private String userEmail = "";
     private double userLat = -34.6037;
@@ -99,6 +103,8 @@ public class MapActivity extends AppCompatActivity {
         etSearch = findViewById(R.id.et_search);
         llSubFilters = findViewById(R.id.ll_sub_filters);
         tvFilterChevron = findViewById(R.id.tv_filter_chevron);
+        llSubFilters.setVisibility(View.GONE);
+        tvFilterChevron.setText("\u25bc");
 
         setupMap();
         setupNavigation();
@@ -357,8 +363,9 @@ public class MapActivity extends AppCompatActivity {
             }
 
             // Category icon with circle background
-            TextView iconView = item.findViewById(R.id.tv_place_icon);
-            applyPlaceIcon(iconView, category, density);
+            final String fPhoto = place.optString("photo_url", "");
+            ImageView iconView = item.findViewById(R.id.tv_place_icon);
+            applyPlaceIcon(iconView, category, density, fPhoto);
 
             MaterialButton btnDetail = item.findViewById(R.id.btn_detail);
             final int fId = placeId;
@@ -372,7 +379,6 @@ public class MapActivity extends AppCompatActivity {
             final String fPhone = place.optString("phone", "");
             final int fIsOpen = isOpen;
             final double fDist = distKm;
-            final String fPhoto = place.optString("photo_url", "");
             btnDetail.setOnClickListener(v -> {
                 Intent intent = new Intent(this, PlaceDetailActivity.class);
                 intent.putExtra("PLACE_ID", fId);
@@ -394,21 +400,48 @@ public class MapActivity extends AppCompatActivity {
         }
     }
 
-    private void applyPlaceIcon(TextView iconView, String category, float density) {
-        String emoji;
+    private void applyPlaceIcon(ImageView iconView, String category, float density, String photoUrl) {
         int bgColor;
+        String initial;
         switch (category) {
-            case "store":        emoji = "T"; bgColor = Color.parseColor("#2E7D32"); break;
-            case "restaurant":   emoji = "R"; bgColor = Color.parseColor("#FFC107"); break;
-            case "professional": emoji = "P"; bgColor = Color.parseColor("#1B5E20"); break;
-            case "service":      emoji = "S"; bgColor = Color.parseColor("#FF9800"); break;
-            default:             emoji = "L"; bgColor = Color.parseColor("#2E7D32"); break;
+            case "store":        initial = "T"; bgColor = Color.parseColor("#2E7D32"); break;
+            case "restaurant":   initial = "R"; bgColor = Color.parseColor("#FFC107"); break;
+            case "professional": initial = "P"; bgColor = Color.parseColor("#1B5E20"); break;
+            case "service":      initial = "S"; bgColor = Color.parseColor("#FF9800"); break;
+            default:             initial = "L"; bgColor = Color.parseColor("#2E7D32"); break;
         }
-        iconView.setText(emoji);
+
+        // Circular clip via shape resource applied as background
         GradientDrawable gd = new GradientDrawable();
         gd.setShape(GradientDrawable.OVAL);
         gd.setColor(bgColor);
         iconView.setBackground(gd);
+
+        if (photoUrl != null && !photoUrl.isEmpty()) {
+            iconView.setImageDrawable(null);
+            Glide.with(iconView.getContext())
+                    .load(photoUrl)
+                    .transform(new CircleCrop())
+                    .placeholder(gd)
+                    .error(gd)
+                    .into(iconView);
+        } else {
+            // Draw letter on colored circle as bitmap
+            int size = (int) (40 * density);
+            Bitmap bm = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bm);
+            Paint bg = new Paint(Paint.ANTI_ALIAS_FLAG);
+            bg.setColor(bgColor);
+            canvas.drawCircle(size / 2f, size / 2f, size / 2f, bg);
+            Paint txt = new Paint(Paint.ANTI_ALIAS_FLAG);
+            txt.setColor(Color.WHITE);
+            txt.setTextSize(16 * density);
+            txt.setTextAlign(Paint.Align.CENTER);
+            Paint.FontMetrics fm = txt.getFontMetrics();
+            float y = size / 2f - (fm.ascent + fm.descent) / 2f;
+            canvas.drawText(initial, size / 2f, y, txt);
+            iconView.setImageBitmap(bm);
+        }
     }
 
     private void updateMapMarkers(List<JSONObject> places) {
@@ -478,8 +511,8 @@ public class MapActivity extends AppCompatActivity {
         String photo = place.optString("photo_url", "");
 
         float density = getResources().getDisplayMetrics().density;
-        TextView tvIcon = sheetView.findViewById(R.id.tv_bs_icon);
-        applyPlaceIcon(tvIcon, category, density);
+        ImageView tvIcon = sheetView.findViewById(R.id.tv_bs_icon);
+        applyPlaceIcon(tvIcon, category, density, photo);
 
         ((TextView) sheetView.findViewById(R.id.tv_bs_name)).setText(name);
 

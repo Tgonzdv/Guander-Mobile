@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -45,9 +46,10 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
     private MaterialButton btnGoogle;
-    private MaterialButton btnGoogleRegister;
+    private MaterialButton btnEmailToggle;
     private MaterialButton btnEmailLogin;
     private MaterialButton btnEmailRegister;
+    private LinearLayout emailFormContainer;
     private TextInputEditText etEmail;
     private TextInputEditText etPassword;
     private ProgressBar pbLoading;
@@ -90,16 +92,20 @@ public class LoginActivity extends AppCompatActivity {
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        btnGoogle         = findViewById(R.id.btn_google);
-        btnGoogleRegister = findViewById(R.id.btn_google_register);
-        btnEmailLogin     = findViewById(R.id.btn_email_login);
-        btnEmailRegister  = findViewById(R.id.btn_email_register);
-        etEmail           = findViewById(R.id.et_email);
-        etPassword        = findViewById(R.id.et_password);
-        pbLoading         = findViewById(R.id.pb_loading);
+        btnGoogle          = findViewById(R.id.btn_google);
+        btnEmailToggle     = findViewById(R.id.btn_email_toggle);
+        btnEmailLogin      = findViewById(R.id.btn_email_login);
+        btnEmailRegister   = findViewById(R.id.btn_email_register);
+        emailFormContainer = findViewById(R.id.email_form_container);
+        etEmail            = findViewById(R.id.et_email);
+        etPassword         = findViewById(R.id.et_password);
+        pbLoading          = findViewById(R.id.pb_loading);
 
         btnGoogle.setOnClickListener(v -> { setLoading(true); signInWithGoogle(); });
-        btnGoogleRegister.setOnClickListener(v -> { setLoading(true); signInWithGoogle(); });
+        btnEmailToggle.setOnClickListener(v -> {
+            boolean visible = emailFormContainer.getVisibility() == View.VISIBLE;
+            emailFormContainer.setVisibility(visible ? View.GONE : View.VISIBLE);
+        });
         btnEmailLogin.setOnClickListener(v -> handleEmailLogin());
         btnEmailRegister.setOnClickListener(v -> handleEmailRegister());
     }
@@ -353,11 +359,11 @@ public class LoginActivity extends AppCompatActivity {
     private void setLoading(boolean loading) {
         pbLoading.setVisibility(loading ? View.VISIBLE : View.GONE);
         btnGoogle.setEnabled(!loading);
-        btnGoogleRegister.setEnabled(!loading);
+        btnEmailToggle.setEnabled(!loading);
         btnEmailLogin.setEnabled(!loading);
         btnEmailRegister.setEnabled(!loading);
         btnGoogle.setAlpha(loading ? 0.6f : 1f);
-        btnGoogleRegister.setAlpha(loading ? 0.6f : 1f);
+        btnEmailToggle.setAlpha(loading ? 0.6f : 1f);
         btnEmailLogin.setAlpha(loading ? 0.6f : 1f);
         btnEmailRegister.setAlpha(loading ? 0.6f : 1f);
     }

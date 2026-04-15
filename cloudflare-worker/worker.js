@@ -105,6 +105,9 @@ async function handleRegister(request, env) {
 
     await env.DB.prepare('INSERT INTO customer (points, fk_user) VALUES (0, ?)').bind(userId).run();
 
+    // Send welcome email (non-blocking)
+    await sendWelcomeEmail(env, email, name);
+
     return corsResponse({ success: true, userId, userDataId });
   } catch (err) {
     return corsResponse({ error: err.message }, 500);
@@ -174,6 +177,48 @@ async function handleGetDashboard(request, env, url) {
     return corsResponse({ points, name: userData.name, notifications: results || [] });
   } catch (err) {
     return corsResponse({ error: err.message }, 500);
+  }
+}
+
+async function sendWelcomeEmail(env, email, name) {
+  if (!env.RESEND_API_KEY) return;
+  const displayName = name ? name : 'Guandero';
+  const html = `
+    <div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;background:#fff;border-radius:12px">
+      <div style="text-align:center;margin-bottom:24px">
+        <h1 style="color:#2E7D32;font-size:26px;margin:0">\uD83C\uDF1F \u00a1Bienvenido a Guander!</h1>
+      </div>
+      <p style="font-size:16px;color:#333">Hola <strong>${displayName}</strong>,</p>
+      <p style="font-size:15px;color:#555;line-height:1.6">
+        Tu cuenta fue creada exitosamente. Ya pod\u00e9s escanear QR en locales afiliados,
+        acumular puntos y canjear recompensas exclusivas.
+      </p>
+      <div style="text-align:center;margin:32px 0">
+        <a href="https://guander.app" style="background:#2E7D32;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-size:15px;font-weight:bold">Abrir Guander</a>
+      </div>
+      <hr style="border:none;border-top:1px solid #eee;margin:24px 0" />
+      <p style="font-size:12px;color:#aaa;text-align:center">
+        Si no creaste esta cuenta, ignor\u00e1 este mensaje.<br />
+        &copy; ${new Date().getFullYear()} Guander
+      </p>
+    </div>
+  `;
+  try {
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + env.RESEND_API_KEY,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: 'Guander <onboarding@resend.dev>',
+        to: [email],
+        subject: '\uD83C\uDF1F \u00a1Bienvenido a Guander!',
+        html,
+      }),
+    });
+  } catch (_) {
+    // Non-blocking: registration still succeeds if email fails
   }
 }
 
@@ -623,6 +668,7 @@ async function handleGetComments(request, env, url) {
     }
 
     let canComment = false;
+    let alreadyCommented = false;
     if (email) {
       const customer = await getCustomerByEmail(env, email);
       if (customer) {
@@ -633,10 +679,22 @@ async function handleGetComments(request, env, url) {
           `SELECT 1 FROM ${table} WHERE ${custCol} = ? AND ${fkCol} = ? LIMIT 1`
         ).bind(customer.id_customer, placeId).first().catch(() => null);
         canComment = !!check;
+
+        if (canComment) {
+          const commentTable = placeType === 'professional' ? 'comments_prof' : 'comments_store';
+          const commentFkCol = placeType === 'professional' ? 'fk_professional_id' : 'fk_store_id';
+          const existing = await env.DB.prepare(
+            `SELECT 1 FROM ${commentTable} WHERE fk_customer_id = ? AND ${commentFkCol} = ? LIMIT 1`
+          ).bind(customer.id_customer, placeId).first().catch(() => null);
+          if (existing) {
+            canComment = false;
+            alreadyCommented = true;
+          }
+        }
       }
     }
 
-    return corsResponse({ placeId, placeName, totalComments: comments.length, canComment, comments });
+    return corsResponse({ placeId, placeName, totalComments: comments.length, canComment, alreadyCommented, comments });
   } catch (err) {
     return corsResponse({ error: err.message }, 500);
   }
@@ -655,6 +713,14 @@ async function handlePostReview(request, env) {
   try {
     const customer = await getCustomerByEmail(env, email);
     if (!customer) return corsResponse({ error: 'Usuario no encontrado' }, 404);
+
+    // Prevent duplicate reviews
+    const commentTable = placeType === 'professional' ? 'comments_prof' : 'comments_store';
+    const commentFkCol = placeType === 'professional' ? 'fk_professional_id' : 'fk_store_id';
+    const existingReview = await env.DB.prepare(
+      `SELECT 1 FROM ${commentTable} WHERE fk_customer_id = ? AND ${commentFkCol} = ? LIMIT 1`
+    ).bind(customer.id_customer, parseInt(placeId)).first().catch(() => null);
+    if (existingReview) return corsResponse({ error: 'Ya dejaste una reseña en este lugar' }, 409);
 
     const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
 

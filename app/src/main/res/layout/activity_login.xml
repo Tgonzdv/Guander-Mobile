@@ -12,48 +12,37 @@
     android:gravity="center"
     android:orientation="vertical"
     android:paddingHorizontal="36dp"
-    android:paddingTop="48dp"
-    android:paddingBottom="40dp">
+    android:paddingTop="64dp"
+    android:paddingBottom="48dp">
 
     <!-- Logo -->
     <ImageView
-        android:layout_width="160dp"
-        android:layout_height="160dp"
-        android:layout_marginBottom="8dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="24dp"
         android:src="@drawable/guander_logo"
         android:background="@drawable/login_logo_bg"
-        android:padding="16dp"
+        android:padding="14dp"
         android:scaleType="fitCenter"
         android:contentDescription="Guander logo" />
 
-    <!-- App name -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"
-        android:text="@string/app_name"
-        android:textColor="#FFFFFF"
-        android:textSize="38sp"
-        android:letterSpacing="0.05"
-        android:textStyle="bold" />
-
-    <!-- Subtitle -->
+    <!-- Title -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="48dp"
-        android:text="Accedé o creá tu cuenta"
-        android:textColor="#A8C8A0"
-        android:textSize="15sp" />
+        android:text="Iniciar sesión o registrarse"
+        android:textColor="#FFFFFF"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:gravity="center" />
 
-    <!-- Sign in button -->
+    <!-- Google button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_google"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:layout_marginBottom="14dp"
-        android:text="Iniciar sesión con Google"
+        android:text="Continuar con Google"
         android:textColor="#1B4D2E"
         android:textSize="15sp"
         android:textStyle="bold"
@@ -63,29 +52,12 @@
         app:iconGravity="textStart"
         app:iconTint="@null" />
 
-    <!-- Register button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_google_register"
-        style="@style/Widget.Material3.Button.OutlinedButton"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginBottom="24dp"
-        android:text="Registrarse con Google"
-        android:textColor="#FFFFFF"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        app:cornerRadius="28dp"
-        app:icon="@drawable/ic_google"
-        app:iconGravity="textStart"
-        app:iconTint="@null"
-        app:strokeColor="#FFFFFF"
-        app:strokeWidth="1.5dp" />
-
     <!-- Loading indicator (hidden by default) -->
     <ProgressBar
         android:id="@+id/pb_loading"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="16dp"
         android:visibility="gone"
         android:indeterminateTint="#FFFFFF" />
 
@@ -93,8 +65,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="24dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -108,9 +80,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="12dp"
-            android:text="o continúa con email"
+            android:text="O CONTINUAR CON"
             android:textColor="#A8C8A0"
-            android:textSize="13sp" />
+            android:textSize="11sp"
+            android:letterSpacing="0.1" />
 
         <View
             android:layout_width="0dp"
@@ -119,82 +92,111 @@
             android:background="#4D7A5A" />
     </LinearLayout>
 
-    <!-- Email field -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_email"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="14dp"
-        android:hint="Correo electrónico"
-        app:boxBackgroundColor="#00000000"
-        app:boxStrokeColor="#FFFFFF"
-        app:boxStrokeWidth="1.5dp"
-        app:hintTextColor="#A8C8A0"
-        app:startIconDrawable="@android:drawable/ic_dialog_email"
-        app:startIconTint="#A8C8A0">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#A8C8A0" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <!-- Password field -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_password"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:hint="Contraseña"
-        app:boxBackgroundColor="#00000000"
-        app:boxStrokeColor="#FFFFFF"
-        app:boxStrokeWidth="1.5dp"
-        app:endIconMode="password_toggle"
-        app:endIconTint="#A8C8A0"
-        app:hintTextColor="#A8C8A0"
-        app:startIconDrawable="@android:drawable/ic_lock_lock"
-        app:startIconTint="#A8C8A0">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#A8C8A0" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <!-- Email login button -->
+    <!-- Email icon button -->
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_email_login"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginBottom="12dp"
-        android:text="Iniciar sesión con email"
-        android:textColor="#1B4D2E"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        app:backgroundTint="#FFFFFF"
-        app:cornerRadius="28dp" />
-
-    <!-- Email register button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_email_register"
+        android:id="@+id/btn_email_toggle"
         style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:padding="0dp"
+        app:cornerRadius="16dp"
+        app:icon="@android:drawable/ic_dialog_email"
+        app:iconGravity="textStart"
+        app:iconSize="28dp"
+        app:iconTint="#FFFFFF"
+        app:iconPadding="0dp"
+        app:strokeColor="#4D7A5A"
+        app:strokeWidth="1.5dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp" />
+
+    <!-- Email form (hidden by default) -->
+    <LinearLayout
+        android:id="@+id/email_form_container"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:text="Registrarse con email"
-        android:textColor="#FFFFFF"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        app:cornerRadius="28dp"
-        app:strokeColor="#FFFFFF"
-        app:strokeWidth="1.5dp" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="24dp"
+        android:visibility="gone">
+
+        <!-- Email field -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_email"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="14dp"
+            android:hint="Correo electrónico"
+            app:boxBackgroundColor="#00000000"
+            app:boxStrokeColor="#FFFFFF"
+            app:boxStrokeWidth="1.5dp"
+            app:hintTextColor="#A8C8A0"
+            app:startIconDrawable="@android:drawable/ic_dialog_email"
+            app:startIconTint="#A8C8A0">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#A8C8A0" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Password field -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_password"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:hint="Contraseña"
+            app:boxBackgroundColor="#00000000"
+            app:boxStrokeColor="#FFFFFF"
+            app:boxStrokeWidth="1.5dp"
+            app:endIconMode="password_toggle"
+            app:endIconTint="#A8C8A0"
+            app:hintTextColor="#A8C8A0"
+            app:startIconDrawable="@android:drawable/ic_lock_lock"
+            app:startIconTint="#A8C8A0">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#A8C8A0" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Email login button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_email_login"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginBottom="12dp"
+            android:text="Iniciar sesión"
+            android:textColor="#1B4D2E"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:backgroundTint="#FFFFFF"
+            app:cornerRadius="28dp" />
+
+        <!-- Email register button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_email_register"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Registrarse"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:cornerRadius="28dp"
+            app:strokeColor="#FFFFFF"
+            app:strokeWidth="1.5dp" />
+
+    </LinearLayout>
 
 </LinearLayout>
 </ScrollView>

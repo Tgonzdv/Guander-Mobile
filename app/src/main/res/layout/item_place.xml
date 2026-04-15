@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="10dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="6dp"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="2dp"
     app:cardBackgroundColor="?attr/colorSurface">
 
     <LinearLayout
@@ -21,18 +21,16 @@
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
-            <TextView
+            <ImageView
                 android:id="@+id/tv_place_icon"
-                android:layout_width="46dp"
-                android:layout_height="46dp"
-                android:textSize="20sp"
-                android:gravity="center"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:scaleType="centerCrop"
                 android:layout_marginEnd="10dp" />
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
@@ -61,35 +59,17 @@
                     android:layout_marginTop="1dp"
                     android:visibility="gone" />
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/btn_favorite"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:text="♡"
-                android:textSize="20sp"
-                android:textColor="@color/text_secondary"
-                android:gravity="center"
-                android:background="?attr/selectableItemBackgroundBorderless" />
         </LinearLayout>
 
-        <!-- Distance + points badge row -->
-        <LinearLayout
+        <!-- Distance + open info -->
+        <TextView
+            android:id="@+id/tv_place_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginTop="8dp">
-
-            <TextView
-                android:id="@+id/tv_place_info"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="0.5 km · Abierto ahora"
-                android:textSize="12sp"
-                android:textColor="@color/text_secondary" />
-
-        </LinearLayout>
+            android:text="0.5 km · Abierto ahora"
+            android:textSize="11sp"
+            android:textColor="@color/text_secondary"
+            android:layout_marginTop="6dp" />
 
         <!-- Address row -->
         <TextView
@@ -99,7 +79,6 @@
             android:text=""
             android:textSize="11sp"
             android:textColor="@color/text_secondary"
-            android:drawablePadding="4dp"
             android:layout_marginTop="2dp"
             android:visibility="gone" />
 
@@ -108,10 +87,10 @@
             android:id="@+id/btn_detail"
             style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="match_parent"
-            android:layout_height="36dp"
+            android:layout_height="34dp"
             android:text="Ver detalles y comentarios"
             android:textSize="12sp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="8dp"
             app:strokeColor="?attr/colorPrimary"
             app:strokeWidth="1dp"
             android:textColor="?attr/colorPrimary" />

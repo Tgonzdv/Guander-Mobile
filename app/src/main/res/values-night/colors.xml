@@ -2,8 +2,8 @@
 <resources>
     <!-- Night overrides for static color aliases -->
     <color name="text_secondary">#C1C9BF</color>
-    <color name="green_primary">#8DD98E</color>
-    <color name="green_header">#8DD98E</color>
+    <color name="green_primary">#2E7D32</color>
+    <color name="green_header">#2E7D32</color>
     <color name="notif_icon_bg">#1A4D20</color>
     <color name="appbar_green">#1A3D1A</color>
     <color name="logout_red">#EF9A9A</color>
