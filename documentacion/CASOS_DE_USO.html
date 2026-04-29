@@ -1,0 +1,826 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Guander — Casos de Uso v2.0</title>
+<style>
+  body { font-family: Arial, sans-serif; font-size: 11pt; margin: 40px; color: #000; }
+  h1 { font-size: 16pt; text-align: center; margin-bottom: 4px; }
+  h2 { font-size: 13pt; margin-top: 36px; margin-bottom: 16px; border-bottom: 2px solid #000; padding-bottom: 4px; }
+  h3 { font-size: 11pt; margin-top: 28px; margin-bottom: 8px; }
+  .cu-table { border-collapse: collapse; width: 100%; margin-bottom: 28px; }
+  .cu-table td { border: 1px solid #333; padding: 7px 10px; vertical-align: top; }
+  .cu-table td.label { font-weight: bold; width: 210px; background-color: #f4f4f4; }
+  .cu-table td.content { }
+  ul.flow { margin: 0; padding-left: 18px; }
+  ul.flow li { margin-bottom: 3px; }
+  ol.flow { margin: 0; padding-left: 20px; }
+  ol.flow li { margin-bottom: 3px; }
+  p.meta { text-align: center; font-size: 10pt; color: #555; margin-top: 2px; margin-bottom: 30px; }
+  .module-header { background-color: #e8e8e8; }
+  hr { border: none; border-top: 1px solid #ccc; margin: 10px 0 28px 0; }
+</style>
+</head>
+<body>
+
+<h1>Guander — Casos de Uso</h1>
+<p class="meta">Versión 2.0 | Abril 2026 | Estado: Vigente</p>
+
+<!-- ========================================================== -->
+<h2>Módulo 1: Autenticación y Registro</h2>
+<!-- ========================================================== -->
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-01</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Registrarse con Google</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">El usuario inicia sesión o crea una cuenta usando su cuenta de Google a través de Firebase Auth. Si el usuario ya existe no se crea un duplicado.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Usuario (principal), Firebase Auth, Resend</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Alta</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-01.1, RF-01.5, RF-01.6</td></tr>
+  <tr><td class="label">Precondición</td><td class="content"><ul class="flow">
+    <li>Tener conexión a internet</li>
+    <li>Tener una cuenta de Google activa</li>
+    <li>La app está en la pantalla de Login</li>
+  </ul></td></tr>
+  <tr><td class="label">Postcondición</td><td class="content"><ul class="flow">
+    <li>Usuario autenticado con sesión activa persistida en el dispositivo</li>
+    <li>Perfil creado en el sistema (si es usuario nuevo)</li>
+    <li>Email de bienvenida enviado (si es usuario nuevo)</li>
+  </ul></td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>El usuario abre la app y ve la pantalla de Login</li>
+    <li>Toca el botón "Continuar con Google"</li>
+    <li>Se abre el selector de cuentas de Google</li>
+    <li>El usuario selecciona su cuenta</li>
+    <li>Firebase Auth valida las credenciales de Google y crea la sesión</li>
+    <li>La app envía los datos de registro al sistema</li>
+    <li>Si el email ya existe, el sistema lo indica y no crea un duplicado</li>
+    <li>Si es nuevo, el sistema crea el perfil del usuario</li>
+    <li>El sistema envía el email de bienvenida en segundo plano (CU-29)</li>
+    <li>La app guarda la sesión activa y redirige al Dashboard</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content"><ul class="flow">
+    <li><strong>FA-1 (usuario existente):</strong> El sistema detecta que el email ya existe y la app continúa al Dashboard sin crear duplicados ni mostrar error (RF-01.5)</li>
+  </ul></td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content"><ul class="flow">
+    <li><strong>EX-1:</strong> Fallo de conexión → Toast "Sin conexión a internet"</li>
+    <li><strong>EX-2:</strong> El usuario cancela la selección de cuenta → regresa a la pantalla de Login sin cambios</li>
+    <li><strong>EX-3:</strong> Error de autenticación con Google → se muestra mensaje de error</li>
+    <li>No se crean duplicados si el email ya existe (RF-01.5)</li>
+    <li>La comunicación con el sistema es exclusivamente sobre HTTPS (RNF-02.2)</li>
+  </ul></td></tr>
+</table>
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-02</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Registrarse con email y contraseña</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">El usuario crea una cuenta nueva ingresando email, contraseña, nombre, apellido y teléfono. La contraseña se almacena de forma segura, nunca en texto plano.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Usuario (principal), Resend</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Alta</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-01.2, RF-01.4, RF-01.6</td></tr>
+  <tr><td class="label">Precondición</td><td class="content"><ul class="flow">
+    <li>Tener conexión a internet</li>
+    <li>No tener cuenta registrada con ese email</li>
+  </ul></td></tr>
+  <tr><td class="label">Postcondición</td><td class="content"><ul class="flow">
+    <li>Cuenta creada con contraseña cifrada de forma segura</li>
+    <li>Sesión activa persistida en el dispositivo</li>
+    <li>Email de bienvenida enviado</li>
+  </ul></td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>El usuario toca "Registrarse con email" en la pantalla de Login</li>
+    <li>Completa el formulario: email, nombre, apellido, teléfono y contraseña (RF-01.2)</li>
+    <li>Toca "Registrarse"</li>
+    <li>La app valida los campos localmente (campos requeridos, formato de email)</li>
+    <li>Envía todos los datos de registro al sistema</li>
+    <li>El sistema cifra la contraseña de forma segura (RF-01.4)</li>
+    <li>El sistema crea el perfil del usuario</li>
+    <li>Envía el email de bienvenida en segundo plano, sin bloquear el registro (CU-29)</li>
+    <li>La app guarda la sesión activa y redirige al Dashboard</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content">—</td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content"><ul class="flow">
+    <li><strong>EX-1:</strong> Email ya registrado → "Email ya registrado"</li>
+    <li><strong>EX-2:</strong> Campos incompletos → validación local, se marcan los campos con error</li>
+    <li><strong>EX-3:</strong> Fallo de red → Toast "Sin conexión a internet"</li>
+    <li>La contraseña nunca se almacena en texto plano (RNF-02.1)</li>
+    <li>Se requieren: email, nombre, apellido, teléfono y contraseña (RF-01.2)</li>
+  </ul></td></tr>
+</table>
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-03</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Iniciar sesión con email y contraseña</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">El usuario accede a su cuenta existente con email y contraseña. El sistema verifica las credenciales almacenadas y devuelve los datos del usuario.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Usuario (principal)</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Alta</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-01.3, RF-01.4</td></tr>
+  <tr><td class="label">Precondición</td><td class="content"><ul class="flow">
+    <li>Tener conexión a internet</li>
+    <li>Tener cuenta registrada con email y contraseña</li>
+  </ul></td></tr>
+  <tr><td class="label">Postcondición</td><td class="content"><ul class="flow">
+    <li>Sesión activa persistida en el dispositivo</li>
+    <li>Usuario redirigido al Dashboard</li>
+  </ul></td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>El usuario ingresa su email y contraseña en la pantalla de Login</li>
+    <li>Toca "Iniciar sesión"</li>
+    <li>La app envía las credenciales al sistema</li>
+    <li>El sistema verifica las credenciales almacenadas (RF-01.4)</li>
+    <li>Si coinciden, confirma el éxito con los datos del usuario</li>
+    <li>La app guarda la sesión activa y redirige al Dashboard</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content">—</td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content"><ul class="flow">
+    <li><strong>EX-1:</strong> Credenciales incorrectas → "Credenciales incorrectas"</li>
+    <li><strong>EX-2:</strong> Email no registrado → "Usuario no encontrado"</li>
+    <li><strong>EX-3:</strong> Fallo de red → Toast de error</li>
+    <li>La verificación de credenciales se realiza siempre en el servidor, nunca en la app (RNF-02.1)</li>
+  </ul></td></tr>
+</table>
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-04</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Cerrar sesión</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">El usuario cierra su sesión activa. Se elimina tanto la sesión de Firebase Auth como todos los datos locales almacenados en el dispositivo.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Usuario (principal)</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Alta</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-01.8</td></tr>
+  <tr><td class="label">Precondición</td><td class="content">Estar autenticado</td></tr>
+  <tr><td class="label">Postcondición</td><td class="content"><ul class="flow">
+    <li>Sesión cerrada</li>
+    <li>Datos locales eliminados del dispositivo</li>
+    <li>App en la pantalla de Login</li>
+  </ul></td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>El usuario navega a la sección Perfil</li>
+    <li>Toca el botón "Cerrar sesión"</li>
+    <li>Se muestra un diálogo de confirmación</li>
+    <li>El usuario confirma</li>
+    <li>Se cierra la sesión en el sistema de autenticación</li>
+    <li>Se cierra la sesión de Google</li>
+    <li>Se eliminan todos los datos de sesión guardados en el dispositivo</li>
+    <li>La app redirige a la pantalla de Login</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content"><ul class="flow">
+    <li><strong>FA-1:</strong> El usuario cancela el diálogo de confirmación → no se realiza ninguna acción</li>
+  </ul></td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content">—</td></tr>
+</table>
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-05</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Mantener sesión entre reinicios</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">Al reiniciar la app, el sistema detecta si existe una sesión activa y redirige directamente al Dashboard sin requerir que el usuario inicie sesión nuevamente.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Usuario (principal)</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Alta</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-01.7</td></tr>
+  <tr><td class="label">Precondición</td><td class="content"><ul class="flow">
+    <li>El usuario se autenticó previamente (CU-01, CU-02 o CU-03)</li>
+    <li>No ejecutó cerrar sesión (CU-04)</li>
+  </ul></td></tr>
+  <tr><td class="label">Postcondición</td><td class="content">El usuario accede al Dashboard sin volver a autenticarse</td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>El usuario abre la app (reinicio o reingreso desde segundo plano)</li>
+    <li>La pantalla de inicio verifica si hay sesión guardada en el dispositivo</li>
+    <li>Si existe, verifica si la sesión de Firebase sigue activa</li>
+    <li>Si ambas condiciones se cumplen, redirige directamente al Dashboard</li>
+    <li>Si no se cumplen, redirige a la pantalla de Login</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content">—</td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content"><ul class="flow">
+    <li><strong>EX-1:</strong> La sesión expiró → el usuario se redirige al Login para re-autenticar</li>
+  </ul></td></tr>
+</table>
+
+<!-- ========================================================== -->
+<h2>Módulo 2: Dashboard</h2>
+<!-- ========================================================== -->
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-06</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Ver Dashboard</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">La pantalla principal muestra un saludo personalizado con el nombre del usuario, su saldo actual de PetPoints y las últimas 5 notificaciones con título y descripción.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Usuario (principal), Sistema</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Alta</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-02.1, RF-02.2, RF-02.3</td></tr>
+  <tr><td class="label">Precondición</td><td class="content"><ul class="flow">
+    <li>Estar autenticado</li>
+    <li>Tener conexión a internet</li>
+  </ul></td></tr>
+  <tr><td class="label">Postcondición</td><td class="content">Dashboard visible con datos actualizados desde el servidor</td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>La app muestra un saludo personalizado con el nombre del usuario (RF-02.1)</li>
+    <li>Muestra indicador de carga mientras se obtienen los datos</li>
+    <li>Consulta al sistema los datos del dashboard</li>
+    <li>Muestra el saldo actual de PetPoints con formato numérico (RF-02.2)</li>
+    <li>Muestra las últimas 5 notificaciones con título y descripción (RF-02.3)</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content">—</td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content"><ul class="flow">
+    <li><strong>EX-1:</strong> Sin conexión → se muestra estado vacío con mensaje de error en español (RNF-03.2)</li>
+  </ul></td></tr>
+</table>
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-07</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Navegar entre secciones</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">El usuario accede a las secciones principales de la app mediante la barra de navegación inferior, disponible en todas las pantallas de la aplicación.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Usuario (principal)</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Alta</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-02.4, RNF-03.3</td></tr>
+  <tr><td class="label">Precondición</td><td class="content">Estar autenticado</td></tr>
+  <tr><td class="label">Postcondición</td><td class="content">La pantalla de la sección seleccionada se muestra al usuario</td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>El usuario toca un ítem de la barra de navegación inferior</li>
+    <li>La app navega a la sección correspondiente: Dashboard, Mapa, QR Scanner, Recompensas o Perfil (RF-02.4)</li>
+    <li>La barra de navegación está disponible en todas las pantallas (RNF-03.3)</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content">—</td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content">—</td></tr>
+</table>
+
+<!-- ========================================================== -->
+<h2>Módulo 3: Mapa y Descubrimiento de Lugares</h2>
+<!-- ========================================================== -->
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-08</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Explorar locales en el mapa</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">El usuario visualiza un mapa interactivo centrado en su ubicación con marcadores de establecimientos pet-friendly, acompañado de una lista ordenada por distancia. Cada tarjeta muestra nombre, distancia, calificación en estrellas, horarios y estado abierto/cerrado.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Usuario (principal), Sistema</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Alta</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-03.1, RF-03.2, RF-03.3, RF-03.4, RF-03.5</td></tr>
+  <tr><td class="label">Precondición</td><td class="content"><ul class="flow">
+    <li>Estar autenticado</li>
+    <li>Tener conexión a internet</li>
+  </ul></td></tr>
+  <tr><td class="label">Postcondición</td><td class="content"><ul class="flow">
+    <li>Mapa con marcadores de establecimientos visible</li>
+    <li>Lista de establecimientos visible, ordenada por distancia ascendente</li>
+  </ul></td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>La app solicita permiso de ubicación GPS en el momento en que se necesita (RNF-04.2)</li>
+    <li>Obtiene las coordenadas actuales del usuario</li>
+    <li>Centra el mapa en la ubicación del usuario (RF-03.2)</li>
+    <li>Consulta al sistema la lista de establecimientos cercanos</li>
+    <li>Muestra indicador de carga mientras se obtienen los datos</li>
+    <li>Muestra los marcadores de cada establecimiento en el mapa (RF-03.1)</li>
+    <li>Muestra la lista de establecimientos debajo del mapa, ordenada por distancia ascendente (RF-03.4)</li>
+    <li>Cada tarjeta muestra: nombre, distancia, estrellas, horarios y estado abierto/cerrado (RF-03.5)</li>
+    <li>Las imágenes se cargan en segundo plano (RNF-01.3)</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content"><ul class="flow">
+    <li><strong>FA-1 (sin permiso de ubicación):</strong> La app usa las coordenadas de Buenos Aires como fallback y continúa el flujo normal (RF-03.2)</li>
+  </ul></td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content"><ul class="flow">
+    <li><strong>EX-1:</strong> Sin conexión → mapa vacío, mensaje de error en español (RNF-03.2)</li>
+    <li><strong>EX-2:</strong> GPS no disponible → fallback a Buenos Aires (RF-03.2)</li>
+  </ul></td></tr>
+</table>
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-09</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Filtrar locales por categoría</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">El usuario selecciona una categoría de filtro y tanto la lista como los marcadores del mapa se actualizan instantáneamente mostrando solo los establecimientos de esa categoría.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Usuario (principal)</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Media</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-03.6, RF-03.8</td></tr>
+  <tr><td class="label">Precondición</td><td class="content">Estar en la pantalla del mapa con establecimientos cargados</td></tr>
+  <tr><td class="label">Postcondición</td><td class="content">Lista y marcadores del mapa muestran solo los establecimientos de la categoría seleccionada</td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>El usuario expande el panel de filtros de categoría</li>
+    <li>Selecciona una de las opciones: Todos / Locales / Restaurantes / Profesionales / Servicios (RF-03.6)</li>
+    <li>La lista de establecimientos y los marcadores del mapa se actualizan en tiempo real (RF-03.8)</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content">—</td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content">—</td></tr>
+</table>
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-10</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Buscar local por nombre</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">El usuario escribe en el campo de búsqueda y la lista de establecimientos y los marcadores del mapa se filtran en tiempo real por coincidencia de nombre.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Usuario (principal)</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Media</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-03.7, RF-03.8</td></tr>
+  <tr><td class="label">Precondición</td><td class="content">Estar en la pantalla del mapa con establecimientos cargados</td></tr>
+  <tr><td class="label">Postcondición</td><td class="content">Lista y marcadores filtrados según el texto ingresado</td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>El usuario escribe en el campo de búsqueda</li>
+    <li>La lista y los marcadores se filtran en tiempo real por nombre del establecimiento (RF-03.7, RF-03.8)</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content">—</td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content">—</td></tr>
+</table>
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-11</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Ver detalle de local desde el mapa</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">Al tocar un marcador en el mapa o una tarjeta en la lista, el usuario puede acceder al detalle completo del establecimiento.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Usuario (principal)</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Alta</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-03.9</td></tr>
+  <tr><td class="label">Precondición</td><td class="content">Estar en la pantalla del mapa con establecimientos cargados</td></tr>
+  <tr><td class="label">Postcondición</td><td class="content">Pantalla de detalle del establecimiento abierta (CU-13)</td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>El usuario toca un marcador en el mapa</li>
+    <li>Se abre un panel emergente con resumen: nombre, distancia y estado abierto/cerrado</li>
+    <li>El usuario toca "Ver detalles"</li>
+    <li>La app navega a la pantalla de detalle completo (CU-13)</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content"><ul class="flow">
+    <li><strong>FA-1:</strong> El usuario toca directamente "Ver detalles y comentarios" desde una tarjeta en la lista → navega a CU-13 sin pasar por el panel emergente</li>
+  </ul></td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content">—</td></tr>
+</table>
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-12</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Abrir establecimiento en Google Maps</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">Desde el detalle de un establecimiento, el usuario puede abrir su dirección directamente en Google Maps o en cualquier app de navegación disponible en el dispositivo.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Usuario (principal)</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Media</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-04.2</td></tr>
+  <tr><td class="label">Precondición</td><td class="content">Estar en la pantalla de detalle de un establecimiento con dirección y/o coordenadas disponibles</td></tr>
+  <tr><td class="label">Postcondición</td><td class="content">App de mapas abierta con la ubicación del establecimiento como destino</td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>El usuario toca el botón "Cómo llegar" o "Ver en Google Maps"</li>
+    <li>La app solicita al sistema operativo abrir la app de mapas con la ubicación del establecimiento</li>
+    <li>El sistema operativo muestra el selector de apps de mapas disponibles</li>
+    <li>La app seleccionada se abre con el destino configurado</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content">—</td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content"><ul class="flow">
+    <li><strong>EX-1:</strong> No hay ninguna app de mapas instalada → se muestra mensaje informativo al usuario</li>
+  </ul></td></tr>
+</table>
+
+<!-- ========================================================== -->
+<h2>Módulo 4: Detalle de Local y Reseñas</h2>
+<!-- ========================================================== -->
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-13</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Ver detalle de un local</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">Muestra la información completa del establecimiento: foto, nombre, categoría, estado abierto/cerrado, descripción, dirección y teléfono. Incluye el listado de reseñas con avatar, nombre del autor, fecha relativa, estrellas y texto.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Usuario (principal), Sistema</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Alta</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-04.1, RF-04.3</td></tr>
+  <tr><td class="label">Precondición</td><td class="content"><ul class="flow">
+    <li>Estar autenticado y tener conexión a internet</li>
+    <li>Haber seleccionado un establecimiento (desde CU-11 o directamente)</li>
+  </ul></td></tr>
+  <tr><td class="label">Postcondición</td><td class="content"><ul class="flow">
+    <li>Información completa del establecimiento visible</li>
+    <li>Lista de reseñas visible</li>
+  </ul></td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>La app consulta al sistema los detalles del establecimiento</li>
+    <li>Muestra indicador de carga</li>
+    <li>Muestra: foto, nombre, categoría, estado abierto/cerrado, descripción, dirección y teléfono (RF-04.1)</li>
+    <li>Consulta al sistema las reseñas del establecimiento</li>
+    <li>Muestra cada reseña con: avatar del autor, nombre, fecha relativa, estrellas y texto (RF-04.3)</li>
+    <li>Las imágenes se cargan de forma eficiente en segundo plano (RNF-01.3)</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content">—</td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content"><ul class="flow">
+    <li><strong>EX-1:</strong> Sin conexión → mensaje de error en español (RNF-03.2)</li>
+  </ul></td></tr>
+</table>
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-14</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Dejar una reseña</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">El usuario puede dejar una reseña (1 a 5 estrellas más texto) en un establecimiento, únicamente si realizó al menos una compra allí y no tiene una reseña previa en ese lugar.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Usuario (principal), Sistema</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Alta</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-04.4, RF-04.5, RF-04.6, RF-04.7</td></tr>
+  <tr><td class="label">Precondición</td><td class="content"><ul class="flow">
+    <li>Estar autenticado y tener conexión a internet</li>
+    <li>Estar en el detalle de un establecimiento</li>
+    <li>Haber realizado al menos una compra (QR validado) en ese establecimiento (RF-04.4)</li>
+    <li>No haber dejado reseña previamente en ese establecimiento (RF-04.5)</li>
+  </ul></td></tr>
+  <tr><td class="label">Postcondición</td><td class="content"><ul class="flow">
+    <li>Reseña publicada y visible en la lista del establecimiento</li>
+    <li>Formulario de reseña oculto</li>
+  </ul></td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>La app verifica con el servidor si el usuario tiene compra previa en el establecimiento</li>
+    <li>Si tiene, muestra el formulario con selector de estrellas (1-5) y campo de texto</li>
+    <li>El usuario selecciona la calificación y escribe su comentario</li>
+    <li>Toca "Publicar comentario"</li>
+    <li>La app envía la reseña al sistema</li>
+    <li>El sistema verifica la inexistencia de reseña previa y la registra (RF-04.5)</li>
+    <li>Se recarga la lista de comentarios y el formulario se oculta</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content"><ul class="flow">
+    <li><strong>FA-1 (sin compra previa):</strong> Muestra "No puedes comentar aún — Debes visitar y consumir en este lugar" (RF-04.6)</li>
+    <li><strong>FA-2 (ya dejó reseña):</strong> Muestra "Ya dejaste tu reseña — Solo se permite una reseña por lugar" (RF-04.7)</li>
+  </ul></td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content"><ul class="flow">
+    <li><strong>EX-1:</strong> Intento duplicado → el sistema responde "Ya dejaste una reseña en este lugar" (RF-04.5, RNF-02.5)</li>
+    <li>Solo se permite una reseña por usuario por establecimiento (RF-04.5)</li>
+    <li>La compra previa y la prevención de duplicados se verifican siempre en el servidor (RNF-02.5)</li>
+  </ul></td></tr>
+</table>
+
+<!-- ========================================================== -->
+<h2>Módulo 5: Escáner QR y PetPoints</h2>
+<!-- ========================================================== -->
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-15</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Escanear código QR</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">El usuario escanea el código QR de un establecimiento adherido para registrar su compra y acreditar PetPoints en su cuenta.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Usuario (principal), Sistema</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Alta</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-05.1, RF-05.2, RF-05.3, RF-05.4, RF-05.5, RF-05.6</td></tr>
+  <tr><td class="label">Precondición</td><td class="content"><ul class="flow">
+    <li>Estar autenticado y tener conexión a internet</li>
+    <li>Haber concedido permiso de cámara (RNF-04.2)</li>
+  </ul></td></tr>
+  <tr><td class="label">Postcondición</td><td class="content"><ul class="flow">
+    <li>Compra registrada en el sistema</li>
+    <li>PetPoints calculados y sumados al balance del usuario</li>
+    <li>Diálogo de éxito mostrado con el resumen</li>
+  </ul></td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>La app solicita permiso de cámara en el momento en que se necesita (RNF-04.2)</li>
+    <li>Activa la cámara para escanear el QR (RF-05.1)</li>
+    <li>El usuario apunta la cámara al código QR del establecimiento</li>
+    <li>La app lee la información del QR: tipo, id, nombre del local, monto, producto y código de verificación (RF-05.2)</li>
+    <li>Verifica que el QR pertenece a Guander (RF-05.3)</li>
+    <li>Envía los datos del QR al sistema</li>
+    <li>El sistema re-valida el QR, calcula los puntos ganados según el monto, registra la compra y actualiza el saldo (RF-05.4, RF-05.5)</li>
+    <li>Muestra diálogo de éxito con: nombre del local, monto, puntos ganados y nuevo saldo total (RF-05.6)</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content"><ul class="flow">
+    <li><strong>FA-1 (sin permiso de cámara):</strong> Muestra placeholder con botón para abrir configuración del sistema</li>
+  </ul></td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content"><ul class="flow">
+    <li><strong>EX-1:</strong> QR con información inválida → "QR inválido — El código no tiene el formato correcto"</li>
+    <li><strong>EX-2:</strong> QR no pertenece a Guander → "QR no válido para Guander" (RNF-02.4)</li>
+    <li><strong>EX-3:</strong> Fallo de red → Toast de error en español (RNF-03.2)</li>
+    <li>Se garantiza un mínimo de 1 punto por compra, independientemente del monto (RF-05.5)</li>
+    <li>La validación se re-verifica siempre en el servidor (RNF-02.5)</li>
+  </ul></td></tr>
+</table>
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-16</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Visualizar puntos acumulados</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">El saldo de PetPoints se muestra en formato numérico en el Dashboard y en la pantalla de Recompensas, siempre actualizado desde el servidor.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Usuario (principal), Sistema</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Alta</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-02.2</td></tr>
+  <tr><td class="label">Precondición</td><td class="content">Estar autenticado y tener conexión a internet</td></tr>
+  <tr><td class="label">Postcondición</td><td class="content">Saldo de PetPoints visible y actualizado</td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>El saldo se obtiene consultando al sistema los datos del dashboard o el catálogo de recompensas</li>
+    <li>Se muestra el total de puntos con formato numérico (RF-02.2)</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content">—</td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content">—</td></tr>
+</table>
+
+<!-- ========================================================== -->
+<h2>Módulo 6: Recompensas y Canje</h2>
+<!-- ========================================================== -->
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-17</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Ver catálogo de recompensas</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">El usuario visualiza el catálogo de recompensas disponibles. Se excluyen las expiradas y las ya canjeadas por ese usuario. Se indica visualmente si tiene puntos suficientes para cada recompensa.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Usuario (principal), Sistema</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Alta</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-06.1, RF-06.2, RF-06.3</td></tr>
+  <tr><td class="label">Precondición</td><td class="content">Estar autenticado y tener conexión a internet</td></tr>
+  <tr><td class="label">Postcondición</td><td class="content">Catálogo visible sin recompensas expiradas ni ya canjeadas, con indicación de disponibilidad</td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>La app consulta al sistema el catálogo de recompensas</li>
+    <li>El sistema filtra las recompensas expiradas y las ya canjeadas por el usuario (RF-06.3)</li>
+    <li>Muestra indicador de carga</li>
+    <li>Muestra el catálogo con: nombre, descripción, costo en puntos e ícono del local (RF-06.1)</li>
+    <li>Las recompensas canjeables se habilitan; las con puntos insuficientes se deshabilitan visualmente (RF-06.2)</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content">—</td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content">—</td></tr>
+</table>
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-18</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Buscar recompensas</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">El usuario filtra en tiempo real el catálogo de recompensas escribiendo en el buscador. La búsqueda aplica sobre nombre y descripción.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Usuario (principal)</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Media</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-06.4</td></tr>
+  <tr><td class="label">Precondición</td><td class="content">Estar en la pantalla de Recompensas con el catálogo cargado</td></tr>
+  <tr><td class="label">Postcondición</td><td class="content">Lista filtrada según el texto ingresado</td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>El usuario escribe en el campo de búsqueda</li>
+    <li>La lista se filtra en tiempo real por nombre o descripción (RF-06.4)</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content">—</td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content">—</td></tr>
+</table>
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-19</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Canjear una recompensa</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">El usuario canjea una recompensa disponible usando sus PetPoints. El sistema deduce los puntos, registra la transacción y muestra el código de canje.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Usuario (principal), Sistema</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Alta</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-06.5, RF-06.6, RF-06.7</td></tr>
+  <tr><td class="label">Precondición</td><td class="content"><ul class="flow">
+    <li>Estar autenticado y tener conexión a internet</li>
+    <li>Tener puntos suficientes para la recompensa seleccionada</li>
+  </ul></td></tr>
+  <tr><td class="label">Postcondición</td><td class="content"><ul class="flow">
+    <li>Puntos deducidos del balance del usuario</li>
+    <li>Canje registrado en el sistema</li>
+    <li>Código de canje mostrado al usuario</li>
+  </ul></td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>El usuario toca "Canjear" en una recompensa habilitada</li>
+    <li>Se muestra diálogo de confirmación con el costo en puntos (RF-06.5)</li>
+    <li>El usuario confirma</li>
+    <li>La app envía la solicitud de canje al sistema</li>
+    <li>El sistema verifica que no existe canje previo de esa recompensa (RF-06.7)</li>
+    <li>Deduce los puntos y registra el canje</li>
+    <li>El sistema genera y devuelve el código de canje</li>
+    <li>La app muestra diálogo de éxito con el código de canje (RF-06.6)</li>
+    <li>El balance y el catálogo se actualizan</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content"><ul class="flow">
+    <li><strong>FA-1 (puntos insuficientes):</strong> Botón "Canjear" deshabilitado → el usuario no puede iniciar el flujo</li>
+  </ul></td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content"><ul class="flow">
+    <li><strong>EX-1:</strong> Canje duplicado → el sistema responde "Ya canjeaste esta recompensa" (RF-06.7)</li>
+    <li>No se puede canjear la misma recompensa dos veces (RF-06.7)</li>
+    <li>Los puntos solo se deducen si el canje es exitoso (RNF-02.5)</li>
+  </ul></td></tr>
+</table>
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-20</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Ver historial de canjes</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">El usuario accede al historial completo de sus canjes con ícono, descripción, fecha relativa, puntos utilizados y código de canje.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Usuario (principal), Sistema</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Media</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-06.8</td></tr>
+  <tr><td class="label">Precondición</td><td class="content">Estar autenticado y tener conexión a internet</td></tr>
+  <tr><td class="label">Postcondición</td><td class="content">Historial de canjes visible</td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>El usuario toca la pestaña "Historial" en la pantalla de Recompensas</li>
+    <li>La app consulta al sistema el historial de canjes</li>
+    <li>Muestra cada canje con: ícono, descripción, fecha relativa, puntos utilizados y código de canje (RF-06.8)</li>
+    <li>Las fechas se muestran como: "Hoy", "Hace 1 día", "Hace N días" (RNF-03.4)</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content">—</td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content">—</td></tr>
+</table>
+
+<!-- ========================================================== -->
+<h2>Módulo 7: Perfil de Usuario</h2>
+<!-- ========================================================== -->
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-21</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Ver perfil de usuario</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">Muestra la información completa del perfil: avatar, datos personales, estadísticas (lugares visitados, PetPoints, cupones canjeados) y fecha de alta.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Usuario (principal), Sistema</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Alta</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-07.1, RF-07.4</td></tr>
+  <tr><td class="label">Precondición</td><td class="content">Estar autenticado y tener conexión a internet</td></tr>
+  <tr><td class="label">Postcondición</td><td class="content">Perfil visible con datos actualizados</td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>La app consulta al sistema el perfil del usuario</li>
+    <li>Muestra: avatar/foto, nombre, email, teléfono, dirección y fecha de alta (RF-07.1)</li>
+    <li>Muestra estadísticas: lugares visitados, puntos acumulados, cupones canjeados (RF-07.1)</li>
+    <li>Si no hay foto, muestra la inicial del nombre sobre un fondo circular de color (RF-07.4)</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content">—</td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content">—</td></tr>
+</table>
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-22</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Editar datos personales</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">El usuario actualiza nombre, apellido, teléfono y dirección desde el formulario de edición de perfil.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Usuario (principal), Sistema</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Alta</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-07.2</td></tr>
+  <tr><td class="label">Precondición</td><td class="content">Estar autenticado y tener conexión a internet</td></tr>
+  <tr><td class="label">Postcondición</td><td class="content">Datos personales actualizados en el sistema</td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>El usuario toca "Editar perfil"</li>
+    <li>Se abre el formulario con datos precargados: nombre, apellido, teléfono y dirección (RF-07.2)</li>
+    <li>Modifica los campos deseados y toca "Guardar"</li>
+    <li>La app envía los datos actualizados al sistema</li>
+    <li>El sistema guarda los cambios y la pantalla se recarga</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content">—</td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content"><ul class="flow">
+    <li><strong>EX-1:</strong> Fallo de red → Toast "Error al guardar cambios" (RNF-03.2)</li>
+  </ul></td></tr>
+</table>
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-23</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Cambiar foto de perfil</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">El usuario selecciona una nueva foto desde la galería. La imagen se sube al servidor de almacenamiento mediante una firma de seguridad generada por el sistema.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Usuario (principal), Sistema, Cloudflare R2</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Media</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-07.3, RF-07.4, RNF-02.3</td></tr>
+  <tr><td class="label">Precondición</td><td class="content"><ul class="flow">
+    <li>Estar autenticado y tener conexión a internet</li>
+    <li>Haber concedido permiso de galería/imágenes (RNF-04.2, RNF-04.3)</li>
+  </ul></td></tr>
+  <tr><td class="label">Postcondición</td><td class="content">Nueva foto visible en el perfil del usuario</td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>El usuario toca el ícono de cámara sobre su foto de perfil</li>
+    <li>Se abre el selector de imágenes (RNF-04.3)</li>
+    <li>El usuario selecciona una imagen de la galería (RF-07.3)</li>
+    <li>La app solicita al sistema una autorización segura para subir la imagen (RNF-02.3)</li>
+    <li>Sube la imagen directamente al sistema de almacenamiento</li>
+    <li>Actualiza la foto de perfil en el sistema</li>
+    <li>Muestra la nueva foto de perfil</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content"><ul class="flow">
+    <li><strong>FA-1 (sin foto):</strong> Muestra la inicial del nombre sobre fondo circular de color (RF-07.4)</li>
+  </ul></td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content"><ul class="flow">
+    <li><strong>EX-1:</strong> Sin permiso → solicita el permiso o muestra guía para activarlo</li>
+    <li><strong>EX-2:</strong> Fallo al subir → mensaje de error, la foto anterior se mantiene</li>
+    <li>La firma de subida se genera siempre en el servidor, nunca en la app (RNF-02.3)</li>
+    <li>Los permisos de almacenamiento se diferencian según versión de Android (RNF-04.3)</li>
+  </ul></td></tr>
+</table>
+
+<!-- ========================================================== -->
+<h2>Módulo 8: Configuración</h2>
+<!-- ========================================================== -->
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-24</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Configurar notificaciones</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">El usuario activa o desactiva cada tipo de notificación. Las preferencias se almacenan localmente en el dispositivo.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Usuario (principal)</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Media</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-08.1, RF-08.4</td></tr>
+  <tr><td class="label">Precondición</td><td class="content">Estar autenticado</td></tr>
+  <tr><td class="label">Postcondición</td><td class="content">Preferencias de notificación guardadas en el dispositivo</td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>El usuario navega a Perfil → Notificaciones</li>
+    <li>Visualiza los switches: General, Puntos, Cupones, Lugares nuevos, Promociones (RF-08.1)</li>
+    <li>Activa/desactiva los switches según su preferencia</li>
+    <li>Las preferencias se guardan automáticamente en el dispositivo (RF-08.4)</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content">—</td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content">—</td></tr>
+</table>
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-25</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Configurar privacidad</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">El usuario configura sus preferencias de privacidad: compartir ubicación, datos de uso y contenido personalizado. Las preferencias persisten localmente.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Usuario (principal)</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Media</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-08.2, RF-08.4</td></tr>
+  <tr><td class="label">Precondición</td><td class="content">Estar autenticado</td></tr>
+  <tr><td class="label">Postcondición</td><td class="content">Preferencias de privacidad guardadas en el dispositivo</td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>El usuario navega a Perfil → Privacidad y Seguridad</li>
+    <li>Visualiza los switches: Compartir ubicación, Datos de uso, Contenido personalizado (RF-08.2)</li>
+    <li>Activa/desactiva los switches según su preferencia</li>
+    <li>Las preferencias se guardan en el dispositivo (RF-08.4)</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content">—</td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content">—</td></tr>
+</table>
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-26</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Ver centro de ayuda</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">El usuario consulta las preguntas frecuentes organizadas por categoría y la información de contacto para solicitudes de privacidad.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Usuario (principal)</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Baja</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-08.3, RNF-07.3</td></tr>
+  <tr><td class="label">Precondición</td><td class="content">Estar autenticado</td></tr>
+  <tr><td class="label">Postcondición</td><td class="content">Centro de ayuda visible</td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>El usuario navega a Perfil → Centro de ayuda</li>
+    <li>Visualiza la lista de preguntas frecuentes organizadas por categoría (RF-08.3)</li>
+    <li>Visualiza la información de contacto para solicitudes de privacidad (RNF-07.3)</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content">—</td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content">—</td></tr>
+</table>
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-27</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Ver términos y condiciones</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">El usuario accede al texto legal completo de los términos y condiciones de uso de la aplicación.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Usuario (principal)</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Baja</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">—</td></tr>
+  <tr><td class="label">Precondición</td><td class="content">Estar autenticado</td></tr>
+  <tr><td class="label">Postcondición</td><td class="content">Texto de términos y condiciones visible</td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>El usuario navega a Perfil → Términos y Condiciones</li>
+    <li>Se muestra el texto legal completo con scroll habilitado</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content">—</td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content">—</td></tr>
+</table>
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-28</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Ver política de privacidad</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">El usuario accede al texto completo de la política de privacidad, incluyendo la información de contacto para solicitudes de privacidad.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Usuario (principal)</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Baja</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RNF-07.3</td></tr>
+  <tr><td class="label">Precondición</td><td class="content">Estar autenticado</td></tr>
+  <tr><td class="label">Postcondición</td><td class="content">Texto de política de privacidad visible</td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>El usuario navega a Perfil → Política de Privacidad</li>
+    <li>Se muestra el texto completo con información de contacto para solicitudes de privacidad (RNF-07.3)</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content">—</td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content">—</td></tr>
+</table>
+
+<!-- ========================================================== -->
+<h2>Módulo 9: Sistema Backend</h2>
+<!-- ========================================================== -->
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-29</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Enviar email de bienvenida</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">Tras el registro exitoso de un nuevo usuario, el sistema envía un email de bienvenida a través de Resend en segundo plano, sin bloquear el registro.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Sistema (principal), Resend</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Baja</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-01.6, RNF-05.3</td></tr>
+  <tr><td class="label">Precondición</td><td class="content">El usuario es nuevo (primer registro)</td></tr>
+  <tr><td class="label">Postcondición</td><td class="content">Email de bienvenida enviado al correo registrado</td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>El sistema detecta que el usuario es nuevo</li>
+    <li>Llama al servicio de email en segundo plano con el contenido de bienvenida (RNF-05.3)</li>
+    <li>Resend envía el email al correo registrado</li>
+    <li>El sistema confirma el éxito del registro al cliente independientemente del resultado del email</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content"><ul class="flow">
+    <li><strong>FA-1 (fallo del servicio de email):</strong> El sistema ignora el error y confirma el éxito del registro — el flujo no se ve afectado (RNF-05.3)</li>
+  </ul></td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content">—</td></tr>
+</table>
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-30</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Calcular distancia a locales</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">Al recibir la consulta de establecimientos cercanos con las coordenadas del usuario, el sistema calcula la distancia a cada establecimiento y devuelve la lista ordenada por cercanía.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Sistema (principal)</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Alta</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-03.3, RF-03.4</td></tr>
+  <tr><td class="label">Precondición</td><td class="content">El sistema recibió las coordenadas del usuario (lat/lng)</td></tr>
+  <tr><td class="label">Postcondición</td><td class="content">Lista de establecimientos con distancias calculadas, ordenada por cercanía</td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>El sistema recibe las coordenadas del usuario (lat/lng)</li>
+    <li>Calcula la distancia a cada establecimiento (RF-03.3)</li>
+    <li>Ordena los resultados de menor a mayor distancia (RF-03.4)</li>
+    <li>Incluye la distancia calculada en cada objeto de respuesta y devuelve la lista</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content">—</td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content">—</td></tr>
+</table>
+
+<table class="cu-table">
+  <tr><td class="label">Identificador del Caso de Uso</td><td class="content">CU-31</td></tr>
+  <tr><td class="label">Nombre del Caso de Uso</td><td class="content">Calcular puntos por compra</td></tr>
+  <tr><td class="label">Descripción</td><td class="content">Al validar un QR exitosamente, el sistema calcula los PetPoints a acreditar según el monto de la compra, garantizando un mínimo de 1 punto.</td></tr>
+  <tr><td class="label">Actores</td><td class="content">Sistema (principal)</td></tr>
+  <tr><td class="label">Prioridad</td><td class="content">Alta</td></tr>
+  <tr><td class="label">Requerimientos</td><td class="content">RF-05.5</td></tr>
+  <tr><td class="label">Precondición</td><td class="content">El QR fue validado correctamente y el monto está disponible</td></tr>
+  <tr><td class="label">Postcondición</td><td class="content"><ul class="flow">
+    <li>Puntos calculados y sumados al saldo del usuario</li>
+    <li>Operación registrada con fecha y hora</li>
+  </ul></td></tr>
+  <tr><td class="label">Flujo Principal</td><td class="content"><ol class="flow">
+    <li>El sistema extrae el monto del QR validado</li>
+    <li>Calcula los puntos ganados según el monto de la compra, con un mínimo de 1 punto (RF-05.5)</li>
+    <li>Suma los puntos al saldo del usuario</li>
+    <li>Registra la operación con fecha y hora</li>
+  </ol></td></tr>
+  <tr><td class="label">Flujos Alternativos</td><td class="content">—</td></tr>
+  <tr><td class="label">Observaciones / Excepciones</td><td class="content"><ul class="flow">
+    <li>Mínimo garantizado de 1 punto por compra, independientemente del monto (RF-05.5)</li>
+  </ul></td></tr>
+</table>
+
+</body>
+</html>
