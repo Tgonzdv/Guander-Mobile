@@ -4,65 +4,99 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="10dp"
-    app:cardCornerRadius="14dp"
-    app:cardElevation="2dp"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="3dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="@color/md_theme_outline_variant"
     app:cardBackgroundColor="?attr/colorSurface">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="14dp"
-        android:gravity="center_vertical">
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <!-- Icon container -->
-        <TextView
-            android:id="@+id/tv_reward_icon"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:gravity="center"
-            android:text="🎁"
-            android:textSize="26sp" />
-
-        <!-- Content -->
+        <!-- Top row: icon + info -->
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_marginStart="12dp">
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
+            <!-- Circular icon -->
             <TextView
-                android:id="@+id/tv_reward_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Nombre recompensa"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="?attr/colorOnSurface" />
+                android:id="@+id/tv_reward_icon"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:gravity="center"
+                android:text="🎁"
+                android:textSize="24sp" />
 
-            <TextView
-                android:id="@+id/tv_reward_desc"
-                android:layout_width="wrap_content"
+            <!-- Name + desc -->
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Descripción"
-                android:textSize="12sp"
-                android:textColor="@color/text_secondary"
-                android:layout_marginTop="2dp" />
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="14dp">
 
+                <TextView
+                    android:id="@+id/tv_reward_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nombre recompensa"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorOnSurface"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:id="@+id/tv_reward_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Descripción"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginTop="3dp"
+                    android:maxLines="2"
+                    android:ellipsize="end" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/md_theme_outline_variant"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Bottom row: points badge + button -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Points pill -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginTop="6dp">
+                android:background="@drawable/shape_points_pill"
+                android:paddingStart="10dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="🪙"
-                    android:textSize="14sp" />
+                    android:textSize="13sp" />
 
                 <TextView
                     android:id="@+id/tv_reward_points"
@@ -70,22 +104,30 @@
                     android:layout_height="wrap_content"
                     android:text="800 pts"
                     android:textSize="13sp"
-                    android:textColor="?attr/colorOnSurface"
+                    android:textStyle="bold"
+                    android:textColor="@color/md_theme_on_secondary_container"
                     android:layout_marginStart="4dp" />
             </LinearLayout>
-        </LinearLayout>
 
-        <!-- Canjear button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_reward_canjear"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Canjear"
-            android:textSize="12sp"
-            android:textColor="?attr/colorOnPrimary"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            app:backgroundTint="?attr/colorPrimary"
-            app:cornerRadius="20dp" />
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <!-- Canjear button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_reward_canjear"
+                android:layout_width="wrap_content"
+                android:layout_height="38dp"
+                android:text="Canjear"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnPrimary"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                app:backgroundTint="@color/md_theme_primary"
+                app:cornerRadius="20dp"
+                app:rippleColor="#33FFFFFF" />
+        </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

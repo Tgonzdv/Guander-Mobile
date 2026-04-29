@@ -156,6 +156,80 @@ public class PlaceDetailActivity extends AppCompatActivity {
             tvDetailPhone.setVisibility(View.VISIBLE);
         }
 
+        // Social media
+        String placeWhatsapp = getIntent().getStringExtra("PLACE_WHATSAPP");
+        String placeWebsite = getIntent().getStringExtra("PLACE_WEBSITE");
+        String placeInstagram = getIntent().getStringExtra("PLACE_INSTAGRAM");
+        String placeTwitter = getIntent().getStringExtra("PLACE_TWITTER");
+
+        boolean hasSocial = (placeWhatsapp != null && !placeWhatsapp.isEmpty())
+                || (placeWebsite != null && !placeWebsite.isEmpty())
+                || (placeInstagram != null && !placeInstagram.isEmpty())
+                || (placeTwitter != null && !placeTwitter.isEmpty());
+
+        if (hasSocial) {
+            findViewById(R.id.tv_social_label).setVisibility(View.VISIBLE);
+        }
+
+        if (placeWhatsapp != null && !placeWhatsapp.isEmpty()) {
+            TextView tv = findViewById(R.id.tv_detail_whatsapp);
+            tv.setText("\uD83D\uDCAC WhatsApp: " + placeWhatsapp);
+            tv.setVisibility(View.VISIBLE);
+            final String wa = placeWhatsapp.replaceAll("[^0-9+]", "");
+            tv.setOnClickListener(v -> {
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("https://wa.me/" + wa)));
+                } catch (Exception e) {
+                    Toast.makeText(this, "No se pudo abrir WhatsApp", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        if (placeWebsite != null && !placeWebsite.isEmpty()) {
+            TextView tv = findViewById(R.id.tv_detail_website);
+            tv.setText("\uD83C\uDF10 " + placeWebsite);
+            tv.setVisibility(View.VISIBLE);
+            final String url = placeWebsite.startsWith("http") ? placeWebsite : "https://" + placeWebsite;
+            tv.setOnClickListener(v -> {
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                } catch (Exception e) {
+                    Toast.makeText(this, "No se pudo abrir el sitio web", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        if (placeInstagram != null && !placeInstagram.isEmpty()) {
+            TextView tv = findViewById(R.id.tv_detail_instagram);
+            String handle = placeInstagram.startsWith("@") ? placeInstagram.substring(1) : placeInstagram;
+            tv.setText("\uD83D\uDCF8 Instagram: @" + handle);
+            tv.setVisibility(View.VISIBLE);
+            tv.setOnClickListener(v -> {
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("https://www.instagram.com/" + handle)));
+                } catch (Exception e) {
+                    Toast.makeText(this, "No se pudo abrir Instagram", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        if (placeTwitter != null && !placeTwitter.isEmpty()) {
+            TextView tv = findViewById(R.id.tv_detail_twitter);
+            String handle = placeTwitter.startsWith("@") ? placeTwitter.substring(1) : placeTwitter;
+            tv.setText("𝕏 Twitter/X: @" + handle);
+            tv.setVisibility(View.VISIBLE);
+            tv.setOnClickListener(v -> {
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("https://x.com/" + handle)));
+                } catch (Exception e) {
+                    Toast.makeText(this, "No se pudo abrir Twitter/X", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
         // Directions button
         if (placeLat != 0 || placeLng != 0) {
             MaterialButton btnDirections = findViewById(R.id.btn_directions);

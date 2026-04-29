@@ -122,6 +122,55 @@
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
                         android:textColor="?attr/colorPrimary"
+                        android:layout_marginBottom="6dp"
+                        android:visibility="gone" />
+
+                    <!-- Social media section -->
+                    <TextView
+                        android:id="@+id/tv_social_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Redes sociales"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="?attr/colorOnSurface"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="6dp"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tv_detail_whatsapp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:textColor="?attr/colorPrimary"
+                        android:layout_marginBottom="4dp"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tv_detail_website"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:textColor="?attr/colorPrimary"
+                        android:layout_marginBottom="4dp"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tv_detail_instagram"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:textColor="?attr/colorPrimary"
+                        android:layout_marginBottom="4dp"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tv_detail_twitter"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:textColor="?attr/colorPrimary"
                         android:layout_marginBottom="10dp"
                         android:visibility="gone" />
 

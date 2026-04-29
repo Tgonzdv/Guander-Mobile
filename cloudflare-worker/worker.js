@@ -541,7 +541,11 @@ async function handleGetPlaces(request, env, url) {
              COALESCE(s.stars, 0) AS stars,
              COALESCE(sch.week, '') AS sched_week,
              COALESCE(sch.weekend, '') AS sched_weekend,
-             COALESCE(sch.sunday, '') AS sched_sunday
+             COALESCE(sch.sunday, '') AS sched_sunday,
+             COALESCE(s.social_whatsapp, '') AS whatsapp,
+             COALESCE(s.social_web, '') AS website,
+             COALESCE(s.social_instagram, '') AS instagram,
+             COALESCE(s.social_twitter, '') AS twitter
       FROM stores s
       LEFT JOIN category cat ON cat.id_category = s.fk_category
       LEFT JOIN schedule sch ON sch.id_schedule = s.fk_schedule
@@ -571,6 +575,10 @@ async function handleGetPlaces(request, env, url) {
           sched_week: s.sched_week || '',
           sched_weekend: s.sched_weekend || '',
           sched_sunday: s.sched_sunday || '',
+          whatsapp: s.whatsapp || '',
+          website: s.website || '',
+          instagram: s.instagram || '',
+          twitter: s.twitter || '',
           category: mapStoreCategory(s.cat_name),
           lat, lng,
           points_reward: 50,

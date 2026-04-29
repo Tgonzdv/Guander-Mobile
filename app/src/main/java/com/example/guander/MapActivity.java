@@ -377,6 +377,10 @@ public class MapActivity extends AppCompatActivity {
             final String fDesc = desc;
             final String fAddress = place.optString("address", "");
             final String fPhone = place.optString("phone", "");
+            final String fWhatsapp = place.optString("whatsapp", "");
+            final String fWebsite = place.optString("website", "");
+            final String fInstagram = place.optString("instagram", "");
+            final String fTwitter = place.optString("twitter", "");
             final int fIsOpen = isOpen;
             final double fDist = distKm;
             btnDetail.setOnClickListener(v -> {
@@ -390,6 +394,10 @@ public class MapActivity extends AppCompatActivity {
                 intent.putExtra("PLACE_DESC", fDesc);
                 intent.putExtra("PLACE_ADDRESS", fAddress);
                 intent.putExtra("PLACE_PHONE", fPhone);
+                intent.putExtra("PLACE_WHATSAPP", fWhatsapp);
+                intent.putExtra("PLACE_WEBSITE", fWebsite);
+                intent.putExtra("PLACE_INSTAGRAM", fInstagram);
+                intent.putExtra("PLACE_TWITTER", fTwitter);
                 intent.putExtra("PLACE_IS_OPEN", fIsOpen);
                 intent.putExtra("PLACE_DISTANCE", fDist);
                 intent.putExtra("PLACE_PHOTO", fPhoto);
@@ -547,6 +555,10 @@ public class MapActivity extends AppCompatActivity {
 
         final String fPlaceType = placeType;
         final String fPhone = phone;
+        final String fWhatsapp = place.optString("whatsapp", "");
+        final String fWebsite = place.optString("website", "");
+        final String fInstagram = place.optString("instagram", "");
+        final String fTwitter = place.optString("twitter", "");
         sheetView.findViewById(R.id.btn_bs_detail).setOnClickListener(v -> {
             Intent intent = new Intent(this, PlaceDetailActivity.class);
             intent.putExtra("PLACE_ID", placeId);
@@ -558,6 +570,10 @@ public class MapActivity extends AppCompatActivity {
             intent.putExtra("PLACE_DESC", desc);
             intent.putExtra("PLACE_ADDRESS", address);
             intent.putExtra("PLACE_PHONE", fPhone);
+            intent.putExtra("PLACE_WHATSAPP", fWhatsapp);
+            intent.putExtra("PLACE_WEBSITE", fWebsite);
+            intent.putExtra("PLACE_INSTAGRAM", fInstagram);
+            intent.putExtra("PLACE_TWITTER", fTwitter);
             intent.putExtra("PLACE_IS_OPEN", isOpen);
             intent.putExtra("PLACE_DISTANCE", distKm);
             intent.putExtra("PLACE_PHOTO", photo);

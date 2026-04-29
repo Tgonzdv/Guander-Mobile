@@ -315,20 +315,19 @@ public class RewardsActivity extends AppCompatActivity {
         String emoji;
         int bgColor;
         switch (fkStore) {
-            case 1:  emoji = "🐾"; bgColor = Color.parseColor("#795548"); break; // Mundo Animal - Pet Shop
-            case 2:  emoji = "🏥"; bgColor = Color.parseColor("#2196F3"); break; // Clinica Patas Felices
-            case 3:  emoji = "☕"; bgColor = Color.parseColor("#FF9800"); break; // Cafe Ladrido
-            case 4:  emoji = "✂️"; bgColor = Color.parseColor("#9C27B0"); break; // PetSpa
-            case 5:  emoji = "🏨"; bgColor = Color.parseColor("#009688"); break; // PetResort
-            case 6:  emoji = "🛒"; bgColor = Color.parseColor("#E91E63"); break; // PetParadise
-            case 7:  emoji = "🍽️"; bgColor = Color.parseColor("#FF5722"); break; // Restaurante Woof
-            case 8:  emoji = "📦"; bgColor = Color.parseColor("#607D8B"); break; // MascotaExpress
-            default: emoji = "🎁"; bgColor = getColor(R.color.green_primary);    break;
+            case 1:  emoji = "🐾"; bgColor = Color.parseColor("#795548"); break;
+            case 2:  emoji = "🏥"; bgColor = Color.parseColor("#2196F3"); break;
+            case 3:  emoji = "☕"; bgColor = Color.parseColor("#FF9800"); break;
+            case 4:  emoji = "✂️"; bgColor = Color.parseColor("#9C27B0"); break;
+            case 5:  emoji = "🏨"; bgColor = Color.parseColor("#009688"); break;
+            case 6:  emoji = "🛒"; bgColor = Color.parseColor("#E91E63"); break;
+            case 7:  emoji = "🍽️"; bgColor = Color.parseColor("#FF5722"); break;
+            case 8:  emoji = "📦"; bgColor = Color.parseColor("#607D8B"); break;
+            default: emoji = "🎁"; bgColor = getColor(R.color.md_theme_primary);  break;
         }
         iconView.setText(emoji);
         GradientDrawable gd = new GradientDrawable();
-        gd.setShape(GradientDrawable.RECTANGLE);
-        gd.setCornerRadius(12 * density);
+        gd.setShape(GradientDrawable.OVAL);
         gd.setColor(bgColor);
         iconView.setBackground(gd);
     }
