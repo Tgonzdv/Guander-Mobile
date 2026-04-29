@@ -31,6 +31,9 @@ export default {
     if (request.method === 'GET' && url.pathname === '/places') {
       return handleGetPlaces(request, env, url);
     }
+    if (request.method === 'GET' && url.pathname === '/store-photos') {
+      return handleGetStorePhotos(request, env, url);
+    }
     if (request.method === 'GET' && url.pathname === '/comments') {
       return handleGetComments(request, env, url);
     }
@@ -374,26 +377,59 @@ async function handleGetRewards(request, env, url) {
   await ensurePointsHistoryTable(env);
 
   try {
-    const customer = await getCustomerByEmail(env, email);
-    if (!customer) return corsResponse({ error: 'User not found' }, 404);
+    // Find user — if no customer row exists yet, return 0 points with rewards still visible
+    const userData = await env.DB.prepare(`
+      SELECT u.id_user FROM user_data ud
+      JOIN users u ON u.fk_user_data = ud.id_user_data
+      WHERE LOWER(ud.email) = LOWER(?)
+      ORDER BY u.id_user DESC LIMIT 1
+    `).bind(email).first();
+
+    let customerId = null;
+    let points = 0;
+    if (userData) {
+      const customerRow = await env.DB.prepare(
+        'SELECT id_customer, points FROM customer WHERE fk_user = ? ORDER BY points DESC LIMIT 1'
+      ).bind(userData.id_user).first();
+      if (customerRow) {
+        customerId = customerRow.id_customer;
+        points = customerRow.points || 0;
+      }
+    }
 
     let rewards = [];
     try {
+      const alreadyBoughtStore = customerId
+        ? `AND id_coupon NOT IN (SELECT fk_coupon_id FROM coupon_buy_store WHERE fk_customer_id = ${customerId})`
+        : '';
+      const alreadyBoughtProf = customerId
+        ? `AND id_coupon NOT IN (SELECT fk_coupon_prof_id FROM coupon_buy_prof WHERE fk_customer_id = ${customerId})`
+        : '';
+
       const { results } = await env.DB.prepare(`
         SELECT id_coupon AS id, name, description, point_req,
                code_coupon, fk_store, 'store' AS type
         FROM coupon_store
-        WHERE state = 1 AND fk_coupon_state = 1
-          AND expiration_date >= date('now')
-          AND id_coupon NOT IN (
-            SELECT fk_coupon_id FROM coupon_buy_store WHERE fk_customer_id = ?
-          )
+        WHERE (state IS NULL OR state = 1)
+          AND (fk_coupon_state IS NULL OR fk_coupon_state = 1)
+          AND (expiration_date IS NULL OR expiration_date >= date('now'))
+          ${alreadyBoughtStore}
+
+        UNION ALL
+
+        SELECT id_coupon AS id, name, description, point_req,
+               code_coupon, 0 AS fk_store, 'prof' AS type
+        FROM coupon_prof
+        WHERE (fk_coupon_state IS NULL OR fk_coupon_state = 1)
+          AND (expiration_date IS NULL OR expiration_date >= date('now'))
+          ${alreadyBoughtProf}
+
         ORDER BY point_req ASC
-      `).bind(customer.id_customer).all();
+      `).all();
       rewards = results || [];
     } catch (e) { rewards = []; }
 
-    return corsResponse({ points: customer.points, rewards });
+    return corsResponse({ points, rewards });
   } catch (err) {
     return corsResponse({ error: err.message }, 500);
   }
@@ -527,6 +563,44 @@ function parseLoc(loc) {
   };
 }
 
+// ── GET /store-photos?storeId= ───────────────────────────────────────────────
+async function handleGetStorePhotos(request, env, url) {
+  const storeId = parseInt(url.searchParams.get('storeId') || '0');
+  if (!storeId) return corsResponse({ photos: [] });
+
+  try {
+    const store = await env.DB.prepare(
+      `SELECT image_url, gallery_urls FROM stores WHERE id_store = ?`
+    ).bind(storeId).first().catch(() => null);
+
+    if (!store) return corsResponse({ photos: [] });
+
+    const photos = [];
+
+    // gallery_urls is a JSON array string like ["url1","url2",...]
+    let gallery = [];
+    try {
+      if (store.gallery_urls) {
+        gallery = JSON.parse(store.gallery_urls);
+        if (!Array.isArray(gallery)) gallery = [];
+      }
+    } catch (_) { gallery = []; }
+
+    // The gallery already contains the primary photo first (as uploaded by the dashboard).
+    // Add all gallery photos, then add image_url only if not already present.
+    for (const u of gallery) {
+      if (u && !photos.includes(u)) photos.push(u);
+    }
+    if (store.image_url && !photos.includes(store.image_url)) {
+      photos.unshift(store.image_url);
+    }
+
+    return corsResponse({ photos });
+  } catch (err) {
+    return corsResponse({ photos: [] });
+  }
+}
+
 // ── GET /places?lat=&lng= ────────────────────────────────────────────────────
 async function handleGetPlaces(request, env, url) {
   const userLat = parseFloat(url.searchParams.get('lat') || '-34.6037');
@@ -538,6 +612,7 @@ async function handleGetPlaces(request, env, url) {
       SELECT s.id_store AS id_place, s.name, s.description, s.address, s.location,
              COALESCE(cat.name, '') AS cat_name, 'store' AS place_type,
              COALESCE(s.image_url, '') AS photo_url,
+             s.gallery_urls,
              COALESCE(s.stars, 0) AS stars,
              COALESCE(sch.week, '') AS sched_week,
              COALESCE(sch.weekend, '') AS sched_weekend,
@@ -565,12 +640,22 @@ async function handleGetPlaces(request, env, url) {
     const allPlaces = [
       ...(storeRows || []).map(s => {
         const { lat, lng } = parseLoc(s.location);
+        // Build ordered photo list: gallery first, then image_url as fallback
+        let galleryList = [];
+        try {
+          if (s.gallery_urls) {
+            const parsed = JSON.parse(s.gallery_urls);
+            if (Array.isArray(parsed)) galleryList = parsed.filter(Boolean);
+          }
+        } catch (_) {}
+        if (galleryList.length === 0 && s.photo_url) galleryList = [s.photo_url];
         return {
           id_place: s.id_place,
           name: s.name,
           description: s.description || '',
           address: s.address || '',
-          photo_url: s.photo_url || '',
+          photo_url: galleryList[0] || s.photo_url || '',
+          gallery_urls: JSON.stringify(galleryList),
           stars: s.stars || 0,
           sched_week: s.sched_week || '',
           sched_weekend: s.sched_weekend || '',

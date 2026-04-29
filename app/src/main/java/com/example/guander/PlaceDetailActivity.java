@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -18,6 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
@@ -35,6 +38,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PlaceDetailActivity extends AppCompatActivity {
 
@@ -101,13 +106,46 @@ public class PlaceDetailActivity extends AppCompatActivity {
         String placePhone = getIntent().getStringExtra("PLACE_PHONE");
         int placeIsOpen = getIntent().getIntExtra("PLACE_IS_OPEN", -1);
 
-        // Place photo
+        // Photos gallery
         String placePhoto = getIntent().getStringExtra("PLACE_PHOTO");
-        ImageView ivPlacePhoto = findViewById(R.id.iv_place_photo);
-        if (placePhoto != null && !placePhoto.isEmpty()) {
-            ivPlacePhoto.setVisibility(View.VISIBLE);
-            Glide.with(this).load(placePhoto).centerCrop().into(ivPlacePhoto);
+        String placeGalleryJson = getIntent().getStringExtra("PLACE_GALLERY");
+        ViewPager2 vpPhotos = findViewById(R.id.vp_photos);
+        LinearLayout llIndicators = findViewById(R.id.ll_photo_indicators);
+
+        List<String> photoList = new ArrayList<>();
+
+        // Parse gallery JSON array first (already ordered, primary photo is first)
+        if (placeGalleryJson != null && !placeGalleryJson.isEmpty()) {
+            try {
+                JSONArray arr = new JSONArray(placeGalleryJson);
+                for (int i = 0; i < arr.length(); i++) {
+                    String u = arr.optString(i, "");
+                    if (!u.isEmpty()) photoList.add(u);
+                }
+            } catch (Exception ignored) {}
         }
+        // Fallback: use single photo if gallery is empty
+        if (photoList.isEmpty() && placePhoto != null && !placePhoto.isEmpty()) {
+            photoList.add(placePhoto);
+        }
+
+        PhotoPagerAdapter photoAdapter = new PhotoPagerAdapter(photoList);
+        vpPhotos.setAdapter(photoAdapter);
+
+        if (!photoList.isEmpty()) {
+            vpPhotos.setVisibility(View.VISIBLE);
+            if (photoList.size() > 1) {
+                llIndicators.setVisibility(View.VISIBLE);
+                updateIndicators(llIndicators, 0, photoList.size());
+            }
+        }
+
+        vpPhotos.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                updateIndicators(llIndicators, position, photoAdapter.getItemCount());
+            }
+        });
 
         // Category badge
         TextView tvDetailCategory = findViewById(R.id.tv_detail_category);
@@ -447,5 +485,70 @@ public class PlaceDetailActivity extends AppCompatActivity {
                 });
             }
         }).start();
+    }
+
+    // ── Photos gallery ────────────────────────────────────────────────────────
+
+    private void updateIndicators(LinearLayout ll, int selectedPos, int total) {
+        ll.removeAllViews();
+        if (total <= 1) {
+            ll.setVisibility(View.GONE);
+            return;
+        }
+        float dp = getResources().getDisplayMetrics().density;
+        int dotSize = (int) (8 * dp);
+        int dotMargin = (int) (4 * dp);
+        for (int i = 0; i < total; i++) {
+            View dot = new View(this);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(dotSize, dotSize);
+            lp.setMargins(dotMargin, 0, dotMargin, 0);
+            dot.setLayoutParams(lp);
+            GradientDrawable gd = new GradientDrawable();
+            gd.setShape(GradientDrawable.OVAL);
+            gd.setColor(i == selectedPos ? Color.parseColor("#2E7D32") : Color.parseColor("#BBBBBB"));
+            dot.setBackground(gd);
+            ll.addView(dot);
+        }
+    }
+
+    // ── Inner adapter for photo ViewPager2 ────────────────────────────────────
+
+    private class PhotoPagerAdapter extends RecyclerView.Adapter<PhotoPagerAdapter.PhotoVH> {
+        private final List<String> urls;
+
+        PhotoPagerAdapter(List<String> urls) {
+            this.urls = urls;
+        }
+
+        @Override
+        public PhotoVH onCreateViewHolder(ViewGroup parent, int viewType) {
+            ImageView iv = new ImageView(PlaceDetailActivity.this);
+            iv.setLayoutParams(new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT));
+            iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            return new PhotoVH(iv);
+        }
+
+        @Override
+        public void onBindViewHolder(PhotoVH holder, int position) {
+            Glide.with(PlaceDetailActivity.this)
+                    .load(urls.get(position))
+                    .centerCrop()
+                    .into(holder.imageView);
+        }
+
+        @Override
+        public int getItemCount() {
+            return urls.size();
+        }
+
+        class PhotoVH extends RecyclerView.ViewHolder {
+            final ImageView imageView;
+            PhotoVH(ImageView iv) {
+                super(iv);
+                imageView = iv;
+            }
+        }
     }
 }

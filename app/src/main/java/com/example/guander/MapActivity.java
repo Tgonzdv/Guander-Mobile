@@ -383,6 +383,7 @@ public class MapActivity extends AppCompatActivity {
             final String fTwitter = place.optString("twitter", "");
             final int fIsOpen = isOpen;
             final double fDist = distKm;
+            final String fGallery = place.optString("gallery_urls", "");
             btnDetail.setOnClickListener(v -> {
                 Intent intent = new Intent(this, PlaceDetailActivity.class);
                 intent.putExtra("PLACE_ID", fId);
@@ -401,6 +402,7 @@ public class MapActivity extends AppCompatActivity {
                 intent.putExtra("PLACE_IS_OPEN", fIsOpen);
                 intent.putExtra("PLACE_DISTANCE", fDist);
                 intent.putExtra("PLACE_PHOTO", fPhoto);
+                intent.putExtra("PLACE_GALLERY", fGallery);
                 startActivity(intent);
             });
 
@@ -559,6 +561,7 @@ public class MapActivity extends AppCompatActivity {
         final String fWebsite = place.optString("website", "");
         final String fInstagram = place.optString("instagram", "");
         final String fTwitter = place.optString("twitter", "");
+        final String fGallerySheet = place.optString("gallery_urls", "");
         sheetView.findViewById(R.id.btn_bs_detail).setOnClickListener(v -> {
             Intent intent = new Intent(this, PlaceDetailActivity.class);
             intent.putExtra("PLACE_ID", placeId);
@@ -577,6 +580,7 @@ public class MapActivity extends AppCompatActivity {
             intent.putExtra("PLACE_IS_OPEN", isOpen);
             intent.putExtra("PLACE_DISTANCE", distKm);
             intent.putExtra("PLACE_PHOTO", photo);
+            intent.putExtra("PLACE_GALLERY", fGallerySheet);
             startActivity(intent);
             sheet.dismiss();
         });
