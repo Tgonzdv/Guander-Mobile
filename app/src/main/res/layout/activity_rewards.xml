@@ -177,13 +177,18 @@
 
         <!-- Filter row -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/ll_filter_todos"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
+            android:paddingTop="6dp"
             android:paddingBottom="6dp"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -193,6 +198,7 @@
                 android:textColor="@color/text_secondary" />
 
             <TextView
+                android:id="@+id/tv_filter_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=" Todos"

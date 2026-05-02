@@ -46,6 +46,12 @@ export default {
     if (request.method === 'POST' && url.pathname === '/login-email') {
       return handleLoginEmail(request, env);
     }
+    if (request.method === 'POST' && url.pathname === '/forgot-password') {
+      return handleForgotPassword(request, env);
+    }
+    if (request.method === 'POST' && url.pathname === '/reset-password') {
+      return handleResetPassword(request, env);
+    }
     return new Response('Not found', { status: 404 });
   }
 };
@@ -180,6 +186,127 @@ async function handleGetDashboard(request, env, url) {
     return corsResponse({ points, name: userData.name, notifications: results || [] });
   } catch (err) {
     return corsResponse({ error: err.message }, 500);
+  }
+}
+
+async function handleForgotPassword(request, env) {
+  let body;
+  try { body = await request.json(); } catch { return corsResponse({ error: 'Invalid JSON' }, 400); }
+
+  const { email } = body;
+  if (!email) return corsResponse({ error: 'Email requerido' }, 400);
+
+  try {
+    await env.DB.prepare(`CREATE TABLE IF NOT EXISTS password_reset_tokens (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      email TEXT NOT NULL,
+      token TEXT NOT NULL,
+      expires_at INTEGER NOT NULL,
+      created_at INTEGER NOT NULL
+    )`).run();
+
+    const user = await env.DB.prepare(
+      'SELECT name FROM user_data WHERE LOWER(email) = LOWER(?)'
+    ).bind(email).first();
+
+    // Always return success to avoid email enumeration
+    if (!user) return corsResponse({ success: true });
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = Date.now() + 15 * 60 * 1000;
+
+    await env.DB.prepare(
+      'DELETE FROM password_reset_tokens WHERE LOWER(email) = LOWER(?)'
+    ).bind(email).run();
+
+    await env.DB.prepare(
+      'INSERT INTO password_reset_tokens (email, token, expires_at, created_at) VALUES (?, ?, ?, ?)'
+    ).bind(email, otp, expiresAt, Date.now()).run();
+
+    await sendPasswordResetEmail(env, email, user.name, otp);
+
+    return corsResponse({ success: true });
+  } catch (err) {
+    return corsResponse({ error: err.message }, 500);
+  }
+}
+
+async function handleResetPassword(request, env) {
+  let body;
+  try { body = await request.json(); } catch { return corsResponse({ error: 'Invalid JSON' }, 400); }
+
+  const { email, token, newPassword } = body;
+  if (!email || !token || !newPassword) return corsResponse({ error: 'Datos incompletos' }, 400);
+  if (newPassword.length < 6) return corsResponse({ error: 'La contrase\u00f1a debe tener al menos 6 caracteres' }, 400);
+
+  try {
+    const row = await env.DB.prepare(
+      'SELECT id, expires_at FROM password_reset_tokens WHERE LOWER(email) = LOWER(?) AND token = ?'
+    ).bind(email, token).first();
+
+    if (!row) return corsResponse({ error: 'C\u00f3digo inv\u00e1lido' }, 400);
+    if (Date.now() > row.expires_at) {
+      await env.DB.prepare('DELETE FROM password_reset_tokens WHERE id = ?').bind(row.id).run();
+      return corsResponse({ error: 'El c\u00f3digo expir\u00f3. Solicit\u00e1 uno nuevo.' }, 400);
+    }
+
+    const salt = generateSalt();
+    const hash = await hashPasswordPBKDF2(newPassword, salt);
+    const passwordHash = salt + ':' + hash;
+
+    await env.DB.prepare(
+      'UPDATE user_data SET password_hash = ? WHERE LOWER(email) = LOWER(?)'
+    ).bind(passwordHash, email).run();
+
+    await env.DB.prepare('DELETE FROM password_reset_tokens WHERE id = ?').bind(row.id).run();
+
+    return corsResponse({ success: true });
+  } catch (err) {
+    return corsResponse({ error: err.message }, 500);
+  }
+}
+
+async function sendPasswordResetEmail(env, email, name, otp) {
+  if (!env.RESEND_API_KEY) return;
+  const displayName = name || 'Guandero';
+  const html = `
+    <div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;background:#fff;border-radius:12px">
+      <div style="text-align:center;margin-bottom:24px">
+        <h1 style="color:#2E7D32;font-size:24px;margin:0">\uD83D\uDD12 Restablecer contrase\u00f1a</h1>
+      </div>
+      <p style="font-size:16px;color:#333">Hola <strong>${displayName}</strong>,</p>
+      <p style="font-size:15px;color:#555;line-height:1.6">
+        Recibimos una solicitud para restablecer tu contrase\u00f1a. Ingres\u00e1 el siguiente c\u00f3digo en la app:
+      </p>
+      <div style="text-align:center;margin:32px 0">
+        <div style="display:inline-block;background:#F1F8F1;border:2px solid #2E7D32;border-radius:12px;padding:20px 40px">
+          <span style="font-size:36px;font-weight:bold;letter-spacing:10px;color:#2E7D32">${otp}</span>
+        </div>
+      </div>
+      <p style="font-size:13px;color:#888;text-align:center">Este c\u00f3digo expira en <strong>15 minutos</strong>.</p>
+      <hr style="border:none;border-top:1px solid #eee;margin:24px 0" />
+      <p style="font-size:12px;color:#aaa;text-align:center">
+        Si no solicitaste esto, ignor\u00e1 este mensaje.<br />
+        &copy; ${new Date().getFullYear()} Guander
+      </p>
+    </div>
+  `;
+  try {
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + env.RESEND_API_KEY,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: 'Guander <noreply@guander.site>',
+        to: [email],
+        subject: '\uD83D\uDD12 C\u00f3digo para restablecer tu contrase\u00f1a',
+        html,
+      }),
+    });
+  } catch (_) {
+    // Non-blocking
   }
 }
 

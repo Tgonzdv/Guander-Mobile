@@ -3,10 +3,13 @@ package com.example.guander;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -38,10 +41,12 @@ import java.nio.charset.StandardCharsets;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private static final String WORKER_URL      = "https://guander-api.tomas-gonzalezz.workers.dev/register";
-    private static final String WORKER_LOGIN_URL = "https://guander-api.tomas-gonzalezz.workers.dev/login-email";
-    private static final String PREFS            = "guander_prefs";
-    private static final String KEY_EMAIL_AUTH   = "email_auth";
+    private static final String WORKER_URL       = "https://guander-api.tomas-gonzalezz.workers.dev/register";
+    private static final String WORKER_LOGIN_URL  = "https://guander-api.tomas-gonzalezz.workers.dev/login-email";
+    private static final String WORKER_FORGOT_URL = "https://guander-api.tomas-gonzalezz.workers.dev/forgot-password";
+    private static final String WORKER_RESET_URL  = "https://guander-api.tomas-gonzalezz.workers.dev/reset-password";
+    private static final String PREFS             = "guander_prefs";
+    private static final String KEY_EMAIL_AUTH    = "email_auth";
 
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
@@ -108,6 +113,7 @@ public class LoginActivity extends AppCompatActivity {
         });
         btnEmailLogin.setOnClickListener(v -> handleEmailLogin());
         btnEmailRegister.setOnClickListener(v -> handleEmailRegister());
+        findViewById(R.id.tv_forgot_password).setOnClickListener(v -> showForgotPasswordDialog());
     }
 
     @Override
@@ -152,6 +158,183 @@ public class LoginActivity extends AppCompatActivity {
                     setLoading(false);
                     Toast.makeText(this, "Error Firebase: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
+    }
+
+    // ── Forgot password ───────────────────────────────────────────────────────
+
+    private void showForgotPasswordDialog() {
+        EditText etEmailInput = new EditText(this);
+        etEmailInput.setHint("Correo electrónico");
+        etEmailInput.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS | InputType.TYPE_CLASS_TEXT);
+        int pad = (int) (16 * getResources().getDisplayMetrics().density);
+        etEmailInput.setPadding(pad, pad / 2, pad, pad / 2);
+
+        // Pre-fill with current email field if visible
+        if (etEmail.getText() != null && !etEmail.getText().toString().isEmpty()) {
+            etEmailInput.setText(etEmail.getText().toString().trim());
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle("Recuperar contraseña")
+                .setMessage("Ingresá tu correo y te enviaremos un código de verificación.")
+                .setView(etEmailInput)
+                .setPositiveButton("Enviar código", (dialog, which) -> {
+                    String email = etEmailInput.getText().toString().trim();
+                    if (TextUtils.isEmpty(email)) {
+                        Toast.makeText(this, "Ingresá tu correo", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    callForgotPassword(email);
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void callForgotPassword(String email) {
+        setLoading(true);
+        new Thread(() -> {
+            try {
+                URL url = new URL(WORKER_FORGOT_URL);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setConnectTimeout(10000);
+                conn.setReadTimeout(10000);
+                conn.setDoOutput(true);
+
+                String safeEmail = email.replace("\"", "\\\"");
+                try (OutputStream os = conn.getOutputStream()) {
+                    os.write(("{\"email\":\"" + safeEmail + "\"}").getBytes(StandardCharsets.UTF_8));
+                }
+
+                int code = conn.getResponseCode();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(
+                        code < 400 ? conn.getInputStream() : conn.getErrorStream()));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) sb.append(line);
+                reader.close();
+                conn.disconnect();
+
+                JSONObject resp = new JSONObject(sb.toString());
+                if (resp.optBoolean("success", false)) {
+                    runOnUiThread(() -> {
+                        setLoading(false);
+                        showEnterCodeDialog(email);
+                    });
+                } else {
+                    String msg = resp.optString("error", "Error al enviar el código");
+                    runOnUiThread(() -> {
+                        setLoading(false);
+                        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+                    });
+                }
+            } catch (Exception e) {
+                runOnUiThread(() -> {
+                    setLoading(false);
+                    Toast.makeText(this, "Error de conexión", Toast.LENGTH_SHORT).show();
+                });
+            }
+        }).start();
+    }
+
+    private void showEnterCodeDialog(String email) {
+        float density = getResources().getDisplayMetrics().density;
+        int pad = (int) (16 * density);
+        int gap = (int) (8 * density);
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(pad, gap, pad, 0);
+
+        EditText etCode = new EditText(this);
+        etCode.setHint("Código de 6 dígitos");
+        etCode.setInputType(InputType.TYPE_CLASS_NUMBER);
+        etCode.setMaxLines(1);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.bottomMargin = gap;
+        etCode.setLayoutParams(lp);
+        layout.addView(etCode);
+
+        EditText etNewPass = new EditText(this);
+        etNewPass.setHint("Nueva contraseña (mín. 6 caracteres)");
+        etNewPass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        etNewPass.setMaxLines(1);
+        layout.addView(etNewPass);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Restablecer contraseña")
+                .setMessage("Revisá tu correo " + email + " e ingresá el código recibido.")
+                .setView(layout)
+                .setPositiveButton("Confirmar", (dialog, which) -> {
+                    String code       = etCode.getText().toString().trim();
+                    String newPass    = etNewPass.getText().toString();
+                    if (code.length() != 6) {
+                        Toast.makeText(this, "El código debe tener 6 dígitos", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (newPass.length() < 6) {
+                        Toast.makeText(this, "La contraseña debe tener al menos 6 caracteres", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    callResetPassword(email, code, newPass);
+                })
+                .setNegativeButton("Cancelar", null)
+                .setNeutralButton("Reenviar código", (dialog, which) -> callForgotPassword(email))
+                .show();
+    }
+
+    private void callResetPassword(String email, String token, String newPassword) {
+        setLoading(true);
+        new Thread(() -> {
+            try {
+                URL url = new URL(WORKER_RESET_URL);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setConnectTimeout(10000);
+                conn.setReadTimeout(10000);
+                conn.setDoOutput(true);
+
+                JSONObject body = new JSONObject();
+                body.put("email", email);
+                body.put("token", token);
+                body.put("newPassword", newPassword);
+
+                try (OutputStream os = conn.getOutputStream()) {
+                    os.write(body.toString().getBytes(StandardCharsets.UTF_8));
+                }
+
+                int code = conn.getResponseCode();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(
+                        code < 400 ? conn.getInputStream() : conn.getErrorStream()));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) sb.append(line);
+                reader.close();
+                conn.disconnect();
+
+                JSONObject resp = new JSONObject(sb.toString());
+                if (resp.optBoolean("success", false)) {
+                    runOnUiThread(() -> {
+                        setLoading(false);
+                        Toast.makeText(this, "✓ Contraseña actualizada. Ya podés iniciar sesión.", Toast.LENGTH_LONG).show();
+                    });
+                } else {
+                    String msg = resp.optString("error", "Error al restablecer la contraseña");
+                    runOnUiThread(() -> {
+                        setLoading(false);
+                        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+                    });
+                }
+            } catch (Exception e) {
+                runOnUiThread(() -> {
+                    setLoading(false);
+                    Toast.makeText(this, "Error de conexión", Toast.LENGTH_SHORT).show();
+                });
+            }
+        }).start();
     }
 
     // ── Email / password ─────────────────────────────────────────────────────

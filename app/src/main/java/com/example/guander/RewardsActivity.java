@@ -2,6 +2,7 @@ package com.example.guander;
 
 import android.app.Dialog;
 import android.content.Intent;
+import androidx.appcompat.app.AlertDialog;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
@@ -49,8 +50,10 @@ public class RewardsActivity extends AppCompatActivity {
     private int currentPoints = 0;
     private String userEmail = "";
     private final List<JSONObject> allRewards = new ArrayList<>();
+    private int currentFilterStore = -1;
 
     private TextView tvPoints;
+    private TextView tvFilterLabel;
     private LinearLayout llRewards;
     private LinearLayout llHistory;
     private LinearLayout contentCanjear;
@@ -88,6 +91,7 @@ public class RewardsActivity extends AppCompatActivity {
         contentHistorial = findViewById(R.id.content_historial);
         pbLoading = findViewById(R.id.pb_rewards_loading);
         etSearch = findViewById(R.id.et_search);
+        tvFilterLabel = findViewById(R.id.tv_filter_label);
         indicatorCanjear = findViewById(R.id.indicator_canjear);
         indicatorHistorial = findViewById(R.id.indicator_historial);
         tvTabCanjear = findViewById(R.id.tv_tab_canjear);
@@ -98,11 +102,12 @@ public class RewardsActivity extends AppCompatActivity {
 
         findViewById(R.id.tab_canjear).setOnClickListener(v -> switchTab(true));
         findViewById(R.id.tab_historial).setOnClickListener(v -> switchTab(false));
+        findViewById(R.id.ll_filter_todos).setOnClickListener(v -> showFilterDialog());
 
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filterRewards(s.toString());
+                applyFilters();
             }
             @Override public void afterTextChanged(Editable s) {}
         });
@@ -246,19 +251,61 @@ public class RewardsActivity extends AppCompatActivity {
         tvPoints.setText(nf.format(points));
     }
 
-    private void filterRewards(String query) {
-        if (query.isEmpty()) {
-            renderRewards(allRewards);
-            return;
+    private void showFilterDialog() {
+        java.util.List<String> labels = new ArrayList<>();
+        java.util.List<Integer> stores = new ArrayList<>();
+        labels.add("Todos");
+        stores.add(-1);
+
+        String[] storeNames = {"", "Tienda de mascotas", "Veterinaria",
+                "Cafetería", "Peluquería", "Hotel",
+                "Supermercado", "Restaurante", "Paquetería"};
+        java.util.LinkedHashSet<Integer> seen = new java.util.LinkedHashSet<>();
+        for (JSONObject r : allRewards) seen.add(r.optInt("fk_store", 0));
+        for (int fk : seen) {
+            if (fk >= 1 && fk < storeNames.length) {
+                labels.add(storeNames[fk]);
+                stores.add(fk);
+            } else if (fk == 0) {
+                labels.add("General");
+                stores.add(0);
+            }
         }
-        String q = query.toLowerCase(Locale.getDefault());
+
+        String[] items = labels.toArray(new String[0]);
+        int checkedItem = stores.indexOf(currentFilterStore);
+        if (checkedItem < 0) checkedItem = 0;
+        final int[] selected = {checkedItem};
+
+        new AlertDialog.Builder(this)
+                .setTitle("Filtrar por categoría")
+                .setSingleChoiceItems(items, checkedItem, (dialog, which) -> selected[0] = which)
+                .setPositiveButton("Aplicar", (dialog, which) -> {
+                    currentFilterStore = stores.get(selected[0]);
+                    tvFilterLabel.setText(" " + labels.get(selected[0]));
+                    applyFilters();
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void applyFilters() {
+        String query = etSearch.getText().toString().toLowerCase(Locale.getDefault());
         List<JSONObject> filtered = new ArrayList<>();
         for (JSONObject r : allRewards) {
-            String name = r.optString("name", "").toLowerCase(Locale.getDefault());
-            String desc = r.optString("description", "").toLowerCase(Locale.getDefault());
-            if (name.contains(q) || desc.contains(q)) filtered.add(r);
+            if (currentFilterStore != -1 && r.optInt("fk_store", 0) != currentFilterStore) continue;
+            if (!query.isEmpty()) {
+                String name = r.optString("name", "").toLowerCase(Locale.getDefault());
+                String desc = r.optString("description", "").toLowerCase(Locale.getDefault());
+                if (!name.contains(query) && !desc.contains(query)) continue;
+            }
+            filtered.add(r);
         }
         renderRewards(filtered);
+    }
+
+    private void filterRewards(String query) {
+        applyFilters();
     }
 
     private void renderRewards(List<JSONObject> rewards) {
