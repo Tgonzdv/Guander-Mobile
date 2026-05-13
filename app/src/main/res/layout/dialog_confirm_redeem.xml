@@ -7,15 +7,30 @@
     android:background="@drawable/shape_dialog_bg"
     android:padding="24dp">
 
-    <!-- Scissors icon circle -->
-    <TextView
+    <!-- Icon circle -->
+    <FrameLayout
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center"
-        android:text="✂️"
-        android:textSize="30sp"
-        android:background="@drawable/shape_notif_icon" />
+        android:layout_gravity="center_horizontal">
+
+        <TextView
+            android:id="@+id/tv_confirm_icon"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:gravity="center"
+            android:text="🎁"
+            android:textSize="30sp"
+            android:background="@drawable/shape_notif_icon" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/iv_confirm_photo"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            app:shapeAppearanceOverlay="@style/CircleImageStyle" />
+
+    </FrameLayout>
 
     <!-- Title -->
     <TextView

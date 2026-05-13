@@ -40,6 +40,9 @@ export default {
     if (request.method === 'POST' && url.pathname === '/review') {
       return handlePostReview(request, env);
     }
+    if (request.method === 'POST' && url.pathname === '/generate-consumo') {
+      return handleGenerateConsumo(request, env);
+    }
     if (request.method === 'POST' && url.pathname === '/validate-qr') {
       return handleValidateQr(request, env);
     }
@@ -534,21 +537,28 @@ async function handleGetRewards(request, env, url) {
         : '';
 
       const { results } = await env.DB.prepare(`
-        SELECT id_coupon AS id, name, description, point_req,
-               code_coupon, fk_store, 'store' AS type
-        FROM coupon_store
-        WHERE (state IS NULL OR state = 1)
-          AND (fk_coupon_state IS NULL OR fk_coupon_state = 1)
-          AND (expiration_date IS NULL OR expiration_date >= date('now'))
+        SELECT cs.id_coupon AS id, cs.name, cs.description, cs.point_req,
+               cs.code_coupon, cs.fk_store, 'store' AS type,
+               COALESCE(
+                 NULLIF(s.image_url, ''),
+                 NULLIF(json_extract(s.gallery_urls, '$[0]'), ''),
+                 ''
+               ) AS photo_url
+        FROM coupon_store cs
+        LEFT JOIN stores s ON s.id_store = cs.fk_store
+        WHERE (cs.state IS NULL OR cs.state = 1)
+          AND (cs.fk_coupon_state IS NULL OR cs.fk_coupon_state = 1)
+          AND (cs.expiration_date IS NULL OR cs.expiration_date >= date('now'))
           ${alreadyBoughtStore}
 
         UNION ALL
 
-        SELECT id_coupon AS id, name, description, point_req,
-               code_coupon, 0 AS fk_store, 'prof' AS type
-        FROM coupon_prof
-        WHERE (fk_coupon_state IS NULL OR fk_coupon_state = 1)
-          AND (expiration_date IS NULL OR expiration_date >= date('now'))
+        SELECT cp.id_coupon AS id, cp.name, cp.description, cp.point_req,
+               cp.code_coupon, 0 AS fk_store, 'prof' AS type,
+               '' AS photo_url
+        FROM coupon_prof cp
+        WHERE (cp.fk_coupon_state IS NULL OR cp.fk_coupon_state = 1)
+          AND (cp.expiration_date IS NULL OR cp.expiration_date >= date('now'))
           ${alreadyBoughtProf}
 
         ORDER BY point_req ASC
@@ -960,6 +970,46 @@ async function handlePostReview(request, env) {
   }
 }
 
+// ── Pending consumptions table ───────────────────────────────────────────────
+async function ensurePendingConsumptionsTable(env) {
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS pending_consumptions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    code TEXT UNIQUE NOT NULL,
+    store_type TEXT DEFAULT 'store',
+    store_id INTEGER,
+    store_name TEXT,
+    amount INTEGER,
+    item TEXT,
+    created_at TEXT,
+    used INTEGER DEFAULT 0
+  )`).run();
+}
+
+// ── POST /generate-consumo ────────────────────────────────────────────────────
+async function handleGenerateConsumo(request, env) {
+  let body;
+  try { body = await request.json(); } catch { return corsResponse({ error: 'Invalid JSON' }, 400); }
+
+  const { storeId, storeName, items, total, storeType } = body;
+  if (!storeId || !total) return corsResponse({ error: 'Faltan campos: storeId y total son requeridos' }, 400);
+
+  const bytes = crypto.getRandomValues(new Uint8Array(5));
+  const suffix = Array.from(bytes).map(b => b.toString(36).toUpperCase().padStart(2,'0')).join('').substring(0, 8);
+  const code = 'GUANDER-' + suffix;
+
+  const itemText = Array.isArray(items)
+    ? items.map(i => (i.name || i.servicio || i.nombre || '')).filter(Boolean).join(', ')
+    : (items || '');
+
+  const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+  await ensurePendingConsumptionsTable(env);
+  await env.DB.prepare(
+    'INSERT INTO pending_consumptions (code, store_type, store_id, store_name, amount, item, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)'
+  ).bind(code, storeType || 'store', parseInt(storeId), storeName || '', parseInt(total), itemText, now).run();
+
+  return corsResponse({ code, qrText: code });
+}
+
 // ── POST /validate-qr ──────────────────────────────────────────────────────
 async function handleValidateQr(request, env) {
   let body;
@@ -970,10 +1020,32 @@ async function handleValidateQr(request, env) {
 
   try {
     let qr;
-    try { qr = JSON.parse(qrData); } catch { return corsResponse({ error: 'QR inválido' }, 400); }
+    const trimmed = (qrData || '').trim();
 
-    const { type, id, name: storeName, amount, item, secret } = qr;
-    if (secret !== 'guander2026') return corsResponse({ error: 'QR inválido' }, 400);
+    if (trimmed.startsWith('{')) {
+      // JSON format
+      try { qr = JSON.parse(trimmed); } catch { return corsResponse({ error: 'QR inválido' }, 400); }
+    } else {
+      // Plain code format (e.g. GUANDER-0R962XVT)
+      await ensurePendingConsumptionsTable(env);
+      const pending = await env.DB.prepare(
+        'SELECT * FROM pending_consumptions WHERE code = ? AND used = 0'
+      ).bind(trimmed).first();
+      if (!pending) return corsResponse({ error: 'Código QR no encontrado o ya utilizado' }, 404);
+      qr = {
+        type: pending.store_type,
+        id: pending.store_id,
+        name: pending.store_name,
+        amount: pending.amount,
+        item: pending.item || ''
+      };
+    }
+
+    const type = qr.type || qr.tipo;
+    const id = qr.id || qr.storeId || qr.localId || qr.professionalId;
+    const storeName = qr.name || qr.nombre || qr.storeName;
+    const amount = qr.amount || qr.monto || qr.total;
+    const item = qr.item || qr.servicio || qr.descripcion || '';
     if (!id || !amount) return corsResponse({ error: 'QR incompleto' }, 400);
 
     const customer = await getCustomerByEmail(env, email);
@@ -1000,6 +1072,13 @@ async function handleValidateQr(request, env) {
     await env.DB.prepare(
       'INSERT INTO points_history (fk_customer, description, points_change) VALUES (?, ?, ?)'
     ).bind(customer.id_customer, 'Consumo en ' + (storeName || 'local afiliado'), pointsEarned).run();
+
+    // Mark pending consumption as used (if plain code was used)
+    if (!(qrData || '').trim().startsWith('{')) {
+      await env.DB.prepare(
+        'UPDATE pending_consumptions SET used = 1 WHERE code = ?'
+      ).bind((qrData || '').trim()).run();
+    }
 
     const updated = await env.DB.prepare(
       'SELECT points FROM customer WHERE id_customer = ?'

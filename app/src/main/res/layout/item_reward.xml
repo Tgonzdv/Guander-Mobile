@@ -25,13 +25,27 @@
             android:gravity="center_vertical">
 
             <!-- Circular icon -->
-            <TextView
-                android:id="@+id/tv_reward_icon"
+            <FrameLayout
                 android:layout_width="52dp"
-                android:layout_height="52dp"
-                android:gravity="center"
-                android:text="🎁"
-                android:textSize="24sp" />
+                android:layout_height="52dp">
+
+                <TextView
+                    android:id="@+id/tv_reward_icon"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:gravity="center"
+                    android:text="🎁"
+                    android:textSize="24sp" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/iv_reward_photo"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone"
+                    app:shapeAppearanceOverlay="@style/CircleImageStyle" />
+
+            </FrameLayout>
 
             <!-- Name + desc -->
             <LinearLayout

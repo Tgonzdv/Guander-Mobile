@@ -21,6 +21,10 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.google.android.material.imageview.ShapeableImageView;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -341,7 +345,21 @@ public class RewardsActivity extends AppCompatActivity {
                     .setText(nf.format(pointsCost) + " pts");
 
             TextView iconView = item.findViewById(R.id.tv_reward_icon);
-            applyRewardIcon(iconView, fkStore, density);
+            ShapeableImageView photoView = item.findViewById(R.id.iv_reward_photo);
+            String photoUrl = reward.optString("photo_url", "");
+
+            if (!photoUrl.isEmpty()) {
+                iconView.setVisibility(View.GONE);
+                photoView.setVisibility(View.VISIBLE);
+                Glide.with(this)
+                        .load(photoUrl)
+                        .transform(new CircleCrop())
+                        .placeholder(android.R.color.transparent)
+                        .error(android.R.color.darker_gray)
+                        .into(photoView);
+            } else {
+                applyRewardIcon(iconView, fkStore, density);
+            }
 
             MaterialButton btnCanjear = item.findViewById(R.id.btn_reward_canjear);
             boolean canAfford = currentPoints >= pointsCost;
@@ -352,7 +370,8 @@ public class RewardsActivity extends AppCompatActivity {
             final String fName = name;
             final int fCost = pointsCost;
             final String fType = couponType;
-            btnCanjear.setOnClickListener(v -> showConfirmDialog(fId, fName, fCost, fType));
+            final String fPhoto = photoUrl;
+            btnCanjear.setOnClickListener(v -> showConfirmDialog(fId, fName, fCost, fType, fPhoto));
 
             llRewards.addView(item);
         }
@@ -440,7 +459,7 @@ public class RewardsActivity extends AppCompatActivity {
         }
     }
 
-    private void showConfirmDialog(int couponId, String rewardName, int pointsCost, String couponType) {
+    private void showConfirmDialog(int couponId, String rewardName, int pointsCost, String couponType, String photoUrl) {
         Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_confirm_redeem);
@@ -454,6 +473,20 @@ public class RewardsActivity extends AppCompatActivity {
                 .setText("🪙 " + nf.format(pointsCost) + " pts");
         ((TextView) dialog.findViewById(R.id.tv_confirm_remaining))
                 .setText("🪙 " + nf.format(currentPoints - pointsCost) + " pts");
+
+        // Load store photo if available
+        if (photoUrl != null && !photoUrl.isEmpty()) {
+            TextView tvIcon = dialog.findViewById(R.id.tv_confirm_icon);
+            ShapeableImageView ivPhoto = dialog.findViewById(R.id.iv_confirm_photo);
+            tvIcon.setVisibility(View.GONE);
+            ivPhoto.setVisibility(View.VISIBLE);
+            Glide.with(this)
+                    .load(photoUrl)
+                    .transform(new CircleCrop())
+                    .placeholder(android.R.color.transparent)
+                    .error(android.R.color.darker_gray)
+                    .into(ivPhoto);
+        }
 
         dialog.findViewById(R.id.btn_cancel_redeem).setOnClickListener(v -> dialog.dismiss());
         dialog.findViewById(R.id.btn_confirm_redeem).setOnClickListener(v -> {

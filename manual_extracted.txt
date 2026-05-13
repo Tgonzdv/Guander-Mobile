@@ -1,0 +1,784 @@
+﻿Fast TrackManual de UsuarioFast TrackManual de Usuario
+Fast Track
+Manual de Usuario
+
+
+
+
+
+Fast Track
+Manual de Usuario
+
+
+
+
+
+
+Jorge RuanovaJorge RuanovaVersión: 2.1Versión: 2.1
+Jorge Ruanova
+Jorge Ruanova
+Versión: 2.1
+
+
+
+
+Versión: 2.1
+
+
+
+
+Índice
+
+Índice1
+1.Introducción1
+2.Objetivo1
+3.Perfiles y funcionalidades2
+4.Todos los perfiles3
+4.1.Ingreso al sistema3
+4.2.Autogestión de perfil personal4
+4.3.Salir del sistema4
+4.4.Vista del panel principal5
+5.Perfil: Superadmin6
+5.1.Gestión de empresas6
+5.2.Gestión de usuarios7
+5.3.Gestión de especialidades8
+5.4.Visualización de clientes recurrentes8
+5.5.Revisión de feedbacks recibidos9
+6.Perfil: Owner10
+6.1.Gestión de empresa10
+6.2.Gestión de usuarios11
+6.3.Gestión de especialidades12
+6.4.Asignación de especialidades a profesional12
+6.5.Gestión de clientes recurrentes13
+6.6.Gestión de Reclamos14
+6.6.1.Crear nuevo reclamo15
+6.6.2.Visualizar reclamos históricos16
+6.6.3.Visualizar reclamos en curso17
+6.6.4.Envío de recordatorio manual18
+6.6.5.Exportar reclamos18
+6.7.Envío de feedback18
+7.Perfil: Operador19
+7.1.Gestión de usuarios19
+7.2.Visualización de especialidades asignadas a profesional20
+7.3.Asignación de especialidades a profesional20
+7.4.Gestión de clientes recurrentes21
+7.5.Gestión de Reclamos22
+7.5.1.Crear nuevo reclamo23
+7.5.2.Visualizar reclamos históricos24
+7.5.3.Visualizar reclamos en curso25
+7.5.4.Envío de recordatorio manual26
+7.5.5.Exportar reclamos26
+7.6.Envío de feedback27
+8.Perfil: Profesional28
+8.1.Gestión de fila de trabajo28
+8.2.Contactos rápidos28
+8.3.Gestión de reclamos29
+8.3.1.Reclamos en curso29
+8.3.2.Gestión de reclamo en curso29
+8.3.3.Reclamos Cerrados30
+1.1.Envío de feedback30
+
+
+
+
+
+
+
+
+
+
+Introducción
+Bienvenido/a Fast Track.
+Fast Track es un sistema de gestión que permite la organización de tareas y seguimiento de gestiones de servicio, a través de una moderna e intuitiva plataforma web y móvil.
+Con Fast Track vas a poder gestionar tu empresa, empleados, profesionales, especialidades de tu rubro, agendas, horarios y las gestiones de tus clientes habituales los cuales requieren servicios o visitas.
+Objetivo
+Si bien esta plataforma fue desarrollada bajo un riguroso lineamiento de estándares de navegabilidad y experiencia de usuario, haciendo de la misma una herramienta intuitiva y auto didacta, a través de este manual, vas a poder interiorizarte aún más sobre las funcionalidades del sistema, como utilizarlas, familiarizarte con los flujos.
+Este documento per se, se encuentra en desarrollo constante ya que el mismo depende exclusivamente de la expansión y la implementación de nuevas funcionalidades pensadas y desarrolladas en base a tus necesidades.
+Nuevas actualizaciones o adhesiones a dicho documento serán comunicadas debidamente a través de nuestro boletín de novedades.
+Esperamos sea de utilidad y estamos a disposición para cualquier consulta o sugerencia.
+
+Perfiles y funcionalidades
+Fast Track cuenta 4 perfiles dedicados que permiten el funcionamiento e interacción del sistema.
+Estos perfiles cuentan con distintos tipos de acceso y funcionalidades, y son detallados en la siguiente tabla.
+FUNCION
+PROFESIONAL
+OPERADOR
+OWNER
+SUPERADMIN
+Acceso Web.
+✖
+✓
+✓
+✓
+Acceso Web Mobile.
+✖
+✓
+✓
+✓
+Acceso App Mobile.
+✓
+✖
+✖
+✖
+Creación empresa.
+✖
+✖
+✖
+✓
+Creación Perfiles superadmin y owner.
+✖
+✖
+✖
+✓
+Lectura de Feedbacks.
+✖
+✖
+✖
+✓
+Envío de Feedback.
+✓
+✓
+✓
+✖
+Gestión de especialidades.
+✖
+✖
+✓
+✓
+Asignación especialidad a profesional.
+✖
+✓
+✓
+✖
+Ver reclamos por empresa.
+✖
+✓
+✓
+✓
+Ver todos los reclamos de todas las empresas.
+✖
+✖
+✖
+✓
+Auto gestión de organización.
+✖
+✖
+✓
+✖
+Auto gestión de usuario.
+✓
+✓
+✓
+✓
+Gestión de usuarios.
+✖
+✓
+✓
+✓
+Gestión de roles
+(con restricción por jerarquía).
+✖
+✖
+✓
+✓
+Gestión de fila de trabajo.
+✓
+✖
+✖
+✖
+Gestión de reclamo abierto.
+✓
+✓
+✓
+✖
+Gestión de reclamo cerrado.
+✖
+✓
+✓
+✖
+Creación de clientes.
+✖
+✓
+✓
+✖
+Creación de reclamo.
+✖
+✓
+✓
+✖
+Descarga de reportes de reclamos.
+✖
+✓
+✓
+✖
+Historial y métricas personales.
+✓
+✖
+✖
+✖
+Historial y métricas de empresa.
+✖
+✓
+✓
+✓
+Historial y métricas totales.
+✖
+✖
+✖
+✓
+
+
+Todos los perfiles
+En esta sección se van a detallar acciones que pueden realizar la mayoría de los perfiles a nivel acceso y auto gestión de información.
+Ingreso al sistema
+El ingreso al portal puede ser realizados de dos formas.
+A través del enlace directo > https://fastrack-portal.vercel.app
+A través del botón de acción en el sitio institucional > https://fastrack-cfv.vercel.app - Seleccionar el botón de acción “Ingreso Clientes” en la barra de navegación superior.
+Para acceder al portal, el usuario debe contar con las credenciales de acceso, previamente brindadas por su administrador, esto significa que la plataforma se encuentra cerrada, y no es de acceso mediante autogestión por parte del usuario.
+En el caso de un Owner o propietario, será el superadmin quien brinde este acceso.
+En el caso de un Operador, será un Owner o propietario quien brinde este acceso.
+En el caso de un Profesional, será un Owner/propietario u operador, quienes brinden este acceso.
+Para poder ingresar a la plataforma, la misma solicitara:
+Correo electrónico
+Contraseña
+El sistema permitirá solo 3 intentos fallidos de ingreso. Acto seguido, la cuenta será bloqueada, y solo un perfil de rango superior podrá realizar el desbloqueo de la cuenta con su opcional cambio de contraseña.
+En todo momento, la interfaz gráfica informara el estado y resultado de la acción solicitada.
+IMPORTANTE:
+Acceso Web: En caso de que un perfil Profesional, intente ingresar al portal vía web, luego de validar las credenciales, el usuario será redireccionado a una interfaz la cual le brindara el enlace y QR para realizar la descarga de la aplicación mobile.
+(Este acceso es solo para perfiles Superadmin, Owner y Operador)
+Acceso Mobile: En caso de que un perfil que no sea Profesional intente ingresar al portal vía mobile, luego de validar las credenciales, el usuario será al explorador nativo del dispositivo para volver a autenticarse a través del portal desarrollado Web
+(Este acceso es solo para perfil Profesional)
+Adicionalmente, es recomendable que el usuario acepte el envío de notificaciones push en su dispositivo. Esto le permitirá mantenerse informado de manera activa ante eventos sobre nuevas asignaciones o cambios de estado.
+
+Autogestión de perfil personal
+Cualquier usuario será capaz de gestionar sus datos básicos de perfil y gestión de contraseña.
+ACCESO WEB:
+En la barra de navegación principal (izquierda), realizar un clic sobre el nombre de usuario autenticado, esto desplegara un menú flotante.
+Elegir la opción “Mi perfil”.
+Una vez elegida la opción, un menú lateral se mostrará en la sección derecha de la pantalla.
+Esta sección contara con 2 partes:
+
+Editar Mi perfil:
+En esta sección podrá actualizar datos básicos de contacto (nombre, teléfono, correo electrónico), ya sea todos, o solo algunos, y también podrá realizar el cambio de contraseña.ATENCION: En caso de que el cambio o los cambios, incluyan el cambio de contraseña, el sistema mostrara un mensaje indicando que la sesión se cerrara y el usuario deberá volver a autenticarse en el portal. Hasta que el usuario no acepte este mensaje, el cambio de contraseña no será realizado.
+Cambiar contraseña:Esta opción permite solo realizar el cambio de contraseña.ATENCION: Al realizar este cambio, el sistema mostrará un mensaje indicando que la sesión se cerrará y el usuario deberá volver a autenticarse en el portal. Hasta que el usuario no acepte este mensaje, el cambio de contraseña no será realizado.
+ACCESO MOBILE:
+El acceso mobile se realizará mediante el botón de acción menú hamburguesa, ingresando a la opción “Gestión de perfil”Esto llevará al usuario a una nueva pantalla, con el mismo funcionamiento y requerimiento mencionado en el acceso Web.
+Salir del sistema
+El sistema fue desarrollado con el objetivo de mantener la sesión del usuario al menos 7 días corridos, para evitar una autenticación constante, manejando protocolos de encriptación que brinden al usuario seguridad en sus gestiones.
+No obstante, el usuario cuenta con la opción de cerrar manualmente su sesión en la plataforma.
+ACCESO WEB:
+En la barra de navegación principal (izquierda), realizar un clic sobre el nombre de usuario autenticado, esto desplegara un menú flotante.
+Elegir la opción “Cerrar sesión”.
+Ahora el sistema se encuentra cerrado y para poder ingresar nuevamente, el usuario debe autenticarse con sus credenciales de acceso.
+ACCESO MOBILE:
+El acceso mobile se realizará mediante el botón de acción menú hamburguesa, ingresando a la opción “Cerrar sesión”El sistema cerrará la sesión del usuario y al mismo tiempo eliminará la suscripción a las notificaciones móviles generada al comienzo de la sesión.
+
+Vista del panel principal
+Todos los usuarios, posterior a la validación de sus credenciales de acceso, ingresaran a un panel principal, el cual brindara algunas métricas y datos relevantes para su gestión.
+Esta información tendrá un acceso restringido y limitante según su organización y perfil.
+Algunos ejemplos:
+SUPERADMIN:
+Posee un acceso general y global de toda la aplicación. Podrá visualizar: 
+Distribución de empresas en base a estado de las mismas.
+Usuarios por tipo de rol.
+Clientes Recurrentes activos.
+Especialidades por nombre
+Estadísticas por empresa (usuarios por rol activos, clientes, especialidades, reclamos)
+Tendencia de reclamos
+OWNER Y OPERADOR:
+Posee un acceso limitado únicamente a su organización. Estos roles comparten los siguientes datos: 
+Botones rápidos para la creación de reclamos, visualización de reclamos activos y cerrados.
+Conteo de usuarios por tipo de rol.
+Conteo total de reclamos totales, activos y cerrados.
+Conteo de reclamos cerrados.
+Distribución de usuarios en base a estado.
+Distribución de usuarios en base a rol.
+Distribución de profesiones por nombre.
+Desplegable con resumen de reclamos activos (próximos 5)
+Desplegable con resumen de reclamos histórico (últimos 5)
+
+PROFESIONAL (MOBILE APP):
+Posee un acceso limitado únicamente a su organización y su usuario: 
+Estado de la empresa y datos principales.
+Habilitación/Bloqueo de fila de trabajo.
+Botones rápidos para contacto directo con la empresa.
+Desplegable con resumen de reclamos activos (próximos 5) + Botón para navegar a dicha pagina
+Desplegable con resumen de reclamos histórico (últimos 5) + Botón para navegar a dicha pagina
+
+Perfil: Superadmin
+El perfil Superadmin, es el administrador principal del sistema y se encarga principalmente de ser la puerta de enlace necesaria para que otros usuarios comiencen a operar con la plataforma.
+A lo largo de este punto, se revisarán las diferentes funcionalidades y como interactuar con las mismas.
+Gestión de empresas
+La creación de una empresa es el punto de ingreso principal, para poder comenzar a realizar asignación de usuarios a diferentes organizaciones.
+En la barra de navegación principal (izquierda), ingresar a la opción Empresas.
+Este listado mostrara todas las organizaciones registradas (en caso de existir), sus datos principales, su estado, y las opciones de Gestionar y Bloquear/Desbloquear.
+Crear Nueva Empresa:
+Oprimir el botón de acción “Nueva Empresa”. Esto desplegará un panel lateral la ubicación derecha de la pantalla la cual contendrá ciertos campos a completar (algunos campos previamente ya completados)
+IMPORTANTE: El sistema validara que el nombre de la empresa, CUIT/CUIL y correo electrónico, no existan previamente. En caso de existencia previa, el sistema mostrara una alerta.
+En cuanto a la configuración de la empresa, el sistema permitirá elegir el limite de operadores, profesionales y especialidades, como también la habilidad de realizar envíos manuales de recordatorios. Estas opciones estarán sujetas al plan contratado por cada organización.
+
+Gestionar una empresa:
+A través del listado de empresas, oprimir el botón de acción editar (lápiz), y el menú lateral se desplegara para realizar las ediciones necesarias.IMPORTANTE: El sistema validara que el nombre de la empresa, CUIT/CUIL y correo electrónico, no existan previamente. En caso de existencia previa, el sistema mostrara una alerta.
+En cuanto a la configuración de la empresa, el sistema permitirá elegir el límite de operadores, profesionales y especialidades, como también la habilidad de realizar envíos manuales de recordatorios. Estas opciones estarán sujetas al plan contratado por cada organización.
+Bloquear/Desbloquear una empresa:
+A través del listado de empresas, luego del botón de acción editar (lápiz), se observará un nuevo botón de acción con diseño de candado. El sistema mostrara la interfaz del botón en base al estado de la empresa.
+EMPRESA ACTIVA: El botón aparecerá en rojo con la opción de BLOQUEAR la empresa.
+(Cualquier usuario de la empresa, podrá continuar ingresando al sistema, pero recibirá una comunicación visual con el estado de la organización, limitando la navegación y uso del sistema)
+EMPRESA BLOQUEADA: El botón aparecerá en verde con la opción de DESBLOQUEAR la empresa.
+(Cualquier usuario de la empresa, podrá continuar ingresando al sistema de manera normal)
+
+Gestión de usuarios
+Como perfil Superadmin, el usuario podrá generar nuevos accesos con distintos roles según la necesidad.
+Es importante destacar que, para todos los roles, el sistema solicitara la asignación inmediata de una empresa existente, salvo para otros roles Superadmin.
+En la barra de navegación principal (izquierda), ingresar a la opción Usuarios.
+Este listado mostrara todos los usuarios registrados (en caso de existir), sus datos principales, su estado, roles, y las opciones de Gestionar, Bloquear/Desbloquear o restablecer usuario.
+Crear Nuevo Usuario:
+Oprimir el botón de acción “Crear Usuario”. Esto desplegará un panel lateral la ubicación derecha de la pantalla la cual contendrá ciertos campos a completar (algunos campos previamente ya completados)
+IMPORTANTE: El sistema validara que el nombre del usuario, DNI y correo electrónico, no existan previamente. En caso de existencia previa, el sistema mostrara una alerta.
+Gestionar un usuario:
+A través del listado de usuarios, oprimir el botón de acción editar (lápiz), y el menú lateral se desplegará para realizar las ediciones necesarias.IMPORTANTE: El sistema validará que el nombre del usuario, DNI y correo electrónico, no existan previamente. En caso de existencia previa, el sistema mostrara una alerta.
+Bloquear/Desbloquear Usuario:
+A través del listado de usuarios, luego del botón de acción editar (lápiz), se observará un nuevo botón de acción con diseño de candado. El sistema mostrara la interfaz del botón en base al estado del usuario.
+USUARIO ACTIVO: El botón aparecerá en rojo con la opción de BLOQUEAR el usuario.
+(El usuario, no podrá ingresar al portal y recibirá un mensaje informativo para contactar a su administrador inmediato)
+USUARIO INACTIVO: El botón aparecerá en verde con la opción de DESBLOQUEAR el usuario.
+(El usuario podrá continuar ingresando al sistema de manera normal)
+
+Restablecer Usuario:
+A través del listado de usuarios, luego del botón de acción bloquear/desbloquear, se observará un nuevo botón de acción para restablecer un usuario. Este botón aparecerá únicamente cuando un usuario haya acumulado 3 intentos fallidos de ingreso y su acceso se encuentre bloqueado. Esto se podrá ver ya que el candado se encontrará en verde con la opción “Desbloquear” activa. 
+Al oprimir este botón, el sistema exigirá un cambio de contraseña mandatorio para poder restablecer el acceso.
+Una vez realizada esta opción, el candado volverá nuevamente a rojo, indicando que el usuario ya se encuentra activo y la única opción disponible es “bloquearlo”.
+
+Diferencias entre un usuario inactivo y un usuario bloqueado.
+Un usuario bloqueado, posee registros fallidos en el sistema, mientras que un usuario inactivo, no.
+En caso de que un usuario se encuentre bloqueado, por más que el administrador vuelva a activar al usuario, el mismo no va a poder acceder al portal debido a su registro de intentos fallidos. Este es un mecanismo de seguridad que refuerza la integridad de las credenciales y exige un cambio de contraseña mandatorio para que el usuario pueda volver a acceder al portal.
+
+
+Gestión de especialidades
+Esta sección es complementaria para este rol, y permite la creación y gestión de especialidades (por fuera de los limites) a organizaciones puntuales.
+Estas especialidades pasaran a formar parte del núcleo de dicha organización y serán los focos de actividades que cada empresa trabajara en su día a día.
+En la barra de navegación principal (izquierda), ingresar a la opción Especialidades.
+Este listado mostrara especialidades registradas (en caso de existir), sus datos principales, estados, y las empresas a las cuales pertenece esa especialidad puntual.
+Crear Nueva Especialidad:
+Oprimir el botón de acción “Nueva Especialidad”. Esto desplegará un panel lateral la ubicación derecha de la pantalla la cual solicitará la empresa a la cual se adjudicará este nuevo ingreso y el nombre de la especialidad.
+IMPORTANTE: El sistema validara que el nombre de la especialidad, no existan previamente en esa empresa. En caso de existencia previa, el sistema mostrara una alerta.
+Gestionar Especialidad:
+A través del listado de especialidades, oprimir el botón de acción editar (lápiz), y el menú lateral se desplegará para realizar las ediciones necesarias, en este caso, solo será editar el nombre de la especialidad.IMPORTANTE: El sistema validará que el nombre de la especialidad, no existan previamente en esa empresa. En caso de existencia previa, el sistema mostrara una alerta.
+Activar / Desactivar Especialidad:
+A través del listado de especialidades, luego del botón de acción editar (lápiz), se observará un nuevo botón de acción con diseño de “encendido/apagado”. El sistema mostrara la interfaz del botón en base al estado de la especialidad.
+ESPECIALIDAD ACTIVA: El botón aparecerá en rojo con la opción de DESACTIVAR.
+(Esta especialidad no estará disponible para ser asignada a nuevas gestiones)
+ESPECIALIDAD INACTIVA: El botón aparecerá en verde con la opción de ACTIVAR.
+(Esta especialidad estará disponible para ser asignada a nuevas gestiones)
+
+ Visualización de clientes recurrentes
+Esta sección es puramente informativa, y permite al Superadmin visualizar una composición de empresas, clientes recurrentes y la cantidad y distribución de reclamos totales, activos y finalizados
+El detalle en esta pantalla permite al superadmin entender la composición de estos bloques de trabajo y su interacción. Funciona en conjunto con gráficas y métricas presentes en el panel principal, que permitirán comprender el uso y actividad de la plataforma a través de los diferentes usuarios y empresas.
+En la barra de navegación principal (izquierda), ingresar a la opción Clientes Recurrentes.
+
+Revisión de feedbacks recibidos
+El rol Superadmin podrá revisar el listado de feedbacks y retroalimentación recibida por parte de todos los usuarios activos para proceder a clasificar, segmentar y planificar las iniciativas y podre generar una estrategia ágil para el desarrollo de funcionalidades e iteraciones con cada miembro de las organizaciones.
+Esta opción es clave y fundamental para el desarrollo y evolución del sistema.
+En la barra de navegación principal (izquierda), ingresar a la opción Feedbacks.
+Este listado mostrara todos los feedbacks recibidos con las opciones marcar Ver en detalle o eliminar el mensaje puntual.
+Al hacer clic en la opción “Ver” podrá acceder al detalle completo de la devolución brindada por el usuario, como también el rol del usuario y su empresa para poder iniciar un contacto directo indagatorio y expandido del comentario enviado.
+La relevancia del rol y empresa por la cual se recibió el feedback es clave para entender la necesidad específica del rol, como también una posible necesidad aislada de la organización que, si bien puede o no estar alineada con la plataforma, servirá para entender necesidades puntuales y así poder brindar soluciones específicas al tipo de negocio especifico.
+
+
+Perfil: Owner
+El usuario Owner, quien es registrado como Propietario principal de la organización, será capaz gestionar preferencias y datos de su empresa, que le permitirán operar día a día en base a su necesidad y preferencia.
+Su distintivo, es que es el encargado de definir el alcance y núcleo de su organización, con control total de su empresa y sus especificaciones.
+Algunas terminologías en esta sección dependerán de los rótulos y nomenclaturas que el Owner/Propietario haya configurado para su organización. Las referencias mencionadas, serán únicamente correspondientes las configuraciones iniciales y de base del sistema.
+Gestión de empresa
+En la barra de navegación principal (izquierda), ingresar a la opción “Mi organización”.
+En esta sección el propietario podrá ver el estado de su empresa, sus límites asignados y el estado de la opción de recordatorios manuales.
+La sección se encuentra dividida en 3 niveles desplegables
+Datos de la empresa: Serán utilizados a nivel identificatorio y también como métodos de contacto para reclamos.
+Funciones de reclamo: Podrá actualizar la forma en que estas actividades se manejan
+Si la agenda del reclamo requiere una hora de finalización o no.
+Si el reclamo requiere un campo para alguna URL necesaria.
+Si el cliente requiere un campo para el domicilio o no.
+Etiquetas y templates de comunicaciones: El usuario podrá personalizar el nombre de todas las etiquetas y nomenclaturas a lo largo de toda la aplicación, como así también los textos que serán emitidos durante el proceso de la gestión y actualización de un reclamo.
+Al desplegar cada nivel, el usuario podrá realizar cambios a través de la interfaz visual presentada.Durante la actualización de estos campos, el sistema realizará validaciones y brindará datos relevantes al usuario para su correcto accionamiento.
+ATENCION: Es importante manejar esta sección con cautela y compromiso, ya que la misma consta de datos que impactan de manera directa a la operación diaria.
+Datos de contacto > Serán utilizados como Contactos Rápidos para el profesional, en caso de emergencias o consultas.
+Opciones de reclamo > Definirá el alcance y la forma en que estas actividades son gestionadas.
+Etiquetas y templates > Manejan nomenclaturas a lo largo de toda la organización y la manera en que las actualizaciones son comunicadas.
+
+Gestión de usuarios
+Como perfil Owner, el usuario podrá generar nuevos accesos con distintos roles según la necesidad.
+Es importante destacar que, los únicos roles que este perfil puede generar, serán Operador y Profesional, como así también su actualización.
+En la barra de navegación principal (izquierda), ingresar a la opción Usuarios.
+Este listado mostrara todos los usuarios registrados (en caso de existir), sus datos principales, su estado, roles, y las opciones de Gestionar, Bloquear/Desbloquear o restablecer usuario.
+Crear Nuevo Usuario:
+Oprimir el botón de acción “Crear Usuario”. Esto desplegará un panel lateral la ubicación derecha de la pantalla la cual contendrá ciertos campos a completar (algunos campos previamente ya completados)
+IMPORTANTE: El sistema validara que el nombre del usuario, DNI y correo electrónico, no existan previamente. En caso de existencia previa, el sistema mostrara una alerta.
+Gestionar un usuario:
+A través del listado de usuarios, oprimir el botón de acción editar (lápiz), y el menú lateral se desplegará para realizar las ediciones necesarias.IMPORTANTE: El sistema validará que el nombre del usuario, DNI y correo electrónico, no existan previamente. En caso de existencia previa, el sistema mostrara una alerta.
+Este perfil puede gestionar cualquier tipo de usuario.
+Bloquear/Desbloquear Usuario:
+A través del listado de usuarios, luego del botón de acción editar (lápiz), se observará un nuevo botón de acción con diseño de candado. El sistema mostrara la interfaz del botón en base al estado del usuario.
+USUARIO ACTIVO: El botón aparecerá en rojo con la opción de BLOQUEAR el usuario.
+(El usuario, no podrá ingresar al portal y recibirá un mensaje informativo para contactar a su administrador inmediato)
+USUARIO INACTIVO: El botón aparecerá en verde con la opción de DESBLOQUEAR el usuario.
+(El usuario podrá continuar ingresando al sistema de manera normal)
+
+Restablecer Usuario:
+A través del listado de usuarios, luego del botón de acción bloquear/desbloquear, se observará un nuevo botón de acción para restablecer un usuario. Este botón aparecerá únicamente cuando un usuario haya acumulado 3 intentos fallidos de ingreso y su acceso se encuentre bloqueado. Esto se podrá ver ya que el candado se encontrará en verde con la opción “Desbloquear” activa. 
+Al oprimir este botón, el sistema exigirá un cambio de contraseña mandatorio para poder restablecer el acceso.
+Una vez realizada esta opción, el candado volverá nuevamente a rojo, indicando que el usuario ya se encuentra activo y la única opción disponible es “bloquearlo”.
+
+Diferencias entre un usuario inactivo y un usuario bloqueado.
+Un usuario bloqueado, posee registros fallidos en el sistema, mientras que un usuario inactivo, no.
+En caso de que un usuario se encuentre bloqueado, por más que el administrador vuelva a activar al usuario, el mismo no va a poder acceder al portal debido a su registro de intentos fallidos. Este es un mecanismo de seguridad que refuerza la integridad de las credenciales y exige un cambio de contraseña mandatorio para que el usuario pueda volver a acceder al portal.
+
+Gestión de especialidades
+El usuario podrá definir cuáles son las especialidades por las cuales brindara servicios su organización.
+Estas especialidades pasaran a formar parte del núcleo de dicha organización y serán los focos de actividades que cada empresa trabajara en su día a día.
+En la barra de navegación principal (izquierda), ingresar a la opción Especialidades.
+Este listado mostrara especialidades registradas (en caso de existir), sus datos principales, estados, y las empresas a las cuales pertenece esa especialidad puntual.
+Crear Nueva Especialidad:
+Oprimir el botón de acción “Nueva Especialidad”. Esto desplegará un panel lateral la ubicación derecha de la pantalla la cual el nombre de la especialidad.
+IMPORTANTE: El sistema validara que el nombre de la especialidad, no existan previamente en esa empresa. En caso de existencia previa, el sistema mostrara una alerta.
+Gestionar Especialidad:
+A través del listado de especialidades, oprimir el botón de acción editar (lápiz), y el menú lateral se desplegará para realizar las ediciones necesarias, en este caso, solo será editar el nombre de la especialidad.IMPORTANTE: El sistema validará que el nombre de la especialidad, no existan previamente en esa empresa. En caso de existencia previa, el sistema mostrara una alerta.
+Activar / Desactivar Especialidad:
+A través del listado de especialidades, luego del botón de acción editar (lápiz), se observará un nuevo botón de acción con diseño de “encendido/apagado”. El sistema mostrara la interfaz del botón en base al estado de la especialidad.
+ESPECIALIDAD ACTIVA: El botón aparecerá en rojo con la opción de DESACTIVAR.
+(Esta especialidad no estará disponible para ser asignada a nuevas gestiones)
+ESPECIALIDAD INACTIVA: El botón aparecerá en verde con la opción de ACTIVAR.
+(Esta especialidad estará disponible para ser asignada a nuevas gestiones)
+IMPORTANTE: En caso de superar el límite permitido de especialidades, el usuario deberá ponerse en contacto con el administrador para evaluar excepciones o un cambio a un nuevo plan de contratación.
+Asignación de especialidades a profesional
+El usuario podrá definir cuáles son las especialidades asignadas a cada profesional ingresado.
+Para esto, es necesario que tanto la especialidad, como el usuario con rol Profesional, se encuentren ingresados en el sistema
+Estas especialidades pasaran a formar parte del núcleo de dicha organización y serán los focos de actividades que cada empresa trabajara en su día a día.
+En la barra de navegación principal (izquierda), ingresar a la opción Profesionales.
+Este listado mostrara los profesionales registrados y su listado de especialidades asignadas listas para recibir trabajo.
+Haciendo clic en el botón “Gestionar profesión”, desplegará un panel lateral la ubicación derecha de la pantalla, en el cual podrá quitar especialidades previamente asignadas, o bien agregar nuevas especialidades que hayan sido previamente cargadas en el sistema.
+Gestión de clientes recurrentes
+Los clientes recurrentes son un listado de usuarios que habitualmente trabajan con la empresa y solicitan servicios especializados.
+En esta sección, el usuario podrá realizar la carga de dichos clientes, que luego serán utilizados para la generación de reclamos y asignación de especialistas encargados de accionar la petición requerida.
+En la barra de navegación principal (izquierda), ingresar a la opción Clientes Recurrentes.
+Este listado mostrara los clientes recurrentes habituales junto a algunos datos básicos de los mismos.
+Crear Nuevo Cliente:
+Oprimir el botón de acción “Crear Cliente”. Esto desplegará un panel lateral la ubicación derecha de la pantalla la cual contendrá ciertos campos a completar.
+IMPORTANTE: El sistema validara que el nombre del cliente, DNI y correo electrónico, no existan previamente. En caso de existencia previa, el sistema mostrara una alerta.
+El sistema también solicitara o no datos en base a la configuración de la empresa (domicilio o URL).
+Gestionar un cliente:
+A través del listado de clientes, oprimir el botón de acción editar (lápiz), y el menú lateral se desplegará para realizar las ediciones necesarias.IMPORTANTE: El sistema validará que el nombre del cliente, DNI y correo electrónico, no existan previamente. En caso de existencia previa, el sistema mostrara una alerta (solo se validarán y actualizaran los datos que cambien)
+El sistema también solicitara o no datos en base a la configuración de la empresa (domicilio o URL).
+Activar/Desactivar Cliente:
+A través del listado de clientes, luego del botón de acción editar (lápiz), se observará un nuevo botón de acción con diseño de usuario+/usuario-. El sistema mostrara la interfaz del botón en base al estado del cliente.
+CLIENTE ACTIVO: El botón aparecerá en rojo con la opción de DESACTIVAR el cliente.
+(Este cliente no aparecerá en el listado al momento de crear reclamos)
+CLIENTE INACTIVO: El botón aparecerá en verde con la opción de ACTIVAR el cliente.
+(Este cliente aparecerá en el listado al momento de crear reclamos)
+
+Gestión de Reclamos
+Los reclamos son las actividades principales que el sistema se encarga de gestionar.
+En estas actividades intervienen diferentes factores que posibilitan el éxito del servicio por parte de la empresa hacia sus clientes.
+Para esta actividad, es importante estar familiarizado con capítulos previos revisados en este documento, ya que son de suma importancia para la confección de un reclamo.
+En caso de existir alguna duda, es recomendable revisar nuevamente los módulos:
+6.3 Gestión de especialidades
+6.4 Asignación de especialidades a profesional
+6.5 Gestión de clientes recurrentes
+
+Crear nuevo reclamo
+Los reclamos son actividades de seguimiento cuyo propósito es resolver y brindar una solución a una problemática o solicitud de un cliente. A través de este módulo, estaremos abordando la funcionalidad en detalle y los puntos a tener en cuenta al momento de generar una nueva actividad.
+Para comenzar, debemos tener en cuenta que un reclamo este compuesto de diferentes factores.
+Un cliente recurrente quien solicita la gestión.
+Una especialidad puntual.
+Un profesional bajo dicha especialidad disponible para trabajar.
+Una agenda pactada.
+El detalle del reclamo.
+Para poder acceder a la creación de un nuevo reclamo, la plataforma cuenta con varios puntos de acceso.
+ACCESO VIA ACCIONES RAPIDAS: En el panel principal, haciendo clic en el botón de acción Crear reclamo.
+ACCESO VIA BARRA DE NAVEGACION: En la barra de navegación lateral, desplegar la opción reclamos, y luego haciendo clic en la opción Generar reclamo.
+Al ingresar a la sección, el sistema recopilara los datos disponibles de la empresa para comenzar con la carga de los datos.
+Se solicitará un cliente recurrente (quien solicita el servicio) > Abrir el menú desplegable y seleccionar un cliente
+En caso de no estar el cliente requerido, navegar a la sección Clientes recurrentes y evaluar el caso (revisar anexo 6.5 Gestión de clientes recurrentes).
+Se solicitará una especialidad para el reclamo (el área de trabajo) > Abrir el menú desplegable y seleccionar una especialidad.
+En caso de no existir la especialidad, navegar a la sección Especialidades y evaluar el caso (revisar anexo 6.3 Gestión de especialidades).
+Se solicitará un profesional para el reclamo (quien va a trabajar la actividad) > Abrir el menú desplegable y seleccionar un profesional.
+En caso de no existir un profesional para dicha especialidad, navegar a la sección Profesionales y evaluar el caso (revisar anexo 6.4 Asignación de especialidades a profesional).
+Se solicitará el ingreso de la URL para el reclamo en cuestión.
+Esta opción solo se mostrará si la configuración de empresa así lo requiera (ver anexo 6.1 Gestión de empresa)
+Se solicitará una fecha para trabajar el reclamo > Abrir el menú desplegable y seleccionar una fecha disponible en el calendario (éste, mostrará las fechas inhabilitadas con una x).
+*Se solicitará un horario de inicio para trabajar el reclamo > Abrir el menú desplegable y seleccionar un horario disponible en el selector (éste, mostrará los horarios inhabilitados tachados).
+*Se solicitará un horario de finalización para trabajar el reclamo > Abrir el menú desplegable y seleccionar un horario disponible en el selector (éste, mostrará los horarios inhabilitados tachados).
+Esta opción solo se mostrará si la configuración de empresa así lo requiera (ver anexo 6.1 Gestión de empresa)
+Seleccionar un título corto para el reclamo.
+Agregar una descripción detallada del pedido o problemática del cliente.
+Confirmar carga.
+Ahora el reclamo se encuentra cargado en el sistema, y una notificación ha sido enviada al dispositivo del profesional encargado de dicha solicitud.
+
+* En caso de que el sistema detecte un pronto solapamiento de actividades, el sistema realizara recomendaciones para garantizar el correcto servicio y la buena experiencia del profesional.
+Visualizar reclamos históricos
+El sistema brinda la posibilidad de visualizar el detalle de resoluciones sobre incidencias históricas trabajadas por profesionales. 
+A través de esta vista, el usuario podrá ver todos los detalles de la problemática e incluso reabrir cualquier reclamo cerrado en el caso que el cliente manifieste que la resolución no es acorde a lo esperado.
+Para poder visualizar dicha sección, la plataforma cuenta con varios puntos de acceso.
+ACCESO VIA ACCIONES RAPIDAS: En el panel principal, haciendo clic en el botón de acción Histórico
+ACCESO VIA BARRA DE NAVEGACION: En la barra de navegación lateral, desplegar la opción reclamos, y luego haciendo clic en la opción Historial de reclamos.
+Al ingresar, se accederá a una tabla con el detalle de reclamos trabajados históricamente, con diferentes datos relevantes para su análisis. Al hacer clic en el botón de acción Ver, se desplegará un menú lateral con el detalle expandido del reclamo.
+GESTION DE RECLAMO CERRADO
+El perfil Owner, será capaz de reactivar cualquier reclamo con un estado de finalización, a través del menú desplegable Seleccionar un nuevo estado.
+En esta sección, es importante destacar que se verán reflejados todos aquellos reclamos cuyo estado sea CERRADO o CANCELADO.
+Los nuevos estados que pueden ser actualizados en un reclamo Cerrado o Cancelado, son: ABIERTO – EN PROCESO – EN PAUSA – RE ABIERTO.
+En el caso de seleccionar los estados RE ABIERTO o EN PAUSA, el sistema exigirá una nota detallando el motivo por dicha acción. Esta nota ayudara al profesional a tener información relevante para su próxima gestión.
+Una vez confirmada la acción, el reclamo será removido de esta vista.
+
+
+Visualizar reclamos en curso
+El sistema brinda la posibilidad de visualizar el detalle de incidencias en curso, actualmente asignadas a profesional puntual. 
+A través de esta vista, el usuario podrá ver todos los detalles de la problemática e incluso gestionar cualquier reclamo cuyo estado no sea cerrado o cancelado.
+Para poder visualizar dicha sección, la plataforma cuenta con varios puntos de acceso.
+ACCESO VIA ACCIONES RAPIDAS: En el panel principal, haciendo clic en el botón de acción En Curso.
+ACCESO VIA BARRA DE NAVEGACION: En la barra de navegación lateral, desplegar la opción reclamos, y luego haciendo clic en la opción Reclamos en curso.
+Al ingresar, se accederá a una tabla con el detalle de reclamos activos, con diferentes datos relevantes para su análisis. Al hacer clic en el botón de acción Ver, se desplegará un menú lateral con el detalle expandido del reclamo.
+GESTION DE RECLAMO EN CURSO
+El perfil Owner, será capaz de cambiar el estado de cualquier reclamo, a través del menú desplegable Seleccionar un nuevo estado.
+En esta sección, es importante destacar que se verán reflejados todos aquellos reclamos cuyo estado no sea CERRADO o CANCELADO, esto quiere decir que, dependiendo del estado del reclamo, cualquier estado podrá ser actualizado. 
+Para todo nuevo estado que represente una acción puntual, el sistema solicitara una nota detallada. En este caso, estos estados serian EN PAUSA, CERRADO, CANCELADO, RE-ABIERTO.
+Adicionalmente, el sistema proporciona la opción de adjuntar el valor de un presupuesto numérico (no mandatorio).
+Una vez confirmada la acción, el estado del reclamo será actualizado y dependiendo este último, será removido del listado (para estados CERRADO o CANCELADO) o bien se mostrará el nuevo estado en el listado.
+
+Envío de recordatorio manual
+El sistema cuenta con la posibilidad de generar un recordatorio del reclamo al profesional.
+Esto permitirá al profesional recibir una notificación en su aplicación con el detalle del reclamo en cuestión.
+Es importante tener en cuenta que esta opción solo será visible en reclamos activos, y en aquellas empresas cuyo plan lo permita (ver anexo 6.1Gestión de empresa )
+Al ingresar al reclamo especifico, hacer clic en el botón de acción Enviar Recordatorio.
+El sistema generara una alerta en tiempo real al dispositivo del profesional asignado, con el texto personalizado elegido en la configuración de la organización.
+
+Exportar reclamos
+El sistema permite la posibilidad de realizar una exportación de los reclamos en un archivo Excel para poder extraer la información por fuera del sistema.
+Dicha exportación, se podrá realizar de diferentes maneras, en base a la necesidad del Owner u Operador.
+DESDE RECLAMOS EN CURSO
+En caso de existir reclamos en curso, el botón con el icono de descarga y el texto “En curso”, estará habilitado > Esto descargará todos los reclamos activos.
+En caso de existir algún tipo de reclamo, sea cual sea el estado, el botón con el icono de descarga y el texto “todos”, estará habilitado > Esto descargara todos los reclamos (activos y finalizados)
+DESDE RECLAMOS HISTORICOS
+En caso de existir reclamos históricos, el botón con el icono de descarga y el texto “Cerrados”, estará habilitado > Esto descargará todos los reclamos finalizados.
+En caso de existir algún tipo de reclamo, sea cual sea el estado, el botón con el icono de descarga y el texto “todos”, estará habilitado > Esto descargara todos los reclamos (finalizados y activos)
+Envío de feedback
+Cualquier usuario activo bajo una organización u empresa en actividad, podrá hacer uso de la funcionalidad de feedback dentro del portal.
+Esta opción es clave y fundamental para el desarrollo y evolución del sistema.
+En la barra de navegación principal (izquierda), elegir la opción “Enviar Feedback”
+Esto abrirá un menú lateral con un formulario para que el usuario pueda enviar su sugerencia, pedido o recomendación.
+Perfil: Operador
+El perfil Operador, es un desprendimiento del perfil Owner, con menor acceso, pero pensado para una operatoria diaria.
+Sus funcionalidades, no afectan el núcleo de la organización, pero si su operatoria habitual.
+Algunas terminologías en esta sección dependerán de los rótulos y nomenclaturas que el Owner/Propietario haya configurado para su organización. Las referencias mencionadas, serán únicamente correspondientes las configuraciones iniciales y de base del sistema.
+Gestión de usuarios
+Como perfil Operador, el usuario podrá generar nuevos accesos con el rol Profesional, quienes trabajaran las tareas asignadas.
+Es importante destacar que, los únicos roles que este perfil puede generar, será del tipo Profesional, como así también su actualización.
+Para gestión o creación de nuevos roles Operador, será necesaria la intervención del Owner de la empresa.
+En la barra de navegación principal (izquierda), ingresar a la opción Usuarios.
+Este listado mostrara todos los usuarios registrados (en caso de existir), sus datos principales, su estado, roles, y las opciones de Gestionar, Bloquear/Desbloquear o restablecer usuario.
+Crear Nuevo Usuario:
+Oprimir el botón de acción “Crear Usuario”. Esto desplegará un panel lateral la ubicación derecha de la pantalla la cual contendrá ciertos campos a completar (algunos campos previamente ya completados)
+IMPORTANTE: El sistema validara que el nombre del usuario, DNI y correo electrónico, no existan previamente. En caso de existencia previa, el sistema mostrara una alerta.
+Gestionar un usuario:
+A través del listado de usuarios, oprimir el botón de acción editar (lápiz), y el menú lateral se desplegará para realizar las ediciones necesarias.IMPORTANTE: El sistema validará que el nombre del usuario, DNI y correo electrónico, no existan previamente. En caso de existencia previa, el sistema mostrara una alerta. 
+Bloquear/Desbloquear Usuario:
+A través del listado de usuarios, luego del botón de acción editar (lápiz), se observará un nuevo botón de acción con diseño de candado. El sistema mostrara la interfaz del botón en base al estado del usuario.
+USUARIO ACTIVO: El botón aparecerá en rojo con la opción de BLOQUEAR el usuario.
+(El usuario, no podrá ingresar al portal y recibirá un mensaje informativo para contactar a su administrador inmediato)
+USUARIO INACTIVO: El botón aparecerá en verde con la opción de DESBLOQUEAR el usuario.
+(El usuario podrá continuar ingresando al sistema de manera normal)
+
+Restablecer Usuario:
+A través del listado de usuarios, luego del botón de acción bloquear/desbloquear, se observará un nuevo botón de acción para restablecer un usuario. Este botón aparecerá únicamente cuando un usuario haya acumulado 3 intentos fallidos de ingreso y su acceso se encuentre bloqueado. Esto se podrá ver ya que el candado se encontrará en verde con la opción “Desbloquear” activa. 
+Al oprimir este botón, el sistema exigirá un cambio de contraseña mandatorio para poder restablecer el acceso.
+Una vez realizada esta opción, el candado volverá nuevamente a rojo, indicando que el usuario ya se encuentra activo y la única opción disponible es “bloquearlo”.
+
+
+Diferencias entre un usuario inactivo y un usuario bloqueado.
+Un usuario bloqueado, posee registros fallidos en el sistema, mientras que un usuario inactivo, no.
+En caso de que un usuario se encuentre bloqueado, por más que el administrador vuelva a activar al usuario, el mismo no va a poder acceder al portal debido a su registro de intentos fallidos. Este es un mecanismo de seguridad que refuerza la integridad de las credenciales y exige un cambio de contraseña mandatorio para que el usuario pueda volver a acceder al portal.
+
+Visualización de especialidades asignadas a profesional
+El usuario podrá visualizar cuáles son las especialidades asignadas a cada profesional ingresado para poder tener conocimiento del alcance y los límites que su organización ha definido como foco de trabajo.
+En la barra de navegación principal (izquierda), ingresar a la opción Profesionales.
+Este listado mostrara una tabla con las especialidades ingresadas por el Owner/Propietario, su estado y los profesionales que actualmente están brindando trabajos especializados para dichas áreas.
+En caso de requerir nuevas especialidades o deshabilitar alguna especialidad especifica, el usuario deberá ponerse en contacto con su Owner/Propietario. 
+Asignación de especialidades a profesional
+El usuario podrá definir cuáles son las especialidades asignadas a cada profesional ingresado.
+Para esto, es necesario que tanto la especialidad, como el usuario con rol Profesional, se encuentren ingresados en el sistema
+Estas especialidades pasaran a formar parte del núcleo de dicha organización y serán los focos de actividades que cada empresa trabajara en su día a día.
+En la barra de navegación principal (izquierda), ingresar a la opción Profesionales.
+Este listado mostrara los profesionales registrados y su listado de especialidades asignadas listas para recibir trabajo.
+Haciendo clic en el botón “Gestionar profesión”, desplegará un panel lateral la ubicación derecha de la pantalla, en el cual podrá quitar especialidades previamente asignadas, o bien agregar nuevas especialidades que hayan sido previamente cargadas en el sistema.
+IMPORTANTE: En caso de que la especialidad requerida, no figure en el sistema, el usuario deberá ponerse en contacto con su Owner/Propietario para la adhesión de dicha especialidad.
+
+Gestión de clientes recurrentes
+Los clientes recurrentes son un listado de usuarios que habitualmente trabajan con la empresa y solicitan servicios especializados.
+En esta sección, el usuario podrá realizar la carga de dichos clientes, que luego serán utilizados para la generación de reclamos y asignación de especialistas encargados de accionar la petición requerida.
+En la barra de navegación principal (izquierda), ingresar a la opción Clientes Recurrentes.
+Este listado mostrara los clientes recurrentes habituales junto a algunos datos básicos de los mismos.
+Crear Nuevo Cliente:
+Oprimir el botón de acción “Crear Cliente”. Esto desplegará un panel lateral la ubicación derecha de la pantalla la cual contendrá ciertos campos a completar.
+IMPORTANTE: El sistema validara que el nombre del cliente, DNI y correo electrónico, no existan previamente. En caso de existencia previa, el sistema mostrara una alerta.
+El sistema también solicitara o no datos en base a la configuración de la empresa (domicilio o URL).
+Gestionar un cliente:
+A través del listado de clientes, oprimir el botón de acción editar (lápiz), y el menú lateral se desplegará para realizar las ediciones necesarias.IMPORTANTE: El sistema validará que el nombre del cliente, DNI y correo electrónico, no existan previamente. En caso de existencia previa, el sistema mostrara una alerta (solo se validarán y actualizaran los datos que cambien)
+El sistema también solicitara o no datos en base a la configuración de la empresa (domicilio o URL).
+Activar/Desactivar Cliente:
+A través del listado de clientes, luego del botón de acción editar (lápiz), se observará un nuevo botón de acción con diseño de usuario+/usuario-. El sistema mostrara la interfaz del botón en base al estado del cliente.
+CLIENTE ACTIVO: El botón aparecerá en rojo con la opción de DESACTIVAR el cliente.
+(Este cliente no aparecerá en el listado al momento de crear reclamos)
+CLIENTE INACTIVO: El botón aparecerá en verde con la opción de ACTIVAR el cliente.
+(Este cliente aparecerá en el listado al momento de crear reclamos)
+
+Gestión de Reclamos
+Los reclamos son las actividades principales que el sistema se encarga de gestionar.
+En estas actividades intervienen diferentes factores que posibilitan el éxito del servicio por parte de la empresa hacia sus clientes.
+Para esta actividad, es importante estar familiarizado con capítulos previos revisados en este documento, ya que son de suma importancia para la confección de un reclamo.
+En caso de existir alguna duda, es recomendable revisar nuevamente los módulos:
+7.2 Visualización de especialidades asignadas a profesional
+7.3 Asignación de especialidades a profesional
+7.4 Gestión de clientes recurrentes
+
+Crear nuevo reclamo
+Los reclamos son actividades de seguimiento cuyo propósito es resolver y brindar una solución a una problemática o solicitud de un cliente. A través de este módulo, estaremos abordando la funcionalidad en detalle y los puntos a tener en cuenta al momento de generar una nueva actividad.
+Para comenzar, debemos tener en cuenta que un reclamo este compuesto de diferentes factores.
+Un cliente recurrente quien solicita la gestión.
+Una especialidad puntual.
+Un profesional bajo dicha especialidad disponible para trabajar.
+Una agenda pactada.
+El detalle del reclamo.
+Para poder acceder a la creación de un nuevo reclamo, la plataforma cuenta con varios puntos de acceso.
+ACCESO VIA ACCIONES RAPIDAS: En el panel principal, haciendo clic en el botón de acción Crear reclamo.
+ACCESO VIA BARRA DE NAVEGACION: En la barra de navegación lateral, desplegar la opción reclamos, y luego haciendo clic en la opción Generar reclamo.
+Al ingresar a la sección, el sistema recopilara los datos disponibles de la empresa para comenzar con la carga de los datos.
+Se solicitará un cliente recurrente (quien solicita el servicio) > Abrir el menú desplegable y seleccionar un cliente
+En caso de no estar el cliente requerido, navegar a la sección Clientes recurrentes y evaluar el caso (revisar anexo 7.4 Gestión de clientes recurrentes).
+Se solicitará una especialidad para el reclamo (el área de trabajo) > Abrir el menú desplegable y seleccionar una especialidad.
+En caso de no existir la especialidad, navegar a la sección Especialidades y evaluar el caso (revisar anexo  7.2 Visualización de especialidades asignadas a profesional).
+Se solicitará un profesional para el reclamo (quien va a trabajar la actividad) > Abrir el menú desplegable y seleccionar un profesional.
+En caso de no existir un profesional para dicha especialidad, navegar a la sección Profesionales y evaluar el caso (revisar anexo 7.3 Asignación de especialidades a profesional).
+Se solicitará el ingreso de la URL para el reclamo en cuestión.
+Esta opción solo se mostrará si la configuración de empresa así lo requiera (ver anexo 6.1 Gestión de empresa)
+Se solicitará una fecha para trabajar el reclamo > Abrir el menú desplegable y seleccionar una fecha disponible en el calendario (éste, mostrará las fechas inhabilitadas con una x).
+*Se solicitará un horario de inicio para trabajar el reclamo > Abrir el menú desplegable y seleccionar un horario disponible en el selector (éste, mostrará los horarios inhabilitados tachados).
+*Se solicitará un horario de finalización para trabajar el reclamo > Abrir el menú desplegable y seleccionar un horario disponible en el selector (éste, mostrará los horarios inhabilitados tachados).
+Esta opción solo se mostrará si la configuración de empresa así lo requiera (ver anexo 6.1 Gestión de empresa)
+Seleccionar un título corto para el reclamo.
+Agregar una descripción detallada del pedido o problemática del cliente.
+Confirmar carga.
+Ahora el reclamo se encuentra cargado en el sistema, y una notificación ha sido enviada al dispositivo del profesional encargado de dicha solicitud.
+
+* En caso de que el sistema detecte un pronto solapamiento de actividades, el sistema realizara recomendaciones para garantizar el correcto servicio y la buena experiencia del profesional.
+Visualizar reclamos históricos
+El sistema brinda la posibilidad de visualizar el detalle de resoluciones sobre incidencias históricas trabajadas por profesionales. 
+A través de esta vista, el usuario podrá ver todos los detalles de la problemática e incluso reabrir cualquier reclamo cerrado en el caso que el cliente manifieste que la resolución no es acorde a lo esperado.
+Para poder visualizar dicha sección, la plataforma cuenta con varios puntos de acceso.
+ACCESO VIA ACCIONES RAPIDAS: En el panel principal, haciendo clic en el botón de acción Histórico
+ACCESO VIA BARRA DE NAVEGACION: En la barra de navegación lateral, desplegar la opción reclamos, y luego haciendo clic en la opción Historial de reclamos.
+Al ingresar, se accederá a una tabla con el detalle de reclamos trabajados históricamente, con diferentes datos relevantes para su análisis. Al hacer clic en el botón de acción Ver, se desplegará un menú lateral con el detalle expandido del reclamo.
+GESTION DE RECLAMO CERRADO
+El perfil Operador, será capaz de reactivar cualquier reclamo con un estado de finalización, a través del menú desplegable Seleccionar un nuevo estado.
+En esta sección, es importante destacar que se verán reflejados todos aquellos reclamos cuyo estado sea CERRADO o CANCELADO.
+Los nuevos estados que pueden ser actualizados en un reclamo Cerrado o Cancelado, son: ABIERTO – EN PROCESO – EN PAUSA – RE ABIERTO.
+En el caso de seleccionar los estados RE ABIERTO o EN PAUSA, el sistema exigirá una nota detallando el motivo por dicha acción. Esta nota ayudara al profesional a tener información relevante para su próxima gestión.
+Una vez confirmada la acción, el reclamo será removido de esta vista.
+
+
+Visualizar reclamos en curso
+El sistema brinda la posibilidad de visualizar el detalle de incidencias en curso, actualmente asignadas a profesional puntual. 
+A través de esta vista, el usuario podrá ver todos los detalles de la problemática e incluso gestionar cualquier reclamo cuyo estado no sea cerrado o cancelado.
+Para poder visualizar dicha sección, la plataforma cuenta con varios puntos de acceso.
+ACCESO VIA ACCIONES RAPIDAS: En el panel principal, haciendo clic en el botón de acción En Curso.
+ACCESO VIA BARRA DE NAVEGACION: En la barra de navegación lateral, desplegar la opción reclamos, y luego haciendo clic en la opción Reclamos en curso.
+Al ingresar, se accederá a una tabla con el detalle de reclamos activos, con diferentes datos relevantes para su análisis. Al hacer clic en el botón de acción Ver, se desplegará un menú lateral con el detalle expandido del reclamo.
+GESTION DE RECLAMO EN CURSO
+El perfil Operador, será capaz de cambiar el estado de cualquier reclamo, a través del menú desplegable Seleccionar un nuevo estado.
+En esta sección, es importante destacar que se verán reflejados todos aquellos reclamos cuyo estado no sea CERRADO o CANCELADO, esto quiere decir que, dependiendo del estado del reclamo, cualquier estado podrá ser actualizado. 
+Para todo nuevo estado que represente una acción puntual, el sistema solicitara una nota detallada. En este caso, estos estados serian EN PAUSA, CERRADO, CANCELADO, RE-ABIERTO.
+Adicionalmente, el sistema proporciona la opción de adjuntar el valor de un presupuesto numérico (no mandatorio).
+Una vez confirmada la acción, el estado del reclamo será actualizado y dependiendo este último, será removido del listado (para estados CERRADO o CANCELADO) o bien se mostrará el nuevo estado en el listado.
+
+Envío de recordatorio manual
+El sistema cuenta con la posibilidad de generar un recordatorio del reclamo al profesional.
+Esto permitirá al profesional recibir una notificación en su aplicación con el detalle del reclamo en cuestión.
+Es importante tener en cuenta que esta opción solo será visible en reclamos activos, y en aquellas empresas cuyo plan lo permita (ver anexo 6.1Gestión de empresa )
+Al ingresar al reclamo especifico, hacer clic en el botón de acción Enviar Recordatorio.
+En caso de no visualizar esta opción, el usuario deberá contactar a su Owner/Propietario para mas información.
+El sistema generara una alerta en tiempo real al dispositivo del profesional asignado, con el texto personalizado elegido en la configuración de la organización.
+
+Exportar reclamos
+El sistema permite la posibilidad de realizar una exportación de los reclamos en un archivo Excel para poder extraer la información por fuera del sistema.
+Dicha exportación, se podrá realizar de diferentes maneras, en base a la necesidad del Owner u Operador.
+DESDE RECLAMOS EN CURSO
+En caso de existir reclamos en curso, el botón con el icono de descarga y el texto “En curso”, estará habilitado > Esto descargará todos los reclamos activos.
+En caso de existir algún tipo de reclamo, sea cual sea el estado, el botón con el icono de descarga y el texto “todos”, estará habilitado > Esto descargara todos los reclamos (activos y finalizados)
+DESDE RECLAMOS HISTORICOS
+En caso de existir reclamos históricos, el botón con el icono de descarga y el texto “Cerrados”, estará habilitado > Esto descargará todos los reclamos finalizados.
+En caso de existir algún tipo de reclamo, sea cual sea el estado, el botón con el icono de descarga y el texto “todos”, estará habilitado > Esto descargara todos los reclamos (finalizados y activos)
+
+
+Envío de feedback
+Cualquier usuario activo bajo una organización u empresa en actividad, podrá hacer uso de la funcionalidad de feedback dentro del portal.
+Esta opción es clave y fundamental para el desarrollo y evolución del sistema.
+En la barra de navegación principal (izquierda), elegir la opción “Enviar Feedback”
+Esto abrirá un menú lateral con un formulario para que el usuario pueda enviar su sugerencia, pedido o recomendación.
+
+Perfil: Profesional
+El perfil Profesional, es el usuario quien trabajará las tareas asignadas por su organización y el cual accederá mediante la aplicación para dispositivos móviles.
+Gestión de fila de trabajo
+En la pantalla principal, una vez autenticado, se podrá observar una opción para la habitación/bloqueo de fila de trabajo.
+Al oprimir, esta opción actualizara el estado de la fila
+RECIBIENDO GESTIONES > Se podrán recibir nuevas asignaciones.
+NO RECIBIENDO GESTIONES > No se recibirán nuevas asignaciones.
+Contactos rápidos
+La sección de contactos rápidos le permite al profesional mantener el contacto con la empresa en todo momento para evacuar dudas o consultas puntuales.
+El sistema interactúa con las aplicaciones nativas del dispositivo, accionara acorde a la aplicación seleccionada.Esto último, dependerá de que medios de contacto rápido haya habilitado la empresa administradora.
+LLAMAR > Al hacer clic, pedirá al usuario confirmar la operación de llamado.
+EMAIL > Al hacer clic, el dispositivo redireccionara al usuario a su aplicación de correo electrónico predeterminada.
+WHATSAPP > Al hacer clic, el dispositivo abrirá la aplicación de Whatsapp (debe estar instalada) abriendo un nuevo chat directo a la empresa administradora.
+TELEGRAM > Al hacer clic, el dispositivo abrirá la aplicación de Telegram (debe estar instalada) abriendo un nuevo chat directo a la empresa administradora.
+El acceso a esta sección podrá realizarse de 3 maneras:
+Pantalla principal:Al cargar la aplicación, en la sección superior se observarán los botones disponibles para su interacción.
+Menú principal:Al hacer clic en el menú de interacción de hamburguesa, el usuario podrá hacer clic en la opción Contactos Rápidos y allí navegará a una sección dedicada (ideal cuando el usuario no esta en la pantalla principal).
+Reclamo cerrado o en curso:En cada reclamo, al visualizar el detalle, el usuario dispone de la misma botonera presente en la pantalla principal, de manera que pueda tener una forma de contacto rápida con la empresa al momento de revisar un reclamo cerrado o trabajar un reclamo en curso
+
+Gestión de reclamos
+La gestión de reclamos le permite al Profesional interactuar con los pedidos asignados a su fila de trabajo, ya sea visualizar el historial de reclamos trabajados como también obtener la información necesaria para trabajar nuevas actividades.
+Reclamos en curso
+El usuario podrá acceder a esta sección a través de 2 localizaciones.
+Pantalla principal:Al cargar la aplicación, en la sección Reclamos abiertos, se mostrarán los próximos 5 reclamos. En caso de existir más 5 reclamos activos, un botón en la parte inferior con el texto “Ver más reclamos” permitirá navegar a la pantalla dedicada.
+Menú principal:Al hacer clic en el menú de interacción de hamburguesa, el usuario podrá hacer clic en la opción Reclamos Abiertos y allí navegará a una sección dedicada (ideal cuando el usuario no está en la pantalla principal).
+
+En esta sección, el profesional podrá acceder al detalle de los reclamos recibidos, y al oprimir en el botón con el texto “Ver”, podrá ver el detalle del reclamo trabajo, su estado y comenzar a gestionar el pedido.
+
+Gestión de reclamo en curso
+Al ingresar a un reclamo puntual, el profesional podrá comenzar con la gestión de este.
+El panel mostrara todos los datos relevantes del cliente y su pedido puntual, como así también sus datos de contacto.
+Al igual que la sección Contactos Rápidos, el profesional tendrá una funcionalidad similar en la cual podrá contactar de manera inmediata al cliente a través de 2 medios.
+
+TELEFONO > Al hacer clic, pedirá al usuario confirmar la operación de llamado.
+EMAIL > Al hacer clic, el dispositivo redireccionara al usuario a su aplicación de correo electrónico predeterminada.
+El profesional también cuenta con la posibilidad de visualizar la ubicación del cliente (en caso de que aplique) a través de Google Maps, brindando una lista de rutas de llegada detalladas en base a la ubicación actual del dispositivo (es necesario que el usuario brinde los permisos correspondientes del dispositivo).
+Para acceder a esta funcionalidad, el profesional debe hacer clic en el botón con el texto “Ver en el mapa”. 
+Automáticamente, el dispositivo abrirá el mapa con la información mencionada.
+Al momento de gestionar el reclamo, el Profesional podrá elegir el estado del pedido (ABIERTO, CERRADO, CANCELADO o EN PAUSA).
+La aplicación solicitara de manera mandatorio un comentario (detalle de la actualización) y de manera opcional un presupuesto. 
+Al guardar los cambios, se realizará la actualización de la actividad.
+
+
+
+
+Reclamos Cerrados
+El usuario podrá acceder a esta sección a través de 2 localizaciones.
+Pantalla principal:Al cargar la aplicación, en la sección Reclamos cerrados, se mostrarán los próximos 5 reclamos. En caso de existir más 5 reclamos finalizados, un botón en la parte inferior con el texto “Ver más reclamos” permitirá navegar a la pantalla dedicada.
+Menú principal:Al hacer clic en el menú de interacción de hamburguesa, el usuario podrá hacer clic en la opción Reclamos Cerrados y allí navegará a una sección dedicada (ideal cuando el usuario no está en la pantalla principal).
+
+En esta sección, el profesional podrá acceder al detalle de los reclamos históricos, y al oprimir en el botón con el texto “Ver”, podrá ver el detalle del reclamo trabajo, su estado y detalle de resolución.
+
+Envío de feedback
+Cualquier usuario activo bajo una organización u empresa en actividad, podrá hacer uso de la funcionalidad de feedback dentro del portal.
+Esta opción es clave y fundamental para el desarrollo y evolución del sistema.
+Accionar el botón de acción menú hamburguesa, y en el menú seleccionara la opción “Feedback”.
+Esto llevara al usuario a una nueva pantalla, con un formulario para que el usuario pueda enviar su sugerencia, pedido o recomendación.
+
+
+

@@ -14,7 +14,14 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.imageview.ShapeableImageView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -46,6 +53,7 @@ public class DashboardActivity extends AppCompatActivity {
     private TextView tvPoints;
     private LinearLayout llNotifications;
     private ProgressBar pbLoading;
+    private ShapeableImageView ivAvatarDash;
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
@@ -65,6 +73,7 @@ public class DashboardActivity extends AppCompatActivity {
         tvPoints = findViewById(R.id.tv_points);
         llNotifications = findViewById(R.id.ll_notifications);
         pbLoading = findViewById(R.id.pb_loading);
+        ivAvatarDash = findViewById(R.id.iv_avatar_dash);
 
         FirebaseUser user = mAuth.getCurrentUser();
         // Determine active email: Google/Firebase user first, then email/password session
@@ -97,6 +106,38 @@ public class DashboardActivity extends AppCompatActivity {
         TextView tvAvatar = findViewById(R.id.tv_avatar);
         tvGreeting.setText("¡Hola, " + firstName + "!");
         tvAvatar.setText(String.valueOf(firstName.charAt(0)).toUpperCase());
+
+        // Load profile photo if available
+        String savedPhoto = getSharedPreferences(PREFS, MODE_PRIVATE).getString("profile_photo", "");
+        if (savedPhoto.isEmpty() && user != null && user.getPhotoUrl() != null) {
+            savedPhoto = user.getPhotoUrl().toString();
+        }
+        if (!savedPhoto.isEmpty()) {
+            final TextView fTvAvatar = tvAvatar;
+            tvAvatar.setVisibility(View.INVISIBLE);
+            ivAvatarDash.setVisibility(View.VISIBLE);
+            Glide.with(this)
+                    .load(savedPhoto)
+                    .transform(new CircleCrop())
+                    .placeholder(android.R.color.transparent)
+                    .listener(new RequestListener<android.graphics.drawable.Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@androidx.annotation.Nullable GlideException e,
+                                Object model, Target<android.graphics.drawable.Drawable> target,
+                                boolean isFirstResource) {
+                            ivAvatarDash.setVisibility(View.GONE);
+                            fTvAvatar.setVisibility(View.VISIBLE);
+                            return false;
+                        }
+                        @Override
+                        public boolean onResourceReady(android.graphics.drawable.Drawable resource,
+                                Object model, Target<android.graphics.drawable.Drawable> target,
+                                DataSource dataSource, boolean isFirstResource) {
+                            return false;
+                        }
+                    })
+                    .into(ivAvatarDash);
+        }
 
         // Navigation
         BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);

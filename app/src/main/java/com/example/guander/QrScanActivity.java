@@ -141,17 +141,28 @@ public class QrScanActivity extends AppCompatActivity {
     }
 
     private void processQrCode(String raw) {
-        try {
-            JSONObject qr = new JSONObject(raw);
-            String secret = qr.optString("secret", "");
-            if (!"guander2026".equals(secret)) {
+        String trimmed = raw != null ? raw.trim() : "";
+        // Accept JSON objects OR plain GUANDER-XXXXX codes
+        boolean isJson = trimmed.startsWith("{");
+        boolean isGuanderCode = trimmed.startsWith("GUANDER-");
+        if (!isJson && !isGuanderCode) {
+            mainHandler.post(() -> {
+                Toast.makeText(this, "QR no reconocido", Toast.LENGTH_LONG).show();
+                resetScanner();
+            });
+            return;
+        }
+        if (isJson) {
+            try { new JSONObject(trimmed); } catch (Exception e) {
                 mainHandler.post(() -> {
-                    Toast.makeText(this, "QR inválido", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "QR no reconocido", Toast.LENGTH_LONG).show();
                     resetScanner();
                 });
                 return;
             }
-
+        }
+        final String qrPayload = trimmed;
+        try {
             new Thread(() -> {
                 try {
                     URL url = new URL(WORKER + "/validate-qr");
@@ -164,7 +175,7 @@ public class QrScanActivity extends AppCompatActivity {
 
                     JSONObject body = new JSONObject();
                     body.put("email", userEmail);
-                    body.put("qrData", raw);
+                    body.put("qrData", qrPayload);
 
                     try (OutputStream os = conn.getOutputStream()) {
                         os.write(body.toString().getBytes("UTF-8"));

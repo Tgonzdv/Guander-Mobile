@@ -29,8 +29,15 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import android.graphics.drawable.Drawable;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -483,11 +490,32 @@ public class MapActivity extends AppCompatActivity {
                 default:             markerColor = Color.parseColor("#2E7D32"); markerLabel = "?"; break;
             }
 
+            String photoUrl = place.optString("photo_url", "");
+
             Marker marker = new Marker(mapView);
             marker.setPosition(new GeoPoint(lat, lng));
             marker.setTitle(name);
             marker.setIcon(createMarkerIcon(markerLabel, markerColor));
             marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER);
+
+            if (!photoUrl.isEmpty()) {
+                final Marker fMarker = marker;
+                final int fColor = markerColor;
+                Glide.with(this)
+                        .asBitmap()
+                        .load(photoUrl)
+                        .circleCrop()
+                        .into(new CustomTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull Bitmap resource,
+                                    @Nullable Transition<? super Bitmap> transition) {
+                                fMarker.setIcon(createMarkerIconFromBitmap(resource, fColor));
+                                mapView.invalidate();
+                            }
+                            @Override
+                            public void onLoadCleared(@Nullable Drawable placeholder) {}
+                        });
+            }
 
             final int fId = placeId;
             final String fName = name;
@@ -611,6 +639,27 @@ public class MapActivity extends AppCompatActivity {
         p.setTextAlign(Paint.Align.CENTER);
         float textY = size / 2f - (p.descent() + p.ascent()) / 2f;
         canvas.drawText(label, size / 2f, textY, p);
+
+        return new BitmapDrawable(getResources(), bm);
+    }
+
+    private BitmapDrawable createMarkerIconFromBitmap(Bitmap photo, int borderColor) {
+        float density = getResources().getDisplayMetrics().density;
+        int size = (int) (36 * density);
+        float borderWidth = 2f * density;
+        Bitmap bm = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bm);
+        Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+        // Colored border
+        p.setColor(borderColor);
+        p.setStyle(Paint.Style.FILL);
+        canvas.drawCircle(size / 2f, size / 2f, size / 2f, p);
+
+        // Scale the circle-cropped photo to fit inside the border
+        int innerSize = size - (int) (borderWidth * 2);
+        Bitmap scaled = Bitmap.createScaledBitmap(photo, innerSize, innerSize, true);
+        canvas.drawBitmap(scaled, borderWidth, borderWidth, null);
 
         return new BitmapDrawable(getResources(), bm);
     }
