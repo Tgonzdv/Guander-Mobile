@@ -177,7 +177,6 @@ public class MapActivity extends AppCompatActivity {
 
     private void setActiveFilter(String category) {
         currentFilter = category;
-        int normal = getColor(R.color.text_secondary);
         int active = getColor(R.color.green_primary);
         ((TextView) findViewById(R.id.tv_filter_locales)).setTextColor("store".equals(category) ? active : Color.parseColor("#212121"));
         ((TextView) findViewById(R.id.tv_filter_restaurantes)).setTextColor("restaurant".equals(category) ? active : Color.parseColor("#212121"));

@@ -23,9 +23,6 @@ import com.bumptech.glide.request.target.Target;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.imageview.ShapeableImageView;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -48,7 +45,6 @@ public class DashboardActivity extends AppCompatActivity {
     private static final String KEY_EMAIL_AUTH = "email_auth";
 
     private FirebaseAuth mAuth;
-    private GoogleSignInClient mGoogleSignInClient;
 
     private TextView tvPoints;
     private LinearLayout llNotifications;
@@ -63,12 +59,6 @@ public class DashboardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dashboard);
 
         mAuth = FirebaseAuth.getInstance();
-
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         tvPoints = findViewById(R.id.tv_points);
         llNotifications = findViewById(R.id.ll_notifications);
@@ -244,14 +234,4 @@ public class DashboardActivity extends AppCompatActivity {
         }
     }
 
-    private void logout() {
-        mAuth.signOut();
-        getSharedPreferences(PREFS, MODE_PRIVATE).edit().remove(KEY_EMAIL_AUTH).apply();
-        mGoogleSignInClient.signOut().addOnCompleteListener(task -> {
-            Intent intent = new Intent(this, LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
-        });
-    }
 }

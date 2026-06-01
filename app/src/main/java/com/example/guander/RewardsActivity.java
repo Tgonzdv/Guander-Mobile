@@ -308,10 +308,6 @@ public class RewardsActivity extends AppCompatActivity {
         renderRewards(filtered);
     }
 
-    private void filterRewards(String query) {
-        applyFilters();
-    }
-
     private void renderRewards(List<JSONObject> rewards) {
         llRewards.removeAllViews();
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -448,7 +444,6 @@ public class RewardsActivity extends AppCompatActivity {
 
                 if (!redemptionCode.isEmpty()) {
                     final String finalCode = redemptionCode;
-                    final String finalName = name;
                     row.setBackgroundResource(android.R.drawable.list_selector_background);
                     row.setClickable(true);
                     row.setOnClickListener(v -> showSuccessDialog(finalCode));
