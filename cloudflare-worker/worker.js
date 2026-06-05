@@ -766,12 +766,19 @@ async function handleGetPlaces(request, env, url) {
     // Query real professionals table (name comes from fk_user_id → users → user_data)
     const { results: profRows } = await env.DB.prepare(`
       SELECT p.id_professional AS id_place,
+             COALESCE(ud.name, '') AS first_name,
+             COALESCE(ud.last_name, '') AS last_name,
              COALESCE(ud.name, p.description) AS name,
              p.description, p.address, p.location,
+             COALESCE(ud.photo_url, p.image_url, '') AS photo_url,
+             COALESCE(sch.week, '') AS sched_week,
+             COALESCE(sch.weekend, '') AS sched_weekend,
+             COALESCE(sch.sunday, '') AS sched_sunday,
              '' AS cat_name, 'professional' AS place_type
       FROM professionals p
       LEFT JOIN users u ON u.id_user = p.fk_user_id
       LEFT JOIN user_data ud ON ud.id_user_data = u.fk_user_data
+      LEFT JOIN schedule sch ON sch.id_schedule = p.fk_schedule
     `).all().catch(() => ({ results: [] }));
 
     const allPlaces = [
@@ -811,15 +818,23 @@ async function handleGetPlaces(request, env, url) {
       }),
       ...(profRows || []).map(p => {
         const { lat, lng } = parseLoc(p.location);
+        const first = (p.first_name || '').trim();
+        const last = (p.last_name || '').trim();
+        const fullName = (first + ' ' + last).trim() || (p.name || '').trim() || 'Profesional';
         return {
           id_place: p.id_place,
-          name: p.name,
+          name: fullName,
           description: p.description || '',
           address: p.address || '',
+          photo_url: p.photo_url || '',
+          sched_week: p.sched_week || '',
+          sched_weekend: p.sched_weekend || '',
+          sched_sunday: p.sched_sunday || '',
           lat, lng,
           points_reward: 50,
           is_open: 1,
           place_type: 'professional',
+          category: 'professional',
           distance_km: Math.round(haversineKm(userLat, userLng, lat, lng) * 10) / 10
         };
       })
