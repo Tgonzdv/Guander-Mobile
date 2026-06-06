@@ -178,13 +178,12 @@ async function handleGetDashboard(request, env, url) {
     const points = customerData ? customerData.points : 0;
 
     const { results } = await env.DB.prepare(
-      `SELECT n.name, n.description
+      `SELECT n.id_notification, n.name, n.description, n.expiration_date
        FROM notifications n
-       JOIN notif_users nu ON n.id_notification = nu.fk_notifications_id
-       WHERE nu.fk_users_id = ?
+       WHERE date(n.expiration_date) >= date('now')
        ORDER BY n.id_notification DESC
-       LIMIT 5`
-    ).bind(userData.id_user).all();
+       LIMIT 20`
+    ).all();
 
     return corsResponse({ points, name: userData.name, notifications: results || [] });
   } catch (err) {
@@ -882,7 +881,11 @@ async function handleGetComments(request, env, url) {
 
       const { results } = await env.DB.prepare(`
         SELECT cm.id_comment AS id,
-               COALESCE(ud.name, 'Usuario') AS authorName,
+               CASE WHEN TRIM(COALESCE(ud.name, '') || ' ' || COALESCE(ud.last_name, '')) = ''
+                    THEN 'Cliente'
+                    ELSE TRIM(COALESCE(ud.name, '') || ' ' || COALESCE(ud.last_name, ''))
+               END AS authorName,
+               COALESCE(ud.photo_url, '') AS authorPhoto,
                cm.stars AS rating,
                cm.body AS comment,
                ${dateExpr('cm.date')} AS date
@@ -900,7 +903,11 @@ async function handleGetComments(request, env, url) {
 
       const { results } = await env.DB.prepare(`
         SELECT cm.id_comment AS id,
-               COALESCE(ud.name, 'Usuario') AS authorName,
+               CASE WHEN TRIM(COALESCE(ud.name, '') || ' ' || COALESCE(ud.last_name, '')) = ''
+                    THEN 'Cliente'
+                    ELSE TRIM(COALESCE(ud.name, '') || ' ' || COALESCE(ud.last_name, ''))
+               END AS authorName,
+               COALESCE(ud.photo_url, '') AS authorPhoto,
                cm.stars AS rating,
                cm.body AS comment,
                ${dateExpr('cm.date')} AS date

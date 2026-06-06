@@ -194,18 +194,32 @@ public class MapActivity extends AppCompatActivity {
     }
 
     private void applyFilterAndSearch() {
-        String query = etSearch.getText().toString().toLowerCase(Locale.getDefault()).trim();
+        String query = normalize(etSearch.getText().toString());
         List<JSONObject> filtered = new ArrayList<>();
         for (JSONObject place : allPlaces) {
             String cat = place.optString("category", "");
-            String name = place.optString("name", "").toLowerCase(Locale.getDefault());
-            String desc = place.optString("description", "").toLowerCase(Locale.getDefault());
+            String name = normalize(place.optString("name", ""));
+            String desc = normalize(place.optString("description", ""));
+            String addr = normalize(place.optString("address", ""));
             boolean catMatch = "all".equals(currentFilter) || cat.equals(currentFilter);
-            boolean searchMatch = query.isEmpty() || name.contains(query) || desc.contains(query);
-            if (catMatch && searchMatch) filtered.add(place);
+            boolean searchMatch = query.isEmpty()
+                    || name.contains(query)
+                    || desc.contains(query)
+                    || addr.contains(query);
+            // Cuando hay texto de búsqueda, ignoramos el filtro de categoría
+            // para que la búsqueda sea transversal.
+            boolean include = query.isEmpty() ? catMatch : searchMatch;
+            if (include) filtered.add(place);
         }
         renderPlaces(filtered);
         updateMapMarkers(filtered);
+    }
+
+    private static String normalize(String s) {
+        if (s == null) return "";
+        String n = java.text.Normalizer.normalize(s, java.text.Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+        return n.toLowerCase(Locale.getDefault()).trim();
     }
 
     private void requestLocationAndLoad() {

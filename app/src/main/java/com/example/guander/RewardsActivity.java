@@ -260,12 +260,20 @@ public class RewardsActivity extends AppCompatActivity {
         java.util.List<Integer> stores = new ArrayList<>();
         labels.add("Todos");
         stores.add(-1);
+        labels.add("Local");
+        stores.add(-2);
+        labels.add("Profesional");
+        stores.add(-3);
 
         String[] storeNames = {"", "Tienda de mascotas", "Veterinaria",
                 "Cafetería", "Peluquería", "Hotel",
                 "Supermercado", "Restaurante", "Paquetería"};
         java.util.LinkedHashSet<Integer> seen = new java.util.LinkedHashSet<>();
-        for (JSONObject r : allRewards) seen.add(r.optInt("fk_store", 0));
+        for (JSONObject r : allRewards) {
+            if ("store".equals(r.optString("type", "store"))) {
+                seen.add(r.optInt("fk_store", 0));
+            }
+        }
         for (int fk : seen) {
             if (fk >= 1 && fk < storeNames.length) {
                 labels.add(storeNames[fk]);
@@ -297,7 +305,15 @@ public class RewardsActivity extends AppCompatActivity {
         String query = etSearch.getText().toString().toLowerCase(Locale.getDefault());
         List<JSONObject> filtered = new ArrayList<>();
         for (JSONObject r : allRewards) {
-            if (currentFilterStore != -1 && r.optInt("fk_store", 0) != currentFilterStore) continue;
+            String rType = r.optString("type", "store");
+            int rFkStore = r.optInt("fk_store", 0);
+            if (currentFilterStore == -2) {
+                if (!"store".equals(rType)) continue;
+            } else if (currentFilterStore == -3) {
+                if (!"prof".equals(rType)) continue;
+            } else if (currentFilterStore != -1 && rFkStore != currentFilterStore) {
+                continue;
+            }
             if (!query.isEmpty()) {
                 String name = r.optString("name", "").toLowerCase(Locale.getDefault());
                 String desc = r.optString("description", "").toLowerCase(Locale.getDefault());
